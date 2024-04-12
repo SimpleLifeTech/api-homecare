@@ -4,7 +4,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
+  OneToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -19,7 +19,7 @@ export class EmployeeModel {
   @Column()
   user_id: string;
 
-  @ManyToOne(() => UserModel)
+  @OneToOne(() => UserModel)
   @JoinColumn({ name: 'user_id' })
   user: UserModel;
 
