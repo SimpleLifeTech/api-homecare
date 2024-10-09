@@ -16,6 +16,13 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@shared/shared": ["src/modules/shared"],
+      "@shared/shared/*": ["src/modules/shared/*"],
+      "@pipes/pipe": ["src/modules/shared/pipes"],
+      "@shared/pipes/*": ["src/modules/shared/pipes/*"],
+      "@modules/*": ["src/modules/*"]
+    }
   }
 }
