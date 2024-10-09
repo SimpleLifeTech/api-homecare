@@ -3,7 +3,7 @@ import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Public } from 'src/modules/shared/decorators'
 import { AuthDto } from '../../dto/auth.dto'
 import { IResponseLogin } from '../../types/response-login.type'
-import { LoginService } from './login.service'
+import { LoginService } from '../login.service'
 
 @ApiTags('User')
 @Controller('auth')
