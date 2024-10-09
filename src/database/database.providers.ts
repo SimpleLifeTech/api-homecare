@@ -3,11 +3,12 @@ import "reflect-metadata"
 
 import { DataSource } from "typeorm"
 
+import { DATA_SOURCE_PROVIDER } from "@shared/shared/utils/constants"
 import models from "../modules/models"
 
 export const databaseProviders = [
   {
-    provide: "DATA_SOURCE",
+    provide: DATA_SOURCE_PROVIDER,
     useFactory: async () => {
       const dataSource = new DataSource({
         type: "postgres",
