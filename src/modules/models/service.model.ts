@@ -1,5 +1,5 @@
 import {
-    Column,
+  Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
@@ -27,7 +27,7 @@ export class ServiceModel {
 
   @Column()
   employee_id: string;
-  
+
   @ManyToOne(() => EmployeeModel)
   @JoinColumn({ name: 'employee_id' })
   employee: EmployeeModel;
