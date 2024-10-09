@@ -8,7 +8,6 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from "typeorm"
-import { UserModel } from "./user.model"
 import { ClientModel } from "./client.model"
 import { EmployeeModel } from "./employee.model"
 import { EnterpriseModel } from "./enterprise.model"
