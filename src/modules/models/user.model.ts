@@ -5,55 +5,55 @@ import {
   Entity,
   PrimaryColumn,
   UpdateDateColumn,
-} from 'typeorm';
+} from "typeorm"
 
 @Entity()
 export class UserModel {
   @PrimaryColumn()
-  id: string;
+  id: string
 
   @Column()
-  name: string;
+  name: string
 
   @Column()
-  email: string;
+  email: string
 
   @Column({ select: false })
-  password: string;
+  password: string
 
   @Column()
-  role: string;
+  role: string
 
   @Column()
-  phone: string;
-  
+  phone: string
+
   @Column()
-  city: string;
-  
+  city: string
+
   @Column()
-  address: string;
-  
+  address: string
+
   @Column()
-  address_number: string;
-  
+  address_number: string
+
   @Column()
-  address_complement: string;
-  
+  address_complement: string
+
   @Column()
-  address_city: string;
-  
+  address_city: string
+
   @Column()
-  address_state: string;
-  
+  address_state: string
+
   @Column()
-  address_zipcode: string;
+  address_zipcode: string
 
   @CreateDateColumn()
-  created_at: Date;
+  created_at: Date
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updated_at: Date
 
   @DeleteDateColumn()
-  deleted_at: Date;
+  deleted_at: Date
 }

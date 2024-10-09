@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-import { PrismaService } from '@prisma/prisma/prisma.service'
-import * as argon from 'argon2'
-import { AuthService } from '../../auth.service'
-import { Tokens } from '../../types'
-import { LoginRoles } from '../../business/login.roles'
-import { ConfigService } from '#kernel/config/config.service'
+import { Injectable } from "@nestjs/common"
+import { JwtService } from "@nestjs/jwt"
+import { PrismaService } from "@prisma/prisma/prisma.service"
+import * as argon from "argon2"
+import { AuthService } from "../../auth.service"
+import { Tokens } from "../../types"
+import { LoginRoles } from "../../business/login.roles"
+import { ConfigService } from "#kernel/config/config.service"
 
 @Injectable()
 export class RefreshTokenService extends AuthService {

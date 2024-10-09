@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-import { PrismaService } from '@prisma/prisma/prisma.service'
-import { JwtPayload, Tokens } from './types'
+import { Injectable } from "@nestjs/common"
+import { JwtService } from "@nestjs/jwt"
+import { PrismaService } from "@prisma/prisma/prisma.service"
+import { JwtPayload, Tokens } from "./types"
 
-import * as argon from 'argon2'
-import { ConfigService } from '#kernel/config/config.service'
+import * as argon from "argon2"
+import { ConfigService } from "#kernel/config/config.service"
 
 type GenTokenPayload = { userId: string; role: string; email: string; phone?: string }
 
@@ -38,12 +38,12 @@ export class AuthService {
 
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(jwtPayload, {
-        secret: this.config.get('AT_SECRET'),
-        expiresIn: '24h',
+        secret: this.config.get("AT_SECRET"),
+        expiresIn: "24h",
       }),
       this.jwtService.signAsync(jwtPayload, {
-        secret: this.config.get('RT_SECRET'),
-        expiresIn: '7d',
+        secret: this.config.get("RT_SECRET"),
+        expiresIn: "7d",
       }),
     ])
 

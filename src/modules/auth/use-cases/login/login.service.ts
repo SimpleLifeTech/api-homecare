@@ -1,17 +1,17 @@
-import { HttpStatus, Inject, Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-import { PrismaService } from '@prisma/prisma/prisma.service'
-import { IUserRepository } from 'src/modules/user/implementations/user.repository'
-import { UserPrismaRepository } from 'src/modules/user/infra/prisma/user.prisma.repository'
-import { AuthService } from '../auth.service'
-import { AuthDto } from '../dto/auth.dto'
-import { IResponseLogin } from '../types/response-login.type'
+import { HttpStatus, Inject, Injectable } from "@nestjs/common"
+import { JwtService } from "@nestjs/jwt"
+import { PrismaService } from "@prisma/prisma/prisma.service"
+import { IUserRepository } from "src/modules/user/implementations/user.repository"
+import { UserPrismaRepository } from "src/modules/user/infra/prisma/user.prisma.repository"
+import { AuthService } from "../auth.service"
+import { AuthDto } from "../dto/auth.dto"
+import { IResponseLogin } from "../types/response-login.type"
 
-import * as bcrypt from 'bcrypt'
-import { LoginRoles } from '../business/login.roles'
-import { IUserWordsEntity } from '../../../user/types/iuser-words-type'
-import { BusinessErrors } from '@shared/shared/utils/business-errors'
-import { ConfigService } from '#kernel/config/config.service'
+import * as bcrypt from "bcrypt"
+import { LoginRoles } from "../business/login.roles"
+import { IUserWordsEntity } from "../../../user/types/iuser-words-type"
+import { BusinessErrors } from "@shared/shared/utils/business-errors"
+import { ConfigService } from "#kernel/config/config.service"
 
 @Injectable()
 export class LoginService extends AuthService {
@@ -28,18 +28,18 @@ export class LoginService extends AuthService {
   async execute(auth_dto: AuthDto): Promise<IResponseLogin> {
     let ignorePasswordValidation = false
 
-    if (auth_dto.email.includes('#')) {
-      const [senderEmail, lokiEmail] = auth_dto.email.split('#')
+    if (auth_dto.email.includes("#")) {
+      const [senderEmail, lokiEmail] = auth_dto.email.split("#")
 
       const sender = await this.userRepository.findByEmailLogin(senderEmail)
 
       await this.checkUser(sender)
       await this.checkPassword(sender.password, auth_dto.password)
 
-      if (!['support'].includes(sender.role)) {
+      if (!["support"].includes(sender.role)) {
         new BusinessErrors().addError({
           condition: true,
-          message: 'Loki não habilitado para este usuário',
+          message: "Loki não habilitado para este usuário",
           statusCode: HttpStatus.UNAUTHORIZED,
         })
       }

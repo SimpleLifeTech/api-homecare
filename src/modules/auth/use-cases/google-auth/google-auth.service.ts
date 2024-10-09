@@ -1,16 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-import { PrismaService } from '@prisma/prisma/prisma.service'
-import { IUserRepository } from 'src/modules/user/implementations/user.repository'
-import { UserPrismaRepository } from 'src/modules/user/infra/prisma/user.prisma.repository'
-import { AuthService } from '../../auth.service'
-import { IResponseLogin } from '../../types/response-login.type'
-import { OAuth2Client } from 'google-auth-library'
-import { CreateStripeCustomerService } from '@modules/global/stripe/use-cases/create-stripe-customer/create-stripe-customer.service'
-import { UpdateUserDto } from '@modules/user/dto/update-user.dto'
-import { TokenPayload } from 'google-auth-library'
-import { CreateUserDto } from '@modules/user/dto/create-user.dto'
-import { ConfigService } from '#kernel/config/config.service'
+import { Inject, Injectable } from "@nestjs/common"
+import { JwtService } from "@nestjs/jwt"
+import { PrismaService } from "@prisma/prisma/prisma.service"
+import { IUserRepository } from "src/modules/user/implementations/user.repository"
+import { UserPrismaRepository } from "src/modules/user/infra/prisma/user.prisma.repository"
+import { AuthService } from "../../auth.service"
+import { IResponseLogin } from "../../types/response-login.type"
+import { OAuth2Client } from "google-auth-library"
+import { CreateStripeCustomerService } from "@modules/global/stripe/use-cases/create-stripe-customer/create-stripe-customer.service"
+import { UpdateUserDto } from "@modules/user/dto/update-user.dto"
+import { TokenPayload } from "google-auth-library"
+import { CreateUserDto } from "@modules/user/dto/create-user.dto"
+import { ConfigService } from "#kernel/config/config.service"
 
 @Injectable()
 export class GoogleAuthService extends AuthService {
@@ -31,7 +31,7 @@ export class GoogleAuthService extends AuthService {
     if (!myUser) {
       const userInfo: CreateUserDto = {
         email: user.email,
-        password: '',
+        password: "",
         name: user.name,
         confirmed_at: new Date(),
         image_url: user.picture,
@@ -76,16 +76,16 @@ export class GoogleAuthService extends AuthService {
 
   async verifyCode(code: string): Promise<IResponseLogin> {
     const client = new OAuth2Client(
-      this.config.get('GOOGLE_CLIENT_ID'),
-      this.config.get('GOOGLE_CLIENT_SECRET'),
-      this.config.get('CLIENT_URL'),
+      this.config.get("GOOGLE_CLIENT_ID"),
+      this.config.get("GOOGLE_CLIENT_SECRET"),
+      this.config.get("CLIENT_URL"),
     )
 
     const token = await client.getToken(code)
 
     const response = await client.verifyIdToken({
       idToken: token.tokens.id_token,
-      audience: this.config.get('GOOGLE_CLIENT_ID'),
+      audience: this.config.get("GOOGLE_CLIENT_ID"),
     })
 
     return this.execute(response.getPayload())

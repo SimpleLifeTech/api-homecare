@@ -1,17 +1,20 @@
-import { Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import { PassportStrategy } from '@nestjs/passport'
-import { PrismaService } from '@prisma/prisma/prisma.service'
-import { Strategy, VerifyCallback } from 'passport-google-oauth20'
+import { Injectable } from "@nestjs/common"
+import { ConfigService } from "@nestjs/config"
+import { PassportStrategy } from "@nestjs/passport"
+import { PrismaService } from "@prisma/prisma/prisma.service"
+import { Strategy, VerifyCallback } from "passport-google-oauth20"
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(config: ConfigService, private prisma: PrismaService) {
+export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
+  constructor(
+    config: ConfigService,
+    private prisma: PrismaService,
+  ) {
     super({
-      clientID: config.get<string>('GOOGLE_CLIENT_ID'),
-      clientSecret: config.get<string>('GOOGLE_CLIENT_SECRET'),
-      callbackURL: config.get<string>('GOOGLE_CALLBACK_URL'),
-      scope: ['profile', 'email'],
+      clientID: config.get<string>("GOOGLE_CLIENT_ID"),
+      clientSecret: config.get<string>("GOOGLE_CLIENT_SECRET"),
+      callbackURL: config.get<string>("GOOGLE_CALLBACK_URL"),
+      scope: ["profile", "email"],
     })
   }
 
@@ -24,7 +27,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const { id, name, emails, photos } = profile
 
     const user = {
-      provider: 'google',
+      provider: "google",
       providerId: id,
       email: emails[0].value,
       name: `${name.givenName} ${name.familyName}`,

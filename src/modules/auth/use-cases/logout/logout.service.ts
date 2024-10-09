@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-import { PrismaService } from '@prisma/prisma/prisma.service'
-import { AuthService } from '../../auth.service'
-import { ConfigService } from '#kernel/config/config.service'
+import { Injectable } from "@nestjs/common"
+import { JwtService } from "@nestjs/jwt"
+import { PrismaService } from "@prisma/prisma/prisma.service"
+import { AuthService } from "../../auth.service"
+import { ConfigService } from "#kernel/config/config.service"
 
 @Injectable()
 export class LogoutService extends AuthService {
