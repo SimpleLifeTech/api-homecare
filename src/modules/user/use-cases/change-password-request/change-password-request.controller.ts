@@ -1,5 +1,5 @@
 import { Body, Controller, HttpStatus, Post, Res } from "@nestjs/common"
-import { ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger"
+
 import { Public } from "@shared/shared/decorators"
 import { Response } from "express"
 import { ChangePasswordRequestDto } from "../../dto/change-password-request"

@@ -15,13 +15,11 @@ export type TUserEntity = users & {
 }
 
 export class UserEntity implements users {
-  @ApiProperty()
   id: string
 
   @ApiPropertyOptional()
   banned_until: Date | null
 
-  @ApiProperty()
   created_at: Date
 
   @ApiPropertyOptional()
@@ -30,7 +28,6 @@ export class UserEntity implements users {
   @ApiPropertyOptional()
   confirmed_at: Date | null
 
-  @ApiProperty()
   email: string
   name: string | null
 
@@ -59,7 +56,6 @@ export class UserEntity implements users {
   @ApiPropertyOptional()
   last_sign_in_at: Date | null
 
-  @ApiProperty()
   @Exclude()
   password: string
 
@@ -78,7 +74,7 @@ export class UserEntity implements users {
   @ApiPropertyOptional()
   profile?: ProfileEntity | null
 
-  @ApiProperty() role: string
+  role: string
 
   @Exclude() stripeId: string
   referralCode: string | null

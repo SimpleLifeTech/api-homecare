@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from "@nestjs/common"
-import { ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger"
+
 import { Public } from "src/modules/shared/decorators"
 import { CreateUserDto } from "../../dto/create-user.dto"
 import { UserEntity } from "../../entities/user.entity"
