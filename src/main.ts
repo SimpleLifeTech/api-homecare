@@ -1,13 +1,13 @@
-import { BadRequestException, ClassSerializerInterceptor, ValidationPipe } from "@nestjs/common"
-import { NestFactory, Reflector } from "@nestjs/core"
-import { AppModule } from "./app.module"
-import { errorLogger, requestLogger } from "@shared/shared/utils/log/logger.http"
+import { BadRequestException, ClassSerializerInterceptor, ValidationPipe } from "@nestjs/common";
+import { NestFactory, Reflector } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { errorLogger, requestLogger } from "@shared/shared/utils/log/logger.http";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: false, logger: false })
+  const app = await NestFactory.create(AppModule, { cors: false, logger: false });
 
-  app.use(requestLogger)
-  app.use(errorLogger)
+  app.use(requestLogger);
+  app.use(errorLogger);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -18,15 +18,15 @@ async function bootstrap() {
           status: true,
           data: null,
           error: errors[0].constraints[Object.keys(errors[0].constraints)[0]],
-        }
-        return new BadRequestException(error)
+        };
+        return new BadRequestException(error);
       },
     }),
-  )
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
+  );
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
-  const port = process.env.PORT || 9000
-  await app.listen(port)
-  console.log("Server is running on port", port)
+  const port = process.env.PORT || 9000;
+  await app.listen(port);
+  console.log("Server is running on port", port);
 }
-bootstrap()
+bootstrap();

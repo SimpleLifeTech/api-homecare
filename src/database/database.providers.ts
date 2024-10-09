@@ -1,10 +1,10 @@
-import "dotenv/config"
-import "reflect-metadata"
+import "dotenv/config";
+import "reflect-metadata";
 
-import { DataSource } from "typeorm"
+import { DataSource } from "typeorm";
 
-import { DATA_SOURCE_PROVIDER } from "@shared/shared/utils/constants"
-import models from "../modules/models"
+import { DATA_SOURCE_PROVIDER } from "@shared/shared/utils/constants";
+import models from "../modules/models";
 
 export const databaseProviders = [
   {
@@ -19,16 +19,16 @@ export const databaseProviders = [
         database: process.env.CONNECTION_DB,
         synchronize: false,
         entities: models,
-      })
+      });
 
       return dataSource
         .initialize()
         .then(() => {
-          console.log("✅ Data Source has been initialized!")
+          console.log("✅ Data Source has been initialized!");
         })
         .catch((err) => {
-          console.error("❌ Error during Data Source initialization", err)
-        })
+          console.error("❌ Error during Data Source initialization", err);
+        });
     },
   },
-]
+];

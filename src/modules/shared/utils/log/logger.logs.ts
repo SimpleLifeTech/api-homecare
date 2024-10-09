@@ -1,8 +1,8 @@
-import * as winston from "winston"
+import * as winston from "winston";
 
 export class MyLogger {
-  private context = "Global"
-  private logger: winston.Logger
+  private context = "Global";
+  private logger: winston.Logger;
 
   constructor() {
     this.logger = winston.createLogger({
@@ -11,16 +11,16 @@ export class MyLogger {
         winston.format.colorize(),
         winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
         winston.format.printf(({ level, message, timestamp, context, status }) => {
-          const statusInfo = status ? `[${status}]` : ""
-          return `${timestamp} [${level}] [${context}] ${statusInfo} - ${message}`
+          const statusInfo = status ? `[${status}]` : "";
+          return `${timestamp} [${level}] [${context}] ${statusInfo} - ${message}`;
         }),
       ),
       transports: [new winston.transports.Console()],
-    })
+    });
   }
 
   setContext(context: string): void {
-    this.context = context
+    this.context = context;
   }
 
   private logMessage(level: string, message: any, optionalParams: any[], status?: string) {
@@ -30,30 +30,30 @@ export class MyLogger {
       context: this.context,
       status: status,
       optionalParams: optionalParams,
-    })
+    });
   }
 
   log(message: any, status?: string, ...optionalParams: any[]) {
-    this.logMessage("info", message, optionalParams, status)
+    this.logMessage("info", message, optionalParams, status);
   }
 
   fatal(message: any, status?: string, ...optionalParams: any[]) {
-    this.logMessage("fatal", message, optionalParams, status)
+    this.logMessage("fatal", message, optionalParams, status);
   }
 
   error(error: any, status?: string, ...optionalParams: any[]) {
-    this.logMessage("error", error, optionalParams, status)
+    this.logMessage("error", error, optionalParams, status);
   }
 
   warn(message: any, status?: string, ...optionalParams: any[]) {
-    this.logMessage("warn", message, optionalParams, status)
+    this.logMessage("warn", message, optionalParams, status);
   }
 
   debug(message: any, status?: string, ...optionalParams: any[]) {
-    this.logMessage("debug", message, optionalParams, status)
+    this.logMessage("debug", message, optionalParams, status);
   }
 
   verbose(message: any, status?: string, ...optionalParams: any[]) {
-    this.logMessage("verbose", message, optionalParams, status)
+    this.logMessage("verbose", message, optionalParams, status);
   }
 }

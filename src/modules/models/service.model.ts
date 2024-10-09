@@ -7,61 +7,61 @@ import {
   ManyToOne,
   PrimaryColumn,
   UpdateDateColumn,
-} from "typeorm"
-import { ClientModel } from "./client.model"
-import { EmployeeModel } from "./employee.model"
-import { EnterpriseModel } from "./enterprise.model"
+} from "typeorm";
+import { ClientModel } from "./client.model";
+import { EmployeeModel } from "./employee.model";
+import { EnterpriseModel } from "./enterprise.model";
 
 @Entity()
 export class ServiceModel {
   @PrimaryColumn()
-  id: string
+  id: string;
 
   @Column()
-  enterprise_id: string
+  enterprise_id: string;
 
   @ManyToOne(() => EnterpriseModel)
   @JoinColumn({ name: "enterprise_id" })
-  enterprise: EnterpriseModel
+  enterprise: EnterpriseModel;
 
   @Column()
-  employee_id: string
+  employee_id: string;
 
   @ManyToOne(() => EmployeeModel)
   @JoinColumn({ name: "employee_id" })
-  employee: EmployeeModel
+  employee: EmployeeModel;
 
   @Column()
-  client_id: string
+  client_id: string;
 
   @ManyToOne(() => ClientModel)
   @JoinColumn({ name: "client_id" })
-  client: ClientModel
+  client: ClientModel;
 
   @Column()
-  title: string
+  title: string;
 
   @Column()
-  description: string
+  description: string;
 
   @Column()
-  start_at: Date
+  start_at: Date;
 
   @Column()
-  start_time: string
+  start_time: string;
 
   @Column()
-  end_at: Date
+  end_at: Date;
 
   @Column()
-  end_time: string
+  end_time: string;
 
   @CreateDateColumn()
-  created_at: Date
+  created_at: Date;
 
   @UpdateDateColumn()
-  updated_at: Date
+  updated_at: Date;
 
   @DeleteDateColumn()
-  deleted_at: Date
+  deleted_at: Date;
 }

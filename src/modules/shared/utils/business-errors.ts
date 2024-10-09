@@ -1,10 +1,10 @@
-import { HttpException, HttpStatus } from "@nestjs/common"
+import { HttpException, HttpStatus } from "@nestjs/common";
 
 export interface IBusinessError {
-  condition: boolean
-  message: string
-  statusCode: HttpStatus
-  messageCode?: string
+  condition: boolean;
+  message: string;
+  statusCode: HttpStatus;
+  messageCode?: string;
 }
 export class BusinessErrors {
   constructor(
@@ -13,33 +13,33 @@ export class BusinessErrors {
     private statusCode?: HttpStatus,
     private messageCode?: string,
   ) {
-    this.message = ""
-    this.canThrow = false
-    this.statusCode = null
-    this.messageCode = ""
+    this.message = "";
+    this.canThrow = false;
+    this.statusCode = null;
+    this.messageCode = "";
   }
 
   public addError(businessError: IBusinessError) {
     if (businessError.condition) {
-      this.canThrow = businessError.condition
-      this.message = businessError.message
-      this.statusCode = businessError.statusCode
-      this.messageCode = businessError.messageCode
+      this.canThrow = businessError.condition;
+      this.message = businessError.message;
+      this.statusCode = businessError.statusCode;
+      this.messageCode = businessError.messageCode;
     }
 
-    this.throwErrors()
+    this.throwErrors();
   }
 
   public clearErrors() {
-    this.message = ""
+    this.message = "";
   }
 
   public throwErrors() {
     if (this.canThrow && this.message.length && this.statusCode) {
       const errorObject = {
         error: { message: this.message, messageCode: this.messageCode },
-      }
-      throw new HttpException(errorObject, this.statusCode)
+      };
+      throw new HttpException(errorObject, this.statusCode);
     }
   }
 }
