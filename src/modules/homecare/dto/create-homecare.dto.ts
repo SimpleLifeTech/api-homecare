@@ -1,0 +1,30 @@
+import { IsNotEmpty, IsString } from "class-validator";
+
+export class CreateHomecareDTO {
+  @IsString({ message: "O nome do homecare deve ser uma string" })
+  @IsNotEmpty({ message: "O nome do homecare deve ser preenchido" })
+  name: string;
+
+  @IsString({ message: "O endereço do homecare deve ser uma string" })
+  @IsNotEmpty({ message: "O endereço do homecare deve ser preenchida" })
+  address: string;
+
+  @IsString({ message: "O numero do endereço do homecare deve ser uma string" })
+  @IsNotEmpty({ message: "O numero do endereço do homecare deve ser preenchido" })
+  address_number: string;
+
+  @IsString({ message: "O complemento do endereço do homecare deve ser uma string" })
+  address_complement: string;
+
+  @IsString({ message: "A cidade do homecare deve ser uma string" })
+  @IsNotEmpty({ message: "A cidade do homecare deve ser preenchido" })
+  address_city: string;
+
+  @IsString({ message: "O estado do homecare deve ser uma string" })
+  @IsNotEmpty({ message: "O estado do homecare deve ser preenchido" })
+  address_state: string;
+
+  @IsString({ message: "O CEP do homecare deve ser uma string" })
+  @IsNotEmpty({ message: "O CEP do homecare deve ser preenchido" })
+  address_zipcode: string;
+}
