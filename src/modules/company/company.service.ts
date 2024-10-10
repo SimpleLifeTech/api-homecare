@@ -6,6 +6,7 @@ import { CompanyRoles } from "./business/company.roles";
 import { CompanyRepository } from "./dao/company.repository";
 import { CreateCompanyDTO } from "./dto/create-company.dto";
 import { UpdateCompanyDTO } from "./dto/update-company.dto";
+import { BrazilAPI } from "@shared/shared/externals/brazil-api/external.apis";
 
 export class CompanyService extends CompanyRoles {
   constructor(
@@ -15,6 +16,8 @@ export class CompanyService extends CompanyRoles {
     super();
   }
 
+  private readonly brazilAPI = new BrazilAPI();
+
   async createCompany(
     createCompanyDTO: CreateCompanyDTO,
   ): Promise<APIResponse<string, ErrorTypes>> {
@@ -23,6 +26,13 @@ export class CompanyService extends CompanyRoles {
     );
 
     await this.companyAlreadyExists(isCompanyAlreadyExists);
+
+    const cnpj = await this.brazilAPI.getCNPJ(createCompanyDTO.document);
+
+    await this.documentDoesntExist(cnpj.data);
+
+    if (cnpj.data.descricao_situacao_cadastral !== "ATIVA")
+      return this.response.error("CNPJ não está ativo!");
 
     await this.companyRepository.createCompany(createCompanyDTO);
 

@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { BANK_RESPONSE, CEP_RESPONSE, CNPJ_RESPONSE } from "./external.types";
 
-export class ExternalAPIs {
+export class BrazilAPI {
   constructor(private readonly BRAZIL_API_URL = process.env.BRAZIL_API_URL) {}
 
   async getBanks() {
