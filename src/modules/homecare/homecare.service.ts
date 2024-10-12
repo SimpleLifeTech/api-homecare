@@ -1,6 +1,6 @@
 import { CompanyRoles } from "@modules/company/business/company.roles";
 import { CompanyRepository } from "@modules/company/dao/company.repository";
-import { HomecareModel } from "@modules/models/homecare";
+import { HomecareModel } from "@modules/models/homecare.model";
 import { HttpStatus } from "@nestjs/common";
 import { APIResponse, CoreResponse, ErrorTypes } from "@shared/shared/utils/response";
 

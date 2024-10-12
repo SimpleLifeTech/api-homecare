@@ -1,4 +1,4 @@
-import { HomecareModel } from "@modules/models/homecare";
+import { HomecareModel } from "@modules/models/homecare.model";
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { BusinessErrors } from "@shared/shared/utils/business-errors";
 

@@ -1,4 +1,4 @@
-import { BranchModel } from "@modules/models/branch";
+import { BranchModel } from "@modules/models/branch.model";
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { BusinessErrors } from "@shared/shared/utils/business-errors";
 

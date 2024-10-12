@@ -1,4 +1,4 @@
-import { HomecareModel } from "@modules/models/homecare";
+import { HomecareModel } from "@modules/models/homecare.model";
 import { DataSource, UpdateResult } from "typeorm";
 
 import { CreateHomecareDTO } from "../dto/create-homecare.dto";

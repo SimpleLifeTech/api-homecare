@@ -1,4 +1,4 @@
-import { BranchModel } from "@modules/models/branch";
+import { BranchModel } from "@modules/models/branch.model";
 import { DataSource, UpdateResult } from "typeorm";
 
 import { CreateBranchDTO } from "../dto/create-branch.dto";
