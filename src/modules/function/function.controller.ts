@@ -3,10 +3,14 @@ import { Response } from "express";
 
 import { CreateOrUpdateFunctionDTO } from "./dto/create-update-function.dto";
 import { FunctionService } from "./function.service";
+import { GlobalFunctions } from "@shared/shared/utils/functions";
 
 @Controller("function")
 export class FunctionController {
-  constructor(protected readonly functionService: FunctionService) {}
+  constructor(
+    protected readonly functionService: FunctionService,
+    private readonly globalFunctions = new GlobalFunctions(),
+  ) {}
 
   @Post("/create")
   async createFunction(@Body() body: CreateOrUpdateFunctionDTO, @Res() res: Response) {
@@ -16,6 +20,7 @@ export class FunctionController {
 
   @Get("/list/:functionId")
   async getFunctionById(@Param("functionId") functionId: number, @Res() res: Response) {
+    this.globalFunctions.IsEmptyParam(functionId);
     const { codeHttp, ...response } = await this.functionService.findFunctionById(functionId);
     return res.status(codeHttp).json(response);
   }
@@ -32,6 +37,7 @@ export class FunctionController {
     @Body() body: CreateOrUpdateFunctionDTO,
     @Res() res: Response,
   ) {
+    this.globalFunctions.IsEmptyParam(functionId);
     const { codeHttp, ...response } = await this.functionService.updateFunctionById(
       functionId,
       body,
@@ -41,6 +47,7 @@ export class FunctionController {
 
   @Delete("/delete/:functionId")
   async deleteFunction(@Param("functionId") functionId: number, @Res() res: Response) {
+    this.globalFunctions.IsEmptyParam(functionId);
     const { codeHttp, ...response } = await this.functionService.inactivateFunctionById(functionId);
     return res.status(codeHttp).json(response);
   }
