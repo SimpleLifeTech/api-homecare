@@ -1,6 +1,7 @@
-import { BranchModel } from "./branch";
+import { BranchModel } from "./branch.model";
 import { CompanyModel } from "./company.model";
-import { HomecareModel } from "./homecare";
+import { FunctionModel } from "./function.model";
+import { HomecareModel } from "./homecare.model";
 import { UserModel } from "./user.model";
 
-export default [UserModel, CompanyModel, HomecareModel, BranchModel];
+export default [BranchModel, CompanyModel, FunctionModel, HomecareModel, UserModel];
