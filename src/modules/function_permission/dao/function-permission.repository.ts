@@ -14,11 +14,11 @@ export class FunctionPermissionRepository {
   }
 
   async findFunctionPermissionById(functionPermissionId: string): Promise<FunctionPermissionModel> {
-    return this.repository.findOne({ where: { id: functionPermissionId } });
+    return this.repository.findOneBy({ id: functionPermissionId });
   }
 
   async findFunctionPermissionByFunctionId(functionId: number): Promise<FunctionPermissionModel> {
-    return this.repository.findOne({ where: { function_id: functionId } });
+    return this.repository.findOneBy({ function_id: functionId });
   }
 
   async updateFunctionPermissionById(

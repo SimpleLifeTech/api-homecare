@@ -11,11 +11,11 @@ export class FunctionRepository {
   }
 
   async findFunctionByName(name: string): Promise<FunctionModel> {
-    return this.repository.findOne({ where: { name } });
+    return this.repository.findOneBy({ name });
   }
 
   async findFunctionById(functionId: number): Promise<FunctionModel> {
-    return this.repository.findOne({ where: { id: functionId } });
+    return this.repository.findOneBy({ id: functionId });
   }
 
   async findFunctions(): Promise<FunctionModel[]> {
