@@ -20,15 +20,15 @@ export class HomecareService extends HomecareRoles {
   }
 
   async createHomecare(
-    companyId: string,
+    branchId: string,
     createHomecareDTO: CreateHomecareDTO,
   ): Promise<APIResponse<string, ErrorTypes>> {
-    const companyExists = await this.companyRepository.findCompanyById(companyId);
+    const companyExists = await this.companyRepository.findCompanyById(branchId);
 
     await this.companyRoles.companyNotFound(companyExists);
 
     const homecareExists = await this.homecareRepository.findHomecareByName(
-      companyId,
+      branchId,
       createHomecareDTO.name,
     );
 
@@ -47,12 +47,12 @@ export class HomecareService extends HomecareRoles {
     return this.response.success(homecare);
   }
 
-  async findHomecare(companyId: string): Promise<APIResponse<HomecareModel[], ErrorTypes>> {
-    const company = await this.companyRepository.findCompanyById(companyId);
+  async findHomecare(branchId: string): Promise<APIResponse<HomecareModel[], ErrorTypes>> {
+    const company = await this.companyRepository.findCompanyById(branchId);
 
     await this.companyRoles.companyNotFound(company);
 
-    const homecares = await this.homecareRepository.findHomecareByCompanyId(companyId);
+    const homecares = await this.homecareRepository.findHomecareByBranchId(branchId);
 
     return this.response.success(homecares);
   }

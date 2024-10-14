@@ -13,13 +13,13 @@ export class HomecareController {
     private readonly globalFunctions = new GlobalFunctions(),
   ) {}
 
-  @Post("/create/:companyId")
+  @Post("/create/:branchId")
   async createHomecare(
-    @Param() companyId: string,
+    @Param() branchId: string,
     @Body() body: CreateHomecareDTO,
     @Res() res: Response,
   ) {
-    const { codeHttp, ...response } = await this.homecareService.createHomecare(companyId, body);
+    const { codeHttp, ...response } = await this.homecareService.createHomecare(branchId, body);
 
     return res.status(codeHttp).json(response);
   }
@@ -33,11 +33,11 @@ export class HomecareController {
     return res.status(codeHttp).json(response);
   }
 
-  @Get("/list-all/:companyId")
-  async getHomecare(@Param("companyId") companyId: string, @Res() res: Response) {
-    this.globalFunctions.IsEmptyParam(companyId);
+  @Get("/list-all/:branchId")
+  async getHomecare(@Param("branchId") branchId: string, @Res() res: Response) {
+    this.globalFunctions.IsEmptyParam(branchId);
 
-    const { codeHttp, ...response } = await this.homecareService.findHomecare(companyId);
+    const { codeHttp, ...response } = await this.homecareService.findHomecare(branchId);
 
     return res.status(codeHttp).json(response);
   }

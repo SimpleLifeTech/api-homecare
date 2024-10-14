@@ -12,16 +12,16 @@ export class HomecareRepository {
     return this.repository.save(data);
   }
 
-  async findHomecareByName(companyId: string, name: string): Promise<HomecareModel> {
-    return this.repository.findOne({ where: { company_id: companyId, name } });
+  async findHomecareByName(branchId: string, name: string): Promise<HomecareModel> {
+    return this.repository.findOneBy({ branch_id: branchId, name });
   }
 
-  async findHomecareByCompanyId(companyId: string): Promise<HomecareModel[]> {
-    return this.repository.findBy({ company_id: companyId });
+  async findHomecareByBranchId(branchId: string): Promise<HomecareModel[]> {
+    return this.repository.findBy({ branch_id: branchId });
   }
 
   async findHomecareById(homecareId: string): Promise<HomecareModel> {
-    return this.repository.findOne({ where: { id: homecareId } });
+    return this.repository.findOneBy({ id: homecareId });
   }
 
   async updateHomecareById(homecareId: string, data: UpdateHomecareDTO): Promise<UpdateResult> {

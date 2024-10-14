@@ -34,4 +34,12 @@ export class CompanyRoles {
       statusCode: HttpStatus.BAD_REQUEST,
     });
   }
+
+  async documentsIsNotActive(situation: string) {
+    this.businessErrors.addError({
+      condition: situation !== "ATIVA",
+      message: "CNPJ não está ativo",
+      statusCode: HttpStatus.BAD_REQUEST,
+    });
+  }
 }

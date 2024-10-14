@@ -8,16 +8,20 @@ export class CompanyRepository {
   constructor(private dataSource: DataSource) {}
   private readonly repository = this.dataSource.getRepository(CompanyModel);
 
-  async createCompany(data: CreateCompanyDTO): Promise<CompanyModel> {
-    return this.repository.save(data);
+  async createCompany(personId: string, data: CreateCompanyDTO): Promise<CompanyModel> {
+    return this.repository.save({ person_id: personId, ...data });
   }
 
   async findCompanyByDocument(document: string): Promise<CompanyModel> {
-    return this.repository.findOne({ where: { document } });
+    return this.repository.findOneBy({ document });
   }
 
   async findCompanyById(companyId: string): Promise<CompanyModel> {
-    return this.repository.findOne({ where: { id: companyId } });
+    return this.repository.findOneBy({ id: companyId });
+  }
+
+  async findCompanyByUserId(personId: string): Promise<CompanyModel> {
+    return this.repository.findOneBy({ person_id: personId });
   }
 
   async updateCompanyById(companyId: string, data: UpdateCompanyDTO): Promise<UpdateResult> {

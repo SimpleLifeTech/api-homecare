@@ -13,9 +13,13 @@ export class CompanyController {
     private readonly globalFunctions = new GlobalFunctions(),
   ) {}
 
-  @Post("/create")
-  async createCompany(@Body() body: CreateCompanyDTO, @Res() res: Response) {
-    const { codeHttp, ...response } = await this.companyService.createCompany(body);
+  @Post("/create/:person_id")
+  async createCompany(
+    @Param("person_id") personId: string,
+    @Body() body: CreateCompanyDTO,
+    @Res() res: Response,
+  ) {
+    const { codeHttp, ...response } = await this.companyService.createCompany(personId, body);
 
     return res.status(codeHttp).json(response);
   }
@@ -25,6 +29,15 @@ export class CompanyController {
     this.globalFunctions.IsEmptyParam(companyId);
 
     const { codeHttp, ...response } = await this.companyService.findCompanyById(companyId);
+
+    return res.status(codeHttp).json(response);
+  }
+
+  @Get("/list-by-person/:personId")
+  async getCompanyByPersonId(@Param("personId") personId: string, @Res() res: Response) {
+    this.globalFunctions.IsEmptyParam(personId);
+
+    const { codeHttp, ...response } = await this.companyService.findCompanyByUserId(personId);
 
     return res.status(codeHttp).json(response);
   }
