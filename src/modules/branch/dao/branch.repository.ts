@@ -8,12 +8,8 @@ export class BranchRepository {
   constructor(private dataSource: DataSource) {}
   private readonly repository = this.dataSource.getRepository(BranchModel);
 
-  async createBranch(data: CreateBranchDTO): Promise<BranchModel> {
-    return this.repository.save(data);
-  }
-
-  async findBranchByHomecareId(homecareId: string): Promise<BranchModel[]> {
-    return this.repository.findBy({ homecare_id: homecareId });
+  async createBranch(companyId: string, data: CreateBranchDTO): Promise<BranchModel> {
+    return this.repository.save({ company_id: companyId, ...data });
   }
 
   async findBranchByCompanyId(companyId: string): Promise<BranchModel[]> {
@@ -21,7 +17,11 @@ export class BranchRepository {
   }
 
   async findBranchById(branchId: string): Promise<BranchModel> {
-    return this.repository.findOne({ where: { id: branchId } });
+    return this.repository.findOneBy({ id: branchId });
+  }
+
+  async findBranchByName(companyId: string, name: string): Promise<BranchModel> {
+    return this.repository.findOneBy({ company_id: companyId, name });
   }
 
   async updateBranchById(branchId: string, data: UpdateBranchDTO): Promise<UpdateResult> {
