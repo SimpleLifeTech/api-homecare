@@ -7,8 +7,8 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-@Entity()
-export class UserModel {
+@Entity("person")
+export class PersonModel {
   @PrimaryColumn()
   id: string;
 
@@ -22,13 +22,13 @@ export class UserModel {
   password: string;
 
   @Column()
-  role: string;
+  document: string;
+
+  @Column()
+  image: string;
 
   @Column()
   phone: string;
-
-  @Column()
-  city: string;
 
   @Column()
   address: string;
