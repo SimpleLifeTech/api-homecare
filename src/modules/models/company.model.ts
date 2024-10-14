@@ -13,6 +13,9 @@ export class CompanyModel {
   id: string;
 
   @Column()
+  person_id: string;
+
+  @Column()
   name: string;
 
   @Column()

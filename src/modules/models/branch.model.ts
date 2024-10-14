@@ -16,9 +16,6 @@ export class BranchModel {
   company_id: string;
 
   @Column()
-  homecare_id: string;
-
-  @Column()
   name: string;
 
   @Column()

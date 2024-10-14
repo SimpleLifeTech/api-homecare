@@ -3,7 +3,7 @@ import { CompanyModel } from "./company.model";
 import { FunctionPermissionModel } from "./function-permission.model";
 import { FunctionModel } from "./function.model";
 import { HomecareModel } from "./homecare.model";
-import { UserModel } from "./user.model";
+import { PersonModel } from "./person.model";
 
 export default [
   BranchModel,
@@ -11,5 +11,5 @@ export default [
   FunctionModel,
   FunctionPermissionModel,
   HomecareModel,
-  UserModel,
+  PersonModel,
 ];

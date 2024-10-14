@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-import { UserModel } from "./user.model";
+import { PersonModel } from "./person.model";
 
 @Entity()
 export class EmployeeModel {
@@ -17,11 +17,11 @@ export class EmployeeModel {
   id: string;
 
   @Column()
-  user_id: string;
+  person_id: string;
 
-  @OneToOne(() => UserModel)
-  @JoinColumn({ name: "user_id" })
-  user: UserModel;
+  @OneToOne(() => PersonModel)
+  @JoinColumn({ name: "person_id" })
+  person: PersonModel;
 
   @Column()
   work_function: string;

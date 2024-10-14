@@ -13,7 +13,7 @@ export class HomecareModel {
   id: string;
 
   @Column()
-  company_id: string;
+  branch_id: string;
 
   @Column()
   name: string;
