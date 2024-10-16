@@ -1,6 +1,6 @@
 import { IsBoolean } from "class-validator";
 
-export class UpdateFunctionPermissionDTO {
+export class UpdateRolePermissionDTO {
   @IsBoolean({ message: "A permissão deve ser uma boolean" })
   feed: boolean;
 

@@ -38,4 +38,18 @@ model role {
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
+
+  role_permission role_permission[]
+}
+
+model role_permission {
+  id         String    @id @default(uuid()) @db.Uuid
+  role_id    Int
+  feed       Boolean
+  delete     Boolean
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  role role @relation(fields: [role_id], references: [id])
 }

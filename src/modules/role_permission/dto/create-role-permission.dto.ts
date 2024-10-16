@@ -1,6 +1,6 @@
 import { IsBoolean, IsNotEmpty } from "class-validator";
 
-export class CreateFunctionPermissionDTO {
+export class CreateRolePermissionDTO {
   @IsBoolean({ message: "A permissão deve ser uma boolean" })
   @IsNotEmpty({ message: "A permissão deve ser preenchida" })
   feed: boolean;
