@@ -18,7 +18,6 @@ export class CreatePersonDTO {
   document: string;
 
   @IsString({ message: "A imagem do usuário deve ser uma string" })
-  @IsNotEmpty({ message: "A imagem do usuário deve ser preenchido" })
   image: string;
 
   @IsString({ message: "O número de telefone/celular do usuário deve ser uma string" })

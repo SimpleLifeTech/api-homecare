@@ -1,16 +1,20 @@
-import { PersonModel } from "@modules/models/person.model";
-import { HttpStatus } from "@nestjs/common";
+import { HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { APIResponse, CoreResponse, ErrorTypes } from "@shared/shared/utils/response";
+import * as bcrypt from "bcryptjs";
 
 import { PersonRoles } from "./business/person.roles";
 import { PersonRepository } from "./dao/person.repository";
 import { CreatePersonDTO } from "./dto/create-person.dto";
 import { UpdatePersonDTO } from "./dto/update-person.dto";
+import { Person } from "./types/person.types";
 
 const response = new CoreResponse();
+const globalFunctions = new GlobalFunctions();
 
+@Injectable()
 export class PersonService extends PersonRoles {
-  constructor(protected readonly personRepository: PersonRepository) {
+  constructor(@Inject(PersonRepository) protected readonly personRepository: PersonRepository) {
     super();
   }
 
@@ -19,17 +23,31 @@ export class PersonService extends PersonRoles {
 
     await this.personAlreadyExists(personExists);
 
-    await this.personRepository.createPerson(data);
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(data.password, salt);
+
+    await this.passwordNotCreated(hashedPassword);
+
+    const user = {
+      ...data,
+      password: hashedPassword,
+      document: globalFunctions.removeSpecialCharacters(data.document),
+      address_zipcode: globalFunctions.removeSpecialCharacters(data.address_zipcode),
+    };
+
+    await this.personRepository.createPerson(user);
 
     return response.success("Pessoa criada com sucesso!", HttpStatus.CREATED);
   }
 
-  async findPersonById(personId: string): Promise<APIResponse<PersonModel, ErrorTypes>> {
+  async findPersonById(personId: string): Promise<APIResponse<Person, ErrorTypes>> {
     const person = await this.personRepository.findPersonById(personId);
 
     await this.personNotFound(person);
 
-    return response.success(person);
+    const formatted = globalFunctions.excludeFromObject(person, ["password"]);
+
+    return response.success(formatted);
   }
 
   async updatePersonById(

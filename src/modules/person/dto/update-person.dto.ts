@@ -7,9 +7,6 @@ export class UpdatePersonDTO {
   @IsString({ message: "O e-mail do usuário deve ser uma string" })
   email: string;
 
-  @IsString({ message: "A senha do usuário deve ser uma string" })
-  password: string;
-
   @IsString({ message: "O CPF do usuário deve ser uma string" })
   document: string;
 

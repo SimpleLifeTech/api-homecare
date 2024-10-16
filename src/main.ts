@@ -4,7 +4,9 @@ import { AppModule } from "./app.module";
 import { errorLogger, requestLogger } from "@shared/shared/utils/log/logger.http";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: false, logger: false });
+  const app = await NestFactory.create(AppModule, {
+    logger: ["error", "warn", "debug", "log", "verbose"],
+  });
 
   app.use(requestLogger);
   app.use(errorLogger);
@@ -27,6 +29,6 @@ async function bootstrap() {
 
   const port = process.env.PORT || 9000;
   await app.listen(port);
-  console.log("Server is running on port", port);
+  console.log("🚀 Server is running on port", port);
 }
 bootstrap();

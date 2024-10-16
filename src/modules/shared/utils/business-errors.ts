@@ -37,7 +37,9 @@ export class BusinessErrors {
   public throwErrors() {
     if (this.canThrow && this.message.length && this.statusCode) {
       const errorObject = {
-        error: { message: this.message, messageCode: this.messageCode },
+        status: false,
+        data: null,
+        error: this.message,
       };
       throw new HttpException(errorObject, this.statusCode);
     }

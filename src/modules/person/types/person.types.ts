@@ -1,10 +1,7 @@
-import { person } from "@prisma/client";
-
-export class PersonModel implements person {
+export interface Person {
   id: string;
   name: string;
   email: string;
-  password: string;
   document: string;
   image: string;
   phone: string;
@@ -17,8 +14,4 @@ export class PersonModel implements person {
   created_at: Date;
   updated_at: Date;
   deleted_at: Date;
-
-  constructor(partial: Partial<PersonModel>) {
-    Object.assign(this, partial);
-  }
 }

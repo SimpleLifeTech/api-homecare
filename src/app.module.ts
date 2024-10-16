@@ -1,9 +1,21 @@
+import { PersonModule } from "@modules/person/person.module";
 import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { APP_FILTER } from "@nestjs/core";
+import { HttpExceptionFilter } from "@shared/shared/utils/errors/http-exeception.filter";
+
 import { AppController } from "./app.controller";
+import { PrismaService } from "./database/prisma/prisma.service";
 
 @Module({
-  imports: [],
+  imports: [ConfigModule.forRoot(), PersonModule],
   controllers: [AppController],
-  providers: [],
+  providers: [
+    PrismaService,
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}
