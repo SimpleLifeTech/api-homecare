@@ -10,19 +10,11 @@ import {
 } from "typeorm";
 import { ClientModel } from "./client.model";
 import { EmployeeModel } from "./employee.model";
-import { EnterpriseModel } from "./enterprise.model";
 
 @Entity()
 export class ServiceModel {
   @PrimaryColumn()
   id: string;
-
-  @Column()
-  enterprise_id: string;
-
-  @ManyToOne(() => EnterpriseModel)
-  @JoinColumn({ name: "enterprise_id" })
-  enterprise: EnterpriseModel;
 
   @Column()
   employee_id: string;

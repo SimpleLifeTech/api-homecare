@@ -7,11 +7,10 @@ import { PersonRepository } from "./dao/person.repository";
 import { CreatePersonDTO } from "./dto/create-person.dto";
 import { UpdatePersonDTO } from "./dto/update-person.dto";
 
+const response = new CoreResponse();
+
 export class PersonService extends PersonRoles {
-  constructor(
-    protected readonly personRepository: PersonRepository,
-    protected readonly response = new CoreResponse(),
-  ) {
+  constructor(protected readonly personRepository: PersonRepository) {
     super();
   }
 
@@ -22,7 +21,7 @@ export class PersonService extends PersonRoles {
 
     await this.personRepository.createPerson(data);
 
-    return this.response.success("Pessoa criada com sucesso!", HttpStatus.CREATED);
+    return response.success("Pessoa criada com sucesso!", HttpStatus.CREATED);
   }
 
   async findPersonById(personId: string): Promise<APIResponse<PersonModel, ErrorTypes>> {
@@ -30,7 +29,7 @@ export class PersonService extends PersonRoles {
 
     await this.personNotFound(person);
 
-    return this.response.success(person);
+    return response.success(person);
   }
 
   async updatePersonById(
@@ -43,7 +42,7 @@ export class PersonService extends PersonRoles {
 
     await this.personRepository.updatePersonById(personId, data);
 
-    return this.response.success("Pessoa atualizada com sucesso!");
+    return response.success("Pessoa atualizada com sucesso!");
   }
 
   async inactivatePersonById(personId: string): Promise<APIResponse<string, ErrorTypes>> {
@@ -53,6 +52,6 @@ export class PersonService extends PersonRoles {
 
     await this.personRepository.inactivatePersonById(personId);
 
-    return this.response.success("Pessoa inativada com sucesso!");
+    return response.success("Pessoa inativada com sucesso!");
   }
 }
