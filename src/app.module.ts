@@ -1,4 +1,5 @@
 import { PersonModule } from "@modules/person/person.module";
+import { RoleModule } from "@modules/role/role.module";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
@@ -8,7 +9,7 @@ import { AppController } from "./app.controller";
 import { PrismaService } from "./database/prisma/prisma.service";
 
 @Module({
-  imports: [ConfigModule.forRoot(), PersonModule],
+  imports: [ConfigModule.forRoot(), PersonModule, RoleModule],
   controllers: [AppController],
   providers: [
     PrismaService,

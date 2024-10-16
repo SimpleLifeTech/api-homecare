@@ -1,0 +1,40 @@
+import { RoleModel } from "@modules/models/role.model";
+import { Injectable } from "@nestjs/common";
+import { GlobalFunctions } from "@shared/shared/utils/functions";
+import { PrismaService } from "src/database/prisma/prisma.service";
+
+import { CreateOrUpdateRoleDTO } from "../dto/create-update-role.dto";
+
+const globalFunction = new GlobalFunctions();
+
+@Injectable()
+export class RoleRepository {
+  constructor(private prisma: PrismaService) {}
+
+  async createRole(data: CreateOrUpdateRoleDTO): Promise<RoleModel> {
+    return await this.prisma.role.create({ data: { ...data } });
+  }
+
+  async findRoleByName(name: string): Promise<RoleModel | null> {
+    return await this.prisma.role.findFirst({ where: { name, deleted_at: null } });
+  }
+
+  async findRoleById(roleId: number): Promise<RoleModel | null> {
+    return await this.prisma.role.findUnique({ where: { id: roleId, deleted_at: null } });
+  }
+
+  async findRoles(): Promise<RoleModel[] | null> {
+    return await this.prisma.role.findMany({ where: { deleted_at: null } });
+  }
+
+  async updateRoleById(roleId: number, data: CreateOrUpdateRoleDTO): Promise<RoleModel> {
+    return await this.prisma.role.update({ where: { id: roleId }, data: { ...data } });
+  }
+
+  async inactivateRoleById(roleId: number): Promise<RoleModel> {
+    return await this.prisma.role.update({
+      where: { id: roleId },
+      data: { deleted_at: globalFunction.getCurrentDateAndTime() },
+    });
+  }
+}

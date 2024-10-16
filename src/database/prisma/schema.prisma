@@ -31,3 +31,11 @@ model person {
   updated_at         DateTime  @updatedAt
   deleted_at         DateTime?
 }
+
+model role {
+  id         Int       @id @default(autoincrement()) @db.Integer
+  name       String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+}
