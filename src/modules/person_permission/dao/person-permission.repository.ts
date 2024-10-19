@@ -17,11 +17,15 @@ export class PersonPermissionRepository {
   }
 
   async findPermissionByPersonId(personId: string): Promise<PersonPermissionModel[]> {
-    return await this.prisma.person_permission.findMany({ where: { person_id: personId } });
+    return await this.prisma.person_permission.findMany({
+      where: { person_id: personId, deleted_at: null },
+    });
   }
 
   async findPermissionById(personPermissionId: string): Promise<PersonPermissionModel> {
-    return await this.prisma.person_permission.findUnique({ where: { id: personPermissionId } });
+    return await this.prisma.person_permission.findUnique({
+      where: { id: personPermissionId, deleted_at: null },
+    });
   }
 
   async updatePermissionById(

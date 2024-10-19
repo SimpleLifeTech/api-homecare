@@ -1,3 +1,4 @@
+import { CompanyModule } from "@modules/company/company.module";
 import { PersonModule } from "@modules/person/person.module";
 import { RoleModule } from "@modules/role/role.module";
 import { RolePermissionModule } from "@modules/role_permission/role-permission.module";
@@ -10,7 +11,7 @@ import { AppController } from "./app.controller";
 import { PrismaService } from "./database/prisma/prisma.service";
 
 @Module({
-  imports: [ConfigModule.forRoot(), PersonModule, RoleModule, RolePermissionModule],
+  imports: [ConfigModule.forRoot(), PersonModule, RoleModule, RolePermissionModule, CompanyModule],
   controllers: [AppController],
   providers: [
     PrismaService,

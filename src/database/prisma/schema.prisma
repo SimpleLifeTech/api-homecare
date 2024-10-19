@@ -13,7 +13,7 @@ model person {
   email              String
   password           String
   document           String
-  image              String
+  image              String?
   phone              String
   address            String
   address_number     String
@@ -22,28 +22,29 @@ model person {
   address_state      String
   address_zipcode    String
   created_at         DateTime            @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
-  updated_at         DateTime            @updatedAt
+  updated_at         DateTime?           @updatedAt
   deleted_at         DateTime?
+  company            company[]
   person_permission  person_permission[]
 }
 
 model person_permission {
-  id                 String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  person_id          String?          @db.Uuid
-  role_permission_id String?          @db.Uuid
-  created_at         DateTime?        @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
-  updated_at         DateTime?        @updatedAt @db.Timestamp(6)
-  deleted_at         DateTime?        @db.Timestamp(6)
-  person             person?          @relation(fields: [person_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_person")
-  role_permission    role_permission? @relation(fields: [role_permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_permision")
+  id                 String          @id @default(uuid()) @db.Uuid
+  person_id          String          @db.Uuid
+  role_permission_id String          @db.Uuid
+  created_at         DateTime        @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
+  updated_at         DateTime?       @updatedAt @db.Timestamp(6)
+  deleted_at         DateTime?       @db.Timestamp(6)
+  person             person          @relation(fields: [person_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_person")
+  role_permission    role_permission @relation(fields: [role_permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_permision")
 }
 
 model role {
+  id              Int               @id @default(autoincrement())
   name            String
   created_at      DateTime          @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
-  updated_at      DateTime          @updatedAt
+  updated_at      DateTime?         @updatedAt
   deleted_at      DateTime?
-  id              Int               @id @default(autoincrement())
   role_permission role_permission[]
 }
 
@@ -53,8 +54,20 @@ model role_permission {
   feed              Boolean
   delete            Boolean
   created_at        DateTime            @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
-  updated_at        DateTime            @updatedAt
+  updated_at        DateTime?           @updatedAt
   deleted_at        DateTime?
   person_permission person_permission[]
   role              role                @relation(fields: [role_id], references: [id])
+}
+
+model company {
+  id         String    @id @default(uuid()) @db.Uuid
+  person_id  String    @db.Uuid
+  name       String    @db.VarChar(255)
+  image      String?   @db.VarChar(255)
+  document   String    @db.VarChar(255)
+  created_at DateTime  @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
+  updated_at DateTime? @db.Timestamp(6)
+  deleted_at DateTime? @db.Timestamp(6)
+  person     person    @relation(fields: [person_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_person")
 }
