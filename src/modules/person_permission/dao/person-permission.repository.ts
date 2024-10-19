@@ -1,39 +1,43 @@
 import { PersonPermissionModel } from "@modules/models/person-permission.model";
-import { DataSource, UpdateResult } from "typeorm";
+import { GlobalFunctions } from "@shared/shared/utils/functions";
+import { PrismaService } from "src/database/prisma/prisma.service";
+
+const globalFunction = new GlobalFunctions();
 
 export class PersonPermissionRepository {
-  constructor(private dataSource: DataSource) {}
-  private readonly repository = this.dataSource.getRepository(PersonPermissionModel);
+  constructor(private prisma: PrismaService) {}
 
   async createPersonPermission(
     personId: string,
-    functionPermissionId: string,
+    rolePermissionId: string,
   ): Promise<PersonPermissionModel> {
-    return this.repository.save({
-      person_id: personId,
-      function_permission_id: functionPermissionId,
+    return await this.prisma.person_permission.create({
+      data: { person_id: personId, role_permission_id: rolePermissionId },
     });
   }
 
   async findPermissionByPersonId(personId: string): Promise<PersonPermissionModel[]> {
-    return this.repository.find({ where: { person_id: personId } });
+    return await this.prisma.person_permission.findMany({ where: { person_id: personId } });
   }
 
   async findPermissionById(personPermissionId: string): Promise<PersonPermissionModel> {
-    return this.repository.findOneBy({ id: personPermissionId });
+    return await this.prisma.person_permission.findUnique({ where: { id: personPermissionId } });
   }
 
   async updatePermissionById(
     personPermissionId: string,
-    functionPermissionId: string,
-  ): Promise<UpdateResult> {
-    return this.repository.update(
-      { id: personPermissionId },
-      { function_permission_id: functionPermissionId },
-    );
+    rolePermissionId: string,
+  ): Promise<PersonPermissionModel> {
+    return await this.prisma.person_permission.update({
+      where: { id: personPermissionId },
+      data: { role_permission_id: rolePermissionId },
+    });
   }
 
-  async inactivatePermissionById(personPermissionId: string): Promise<UpdateResult> {
-    return this.repository.softDelete({ id: personPermissionId });
+  async inactivatePermissionById(personPermissionId: string): Promise<PersonPermissionModel> {
+    return await this.prisma.person_permission.update({
+      where: { id: personPermissionId },
+      data: { deleted_at: globalFunction.getCurrentDateAndTime() },
+    });
   }
 }

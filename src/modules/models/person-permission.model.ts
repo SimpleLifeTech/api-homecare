@@ -1,35 +1,14 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  PrimaryColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { person_permission } from "@prisma/client";
 
-@Entity("person_permission")
-export class PersonPermissionModel {
-  @PrimaryColumn()
+export class PersonPermissionModel implements person_permission {
   id: string;
-
-  @Column()
   person_id: string;
-
-  @Column()
-  function_permission_id: string;
-
-  @Column()
-  feed: boolean;
-
-  @Column()
-  delete: boolean;
-
-  @CreateDateColumn()
+  role_permission_id: string;
   created_at: Date;
-
-  @UpdateDateColumn({ select: false })
   updated_at: Date;
-
-  @DeleteDateColumn({ select: false })
   deleted_at: Date;
+
+  constructor(partial: Partial<PersonPermissionModel>) {
+    Object.assign(this, partial);
+  }
 }

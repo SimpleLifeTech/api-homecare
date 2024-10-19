@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,7 +8,7 @@ datasource db {
 }
 
 model person {
-  id                 String    @id @default(uuid()) @db.Uuid
+  id                 String              @id @default(uuid()) @db.Uuid
   name               String
   email              String
   password           String
@@ -27,29 +21,40 @@ model person {
   address_city       String
   address_state      String
   address_zipcode    String
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
+  created_at         DateTime            @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
+  updated_at         DateTime            @updatedAt
   deleted_at         DateTime?
+  person_permission  person_permission[]
+}
+
+model person_permission {
+  id                 String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  person_id          String?          @db.Uuid
+  role_permission_id String?          @db.Uuid
+  created_at         DateTime?        @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
+  updated_at         DateTime?        @updatedAt @db.Timestamp(6)
+  deleted_at         DateTime?        @db.Timestamp(6)
+  person             person?          @relation(fields: [person_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_person")
+  role_permission    role_permission? @relation(fields: [role_permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_permision")
 }
 
 model role {
-  id         Int       @id @default(autoincrement()) @db.Integer
-  name       String
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
-
+  name            String
+  created_at      DateTime          @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
+  updated_at      DateTime          @updatedAt
+  deleted_at      DateTime?
+  id              Int               @id @default(autoincrement())
   role_permission role_permission[]
 }
 
 model role_permission {
-  id         String    @id @default(uuid()) @db.Uuid
-  role_id    Int
-  feed       Boolean
-  delete     Boolean
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
-
-  role role @relation(fields: [role_id], references: [id])
+  id                String              @id @default(uuid()) @db.Uuid
+  role_id           Int
+  feed              Boolean
+  delete            Boolean
+  created_at        DateTime            @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
+  updated_at        DateTime            @updatedAt
+  deleted_at        DateTime?
+  person_permission person_permission[]
+  role              role                @relation(fields: [role_id], references: [id])
 }
