@@ -6,12 +6,11 @@ import { CreateHomecareDTO } from "./dto/create-homecare.dto";
 import { UpdateHomecareDTO } from "./dto/update-homecare.dto";
 import { HomecareService } from "./homecare.service";
 
+const globalFunctions = new GlobalFunctions();
+
 @Controller("homecare")
 export class HomecareController {
-  constructor(
-    private readonly homecareService: HomecareService,
-    private readonly globalFunctions = new GlobalFunctions(),
-  ) {}
+  constructor(private readonly homecareService: HomecareService) {}
 
   @Post("/create/:branchId")
   async createHomecare(
@@ -26,7 +25,7 @@ export class HomecareController {
 
   @Get("/list/:homecareId")
   async getHomecareById(@Param("homecareId") homecareId: string, @Res() res: Response) {
-    this.globalFunctions.IsEmptyParam(homecareId);
+    globalFunctions.IsEmptyParam(homecareId);
 
     const { codeHttp, ...response } = await this.homecareService.findHomecareById(homecareId);
 
@@ -35,7 +34,7 @@ export class HomecareController {
 
   @Get("/list-all/:branchId")
   async getHomecare(@Param("branchId") branchId: string, @Res() res: Response) {
-    this.globalFunctions.IsEmptyParam(branchId);
+    globalFunctions.IsEmptyParam(branchId);
 
     const { codeHttp, ...response } = await this.homecareService.findHomecaresByBranchId(branchId);
 
@@ -48,7 +47,7 @@ export class HomecareController {
     @Body() body: UpdateHomecareDTO,
     @Res() res: Response,
   ) {
-    this.globalFunctions.IsEmptyParam(homecareId);
+    globalFunctions.IsEmptyParam(homecareId);
 
     const { codeHttp, ...response } = await this.homecareService.updateHomecare(homecareId, body);
 
@@ -57,7 +56,7 @@ export class HomecareController {
 
   @Delete("/delete/:homecareId")
   async inactivateHomecare(@Param("homecareId") homecareId: string, @Res() res: Response) {
-    this.globalFunctions.IsEmptyParam(homecareId);
+    globalFunctions.IsEmptyParam(homecareId);
 
     const { codeHttp, ...response } = await this.homecareService.inactivateHomecare(homecareId);
 

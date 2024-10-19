@@ -5,12 +5,11 @@ import { Response } from "express";
 import { BranchService } from "./branch.service";
 import { CreateBranchDTO } from "./dto/create-branch.dto";
 
+const globalFunctions = new GlobalFunctions();
+
 @Controller("branch")
 export class BranchController {
-  constructor(
-    protected readonly branchService: BranchService,
-    protected readonly globalFunctions = new GlobalFunctions(),
-  ) {}
+  constructor(protected readonly branchService: BranchService) {}
 
   @Post("/create/:companyId")
   async createBranch(
@@ -18,7 +17,7 @@ export class BranchController {
     @Body() data: CreateBranchDTO,
     @Res() res: Response,
   ) {
-    this.globalFunctions.IsEmptyParam(companyId);
+    globalFunctions.IsEmptyParam(companyId);
 
     const { codeHttp, ...response } = await this.branchService.createBranch(companyId, data);
 
@@ -27,7 +26,7 @@ export class BranchController {
 
   @Get("/list/:companyId")
   async findBranchesByCompanyId(@Param("companyId") companyId: string, @Res() res: Response) {
-    this.globalFunctions.IsEmptyParam(companyId);
+    globalFunctions.IsEmptyParam(companyId);
 
     const { codeHttp, ...response } = await this.branchService.findBranchesByCompanyId(companyId);
 
@@ -36,7 +35,7 @@ export class BranchController {
 
   @Get("/list/:branchId")
   async findBranchById(@Param("branchId") branchId: string, @Res() res: Response) {
-    this.globalFunctions.IsEmptyParam(branchId);
+    globalFunctions.IsEmptyParam(branchId);
 
     const { codeHttp, ...response } = await this.branchService.findBranchById(branchId);
 
@@ -49,7 +48,7 @@ export class BranchController {
     @Body() data: CreateBranchDTO,
     @Res() res: Response,
   ) {
-    this.globalFunctions.IsEmptyParam(branchId);
+    globalFunctions.IsEmptyParam(branchId);
 
     const { codeHttp, ...response } = await this.branchService.updateBranchById(branchId, data);
 
@@ -58,7 +57,7 @@ export class BranchController {
 
   @Delete("/delete/:branchId")
   async deleteBranchById(@Param("branchId") branchId: string, @Res() res: Response) {
-    this.globalFunctions.IsEmptyParam(branchId);
+    globalFunctions.IsEmptyParam(branchId);
 
     const { codeHttp, ...response } = await this.branchService.inactivateBranchById(branchId);
 

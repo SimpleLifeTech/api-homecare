@@ -9,6 +9,8 @@ import { BranchRepository } from "./dao/branch.repository";
 import { CreateBranchDTO } from "./dto/create-branch.dto";
 import { UpdateBranchDTO } from "./dto/update-branch.dto";
 
+const response = new CoreResponse();
+
 @Injectable()
 export class BranchService extends BranchRoles {
   constructor(
@@ -17,7 +19,6 @@ export class BranchService extends BranchRoles {
     @Inject(CompanyRepository)
     protected readonly companyRepository: CompanyRepository,
     protected readonly companyRoles: CompanyRoles,
-    protected readonly response = new CoreResponse(),
   ) {
     super();
   }
@@ -36,7 +37,7 @@ export class BranchService extends BranchRoles {
 
     await this.branchRepository.createBranch(companyId, data);
 
-    return this.response.success("Filial criada com sucesso!", HttpStatus.CREATED);
+    return response.success("Filial criada com sucesso!", HttpStatus.CREATED);
   }
 
   async findBranchesByCompanyId(
@@ -50,7 +51,7 @@ export class BranchService extends BranchRoles {
 
     await this.branchesNotFound(branches);
 
-    return this.response.success(branches);
+    return response.success(branches);
   }
 
   async findBranchById(branchId: string): Promise<APIResponse<BranchModel, ErrorTypes>> {
@@ -58,7 +59,7 @@ export class BranchService extends BranchRoles {
 
     await this.branchNotFound(branch);
 
-    return this.response.success(branch);
+    return response.success(branch);
   }
 
   async updateBranchById(
@@ -71,7 +72,7 @@ export class BranchService extends BranchRoles {
 
     await this.branchRepository.updateBranchById(branchId, data);
 
-    return this.response.success("Filial atualizada com sucesso!");
+    return response.success("Filial atualizada com sucesso!");
   }
 
   async inactivateBranchById(branchId: string): Promise<APIResponse<string, ErrorTypes>> {
@@ -81,6 +82,6 @@ export class BranchService extends BranchRoles {
 
     await this.branchRepository.inactivateBranchById(branchId);
 
-    return this.response.success("Filial inativada com sucesso!");
+    return response.success("Filial inativada com sucesso!");
   }
 }

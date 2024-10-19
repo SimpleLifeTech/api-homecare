@@ -10,6 +10,8 @@ import { CompanyRepository } from "./dao/company.repository";
 import { CreateCompanyDTO } from "./dto/create-company.dto";
 import { UpdateCompanyDTO } from "./dto/update-company.dto";
 
+const response = new CoreResponse();
+
 @Injectable()
 export class CompanyService extends CompanyRoles {
   constructor(
@@ -18,7 +20,6 @@ export class CompanyService extends CompanyRoles {
     @Inject(PersonRepository)
     protected readonly personRepository: PersonRepository,
     protected readonly personRoles: PersonRoles,
-    protected readonly response = new CoreResponse(),
   ) {
     super();
   }
@@ -47,7 +48,7 @@ export class CompanyService extends CompanyRoles {
 
     await this.companyRepository.createCompany(personId, createCompanyDTO);
 
-    return this.response.success("Empresa criada com sucesso!", HttpStatus.CREATED);
+    return response.success("Empresa criada com sucesso!", HttpStatus.CREATED);
   }
 
   async findCompanyById(companyId: string): Promise<APIResponse<CompanyModel, ErrorTypes>> {
@@ -55,7 +56,7 @@ export class CompanyService extends CompanyRoles {
 
     await this.companyNotFound(company);
 
-    return this.response.success(company);
+    return response.success(company);
   }
 
   async findCompanyByUserId(personId: string): Promise<APIResponse<CompanyModel, ErrorTypes>> {
@@ -67,7 +68,7 @@ export class CompanyService extends CompanyRoles {
 
     await this.companyNotFound(company);
 
-    return this.response.success(company);
+    return response.success(company);
   }
 
   async updateCompany(
@@ -80,7 +81,7 @@ export class CompanyService extends CompanyRoles {
 
     await this.companyRepository.updateCompanyById(companyId, company);
 
-    return this.response.success("Empresa atualizada com sucesso!");
+    return response.success("Empresa atualizada com sucesso!");
   }
 
   async inactivateCompany(companyId: string): Promise<APIResponse<string, ErrorTypes>> {
@@ -90,6 +91,6 @@ export class CompanyService extends CompanyRoles {
 
     await this.companyRepository.inactivateCompanyById(companyId);
 
-    return this.response.success("Empresa deletada com sucesso!");
+    return response.success("Empresa deletada com sucesso!");
   }
 }

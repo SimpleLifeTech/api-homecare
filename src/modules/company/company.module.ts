@@ -7,10 +7,18 @@ import { PrismaService } from "src/database/prisma/prisma.service";
 import { CompanyController } from "./company.controller";
 import { CompanyService } from "./company.service";
 import { CompanyRepository } from "./dao/company.repository";
+import { PersonRoles } from "@modules/person/business/person.roles";
 
 @Module({
   imports: [PrismaModule],
   controllers: [CompanyController],
-  providers: [CompanyService, CompanyRepository, PersonRepository, BusinessErrors, PrismaService],
+  providers: [
+    CompanyService,
+    CompanyRepository,
+    PersonRepository,
+    PersonRoles,
+    BusinessErrors,
+    PrismaService,
+  ],
 })
 export class CompanyModule {}

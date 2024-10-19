@@ -6,12 +6,10 @@ import { CompanyService } from "./company.service";
 import { CreateCompanyDTO } from "./dto/create-company.dto";
 import { UpdateCompanyDTO } from "./dto/update-company.dto";
 
+const globalFunctions = new GlobalFunctions();
 @Controller("company")
 export class CompanyController {
-  constructor(
-    private readonly companyService: CompanyService,
-    private readonly globalFunctions = new GlobalFunctions(),
-  ) {}
+  constructor(private readonly companyService: CompanyService) {}
 
   @Post("/create/:person_id")
   async createCompany(
@@ -26,7 +24,7 @@ export class CompanyController {
 
   @Get("/list/:companyId")
   async getCompanyById(@Param("companyId") companyId: string, @Res() res: Response) {
-    this.globalFunctions.IsEmptyParam(companyId);
+    globalFunctions.IsEmptyParam(companyId);
 
     const { codeHttp, ...response } = await this.companyService.findCompanyById(companyId);
 
@@ -35,7 +33,7 @@ export class CompanyController {
 
   @Get("/list-by-person/:personId")
   async getCompanyByPersonId(@Param("personId") personId: string, @Res() res: Response) {
-    this.globalFunctions.IsEmptyParam(personId);
+    globalFunctions.IsEmptyParam(personId);
 
     const { codeHttp, ...response } = await this.companyService.findCompanyByUserId(personId);
 
@@ -48,7 +46,7 @@ export class CompanyController {
     @Body() body: UpdateCompanyDTO,
     @Res() res: Response,
   ) {
-    this.globalFunctions.IsEmptyParam(companyId);
+    globalFunctions.IsEmptyParam(companyId);
 
     const { codeHttp, ...response } = await this.companyService.updateCompany(companyId, body);
 
@@ -57,7 +55,7 @@ export class CompanyController {
 
   @Delete("/delete/:companyId")
   async inactivateCompany(@Param("companyId") companyId: string, @Res() res: Response) {
-    this.globalFunctions.IsEmptyParam(companyId);
+    globalFunctions.IsEmptyParam(companyId);
 
     const { codeHttp, ...response } = await this.companyService.inactivateCompany(companyId);
 
