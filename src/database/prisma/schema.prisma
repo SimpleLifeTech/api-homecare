@@ -74,8 +74,25 @@ model company {
 }
 
 model branch {
+  id                 String     @id @default(uuid()) @db.Uuid
+  company_id         String     @db.Uuid
+  name               String     @db.VarChar(255)
+  address            String     @db.VarChar(255)
+  address_number     String     @db.VarChar(255)
+  address_complement String?    @db.VarChar(255)
+  address_city       String     @db.VarChar(255)
+  address_state      String     @db.VarChar(255)
+  address_zipcode    String     @db.VarChar(255)
+  created_at         DateTime   @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'::text)")) @db.Timestamp(6)
+  updated_at         DateTime?  @db.Timestamp(6)
+  deleted_at         DateTime?  @db.Timestamp(6)
+  company            company    @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_company")
+  homecare           homecare[]
+}
+
+model homecare {
   id                 String    @id @default(uuid()) @db.Uuid
-  company_id         String    @db.Uuid
+  branch_id          String    @db.Uuid
   name               String    @db.VarChar(255)
   address            String    @db.VarChar(255)
   address_number     String    @db.VarChar(255)
@@ -83,8 +100,8 @@ model branch {
   address_city       String    @db.VarChar(255)
   address_state      String    @db.VarChar(255)
   address_zipcode    String    @db.VarChar(255)
-  created_at         DateTime  @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'::text)")) @db.Timestamp(6)
+  created_at         DateTime  @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
   updated_at         DateTime? @db.Timestamp(6)
   deleted_at         DateTime? @db.Timestamp(6)
-  company            company   @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_company")
+  branch             branch    @relation(fields: [branch_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_branch")
 }

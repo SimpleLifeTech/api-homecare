@@ -1,7 +1,7 @@
 import { CompanyRoles } from "@modules/company/business/company.roles";
 import { CompanyRepository } from "@modules/company/dao/company.repository";
 import { HomecareModel } from "@modules/models/homecare.model";
-import { HttpStatus } from "@nestjs/common";
+import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { APIResponse, CoreResponse, ErrorTypes } from "@shared/shared/utils/response";
 
 import { HomecareRoles } from "./business/homecare.roles";
@@ -9,9 +9,12 @@ import { HomecareRepository } from "./dao/homecare.repository";
 import { CreateHomecareDTO } from "./dto/create-homecare.dto";
 import { UpdateHomecareDTO } from "./dto/update-homecare.dto";
 
+@Injectable()
 export class HomecareService extends HomecareRoles {
   constructor(
+    @Inject(HomecareRepository)
     protected readonly homecareRepository: HomecareRepository,
+    @Inject(CompanyRepository)
     protected readonly companyRepository: CompanyRepository,
     protected readonly companyRoles: CompanyRoles,
     protected readonly response = new CoreResponse(),
@@ -34,7 +37,7 @@ export class HomecareService extends HomecareRoles {
 
     await this.homecareNotFound(homecareExists);
 
-    await this.homecareRepository.createHomecare(createHomecareDTO);
+    await this.homecareRepository.createHomecare(branchId, createHomecareDTO);
 
     return this.response.success("Homecare criado com sucesso!", HttpStatus.CREATED);
   }
@@ -47,12 +50,14 @@ export class HomecareService extends HomecareRoles {
     return this.response.success(homecare);
   }
 
-  async findHomecare(branchId: string): Promise<APIResponse<HomecareModel[], ErrorTypes>> {
+  async findHomecaresByBranchId(
+    branchId: string,
+  ): Promise<APIResponse<HomecareModel[], ErrorTypes>> {
     const company = await this.companyRepository.findCompanyById(branchId);
 
     await this.companyRoles.companyNotFound(company);
 
-    const homecares = await this.homecareRepository.findHomecareByBranchId(branchId);
+    const homecares = await this.homecareRepository.findHomecaresByBranchId(branchId);
 
     return this.response.success(homecares);
   }

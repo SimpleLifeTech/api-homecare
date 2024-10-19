@@ -37,7 +37,7 @@ export class HomecareController {
   async getHomecare(@Param("branchId") branchId: string, @Res() res: Response) {
     this.globalFunctions.IsEmptyParam(branchId);
 
-    const { codeHttp, ...response } = await this.homecareService.findHomecare(branchId);
+    const { codeHttp, ...response } = await this.homecareService.findHomecaresByBranchId(branchId);
 
     return res.status(codeHttp).json(response);
   }
