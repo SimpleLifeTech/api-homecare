@@ -26,10 +26,10 @@ export class BranchController {
   }
 
   @Get("/list/:companyId")
-  async findBranchByCompanyId(@Param("companyId") companyId: string, @Res() res: Response) {
+  async findBranchesByCompanyId(@Param("companyId") companyId: string, @Res() res: Response) {
     this.globalFunctions.IsEmptyParam(companyId);
 
-    const { codeHttp, ...response } = await this.branchService.findBranchByCompanyId(companyId);
+    const { codeHttp, ...response } = await this.branchService.findBranchesByCompanyId(companyId);
 
     return res.status(codeHttp).json(response);
   }

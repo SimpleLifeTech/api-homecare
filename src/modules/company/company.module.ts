@@ -1,3 +1,4 @@
+import { PersonRepository } from "@modules/person/dao/person.repository";
 import { Module } from "@nestjs/common";
 import { BusinessErrors } from "@shared/shared/utils/business-errors";
 import { PrismaModule } from "src/database/prisma/prisma.module";
@@ -10,6 +11,6 @@ import { CompanyRepository } from "./dao/company.repository";
 @Module({
   imports: [PrismaModule],
   controllers: [CompanyController],
-  providers: [CompanyService, CompanyRepository, BusinessErrors, PrismaService],
+  providers: [CompanyService, CompanyRepository, PersonRepository, BusinessErrors, PrismaService],
 })
 export class CompanyModule {}

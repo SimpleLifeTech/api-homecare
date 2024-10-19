@@ -1,7 +1,7 @@
 import { CompanyRoles } from "@modules/company/business/company.roles";
 import { CompanyRepository } from "@modules/company/dao/company.repository";
 import { BranchModel } from "@modules/models/branch.model";
-import { HttpStatus } from "@nestjs/common";
+import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { APIResponse, CoreResponse, ErrorTypes } from "@shared/shared/utils/response";
 
 import { BranchRoles } from "./business/branch.roles";
@@ -9,9 +9,12 @@ import { BranchRepository } from "./dao/branch.repository";
 import { CreateBranchDTO } from "./dto/create-branch.dto";
 import { UpdateBranchDTO } from "./dto/update-branch.dto";
 
+@Injectable()
 export class BranchService extends BranchRoles {
   constructor(
+    @Inject(BranchRepository)
     protected readonly branchRepository: BranchRepository,
+    @Inject(CompanyRepository)
     protected readonly companyRepository: CompanyRepository,
     protected readonly companyRoles: CompanyRoles,
     protected readonly response = new CoreResponse(),
@@ -36,12 +39,14 @@ export class BranchService extends BranchRoles {
     return this.response.success("Filial criada com sucesso!", HttpStatus.CREATED);
   }
 
-  async findBranchByCompanyId(companyId: string): Promise<APIResponse<BranchModel[], ErrorTypes>> {
+  async findBranchesByCompanyId(
+    companyId: string,
+  ): Promise<APIResponse<BranchModel[], ErrorTypes>> {
     const companyExists = await this.companyRepository.findCompanyById(companyId);
 
     await this.companyRoles.companyNotFound(companyExists);
 
-    const branches = await this.branchRepository.findBranchByCompanyId(companyId);
+    const branches = await this.branchRepository.findBranchesByCompanyId(companyId);
 
     await this.branchesNotFound(branches);
 

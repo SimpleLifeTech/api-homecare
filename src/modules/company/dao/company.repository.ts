@@ -4,21 +4,16 @@ import { PrismaService } from "src/database/prisma/prisma.service";
 
 import { CreateCompanyDTO } from "../dto/create-company.dto";
 import { UpdateCompanyDTO } from "../dto/update-company.dto";
+import { Injectable } from "@nestjs/common";
 
 const globalFunction = new GlobalFunctions();
 
+@Injectable()
 export class CompanyRepository {
   constructor(private prisma: PrismaService) {}
 
   async createCompany(personId: string, data: CreateCompanyDTO): Promise<CompanyModel> {
-    return await this.prisma.company.create({
-      data: {
-        person: {
-          connect: { id: personId },
-        },
-        ...data,
-      },
-    });
+    return await this.prisma.company.create({ data: { person_id: personId, ...data } });
   }
 
   async findCompanyByDocument(document: string): Promise<CompanyModel> {

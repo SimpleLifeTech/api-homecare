@@ -1,7 +1,7 @@
 import { CompanyModel } from "@modules/models/company.model";
 import { PersonRoles } from "@modules/person/business/person.roles";
 import { PersonRepository } from "@modules/person/dao/person.repository";
-import { HttpStatus } from "@nestjs/common";
+import { HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { BrazilAPI } from "@shared/shared/externals/brazil-api/external.apis";
 import { APIResponse, CoreResponse, ErrorTypes } from "@shared/shared/utils/response";
 
@@ -10,9 +10,12 @@ import { CompanyRepository } from "./dao/company.repository";
 import { CreateCompanyDTO } from "./dto/create-company.dto";
 import { UpdateCompanyDTO } from "./dto/update-company.dto";
 
+@Injectable()
 export class CompanyService extends CompanyRoles {
   constructor(
+    @Inject(CompanyRepository)
     protected readonly companyRepository: CompanyRepository,
+    @Inject(PersonRepository)
     protected readonly personRepository: PersonRepository,
     protected readonly personRoles: PersonRoles,
     protected readonly response = new CoreResponse(),

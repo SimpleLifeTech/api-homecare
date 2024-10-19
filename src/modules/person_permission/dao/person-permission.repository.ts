@@ -1,9 +1,11 @@
 import { PersonPermissionModel } from "@modules/models/person-permission.model";
+import { Injectable } from "@nestjs/common";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { PrismaService } from "src/database/prisma/prisma.service";
 
 const globalFunction = new GlobalFunctions();
 
+@Injectable()
 export class PersonPermissionRepository {
   constructor(private prisma: PrismaService) {}
 
