@@ -24,6 +24,10 @@ export class PersonRepository {
     return await this.prisma.person.findFirst({ where: { document, deleted_at: null } });
   }
 
+  async findPersonByEmail(email: string): Promise<PersonModel | null> {
+    return await this.prisma.person.findFirst({ where: { email, deleted_at: null } });
+  }
+
   async updatePersonById(personId: string, data: UpdatePersonDTO): Promise<PersonModel> {
     return this.prisma.person.update({ where: { id: personId }, data: { ...data } });
   }
