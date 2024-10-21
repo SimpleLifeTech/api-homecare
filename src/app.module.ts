@@ -2,6 +2,7 @@ import { BranchModule } from "@modules/branch/branch.module";
 import { CompanyModule } from "@modules/company/company.module";
 import { HomecareModule } from "@modules/homecare/homecare.module";
 import { PersonModule } from "@modules/person/person.module";
+import { AuthModule } from "@modules/auth/auth.module";
 import { RoleModule } from "@modules/role/role.module";
 import { RolePermissionModule } from "@modules/role_permission/role-permission.module";
 import { Module } from "@nestjs/common";
@@ -15,6 +16,7 @@ import { PrismaService } from "./database/prisma/prisma.service";
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    AuthModule,
     BranchModule,
     CompanyModule,
     HomecareModule,
