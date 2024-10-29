@@ -8,9 +8,9 @@ export class AuthController {
   constructor(protected readonly authService: AuthService) {}
 
   @Post("/login")
-  async login(@Body() data: LoginDTO, @Res() res: Response) {
+  async login(@Body() data: LoginDTO, @Res({ passthrough: true }) res: Response) {
     const { codeHttp, ...response } = await this.authService.login(data);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 }

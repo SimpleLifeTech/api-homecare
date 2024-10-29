@@ -16,50 +16,59 @@ export class HomecareController {
   async createHomecare(
     @Param() branchId: string,
     @Body() body: CreateHomecareDTO,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
     const { codeHttp, ...response } = await this.homecareService.createHomecare(branchId, body);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 
   @Get("/list/:homecareId")
-  async getHomecareById(@Param("homecareId") homecareId: string, @Res() res: Response) {
+  async getHomecareById(
+    @Param("homecareId") homecareId: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     globalFunctions.IsEmptyParam(homecareId);
 
     const { codeHttp, ...response } = await this.homecareService.findHomecareById(homecareId);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 
   @Get("/list-all/:branchId")
-  async getHomecare(@Param("branchId") branchId: string, @Res() res: Response) {
+  async getHomecare(
+    @Param("branchId") branchId: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     globalFunctions.IsEmptyParam(branchId);
 
     const { codeHttp, ...response } = await this.homecareService.findHomecaresByBranchId(branchId);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 
   @Put("/update/:homecareId")
   async updateHomecare(
     @Param("homecareId") homecareId: string,
     @Body() body: UpdateHomecareDTO,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(homecareId);
 
     const { codeHttp, ...response } = await this.homecareService.updateHomecare(homecareId, body);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 
   @Delete("/delete/:homecareId")
-  async inactivateHomecare(@Param("homecareId") homecareId: string, @Res() res: Response) {
+  async inactivateHomecare(
+    @Param("homecareId") homecareId: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     globalFunctions.IsEmptyParam(homecareId);
 
     const { codeHttp, ...response } = await this.homecareService.inactivateHomecare(homecareId);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 }

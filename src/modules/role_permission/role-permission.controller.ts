@@ -15,34 +15,34 @@ export class RolePermissionController {
   async createRolePermission(
     @Param("roleId") roleId: string,
     @Body() data: CreateRolePermissionDTO,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(roleId);
     const { codeHttp, ...response } = await this.rolePermissionService.createRolePermission(
       Number(roleId),
       data,
     );
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 
   @Get("role-permission/list/:rolePermissionId")
   async getRolePermissionById(
     @Param("rolePermissionId") rolePermissionId: string,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(rolePermissionId);
 
     const { codeHttp, ...response } =
       await this.rolePermissionService.findRolePermissionById(rolePermissionId);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 
   @Put("role-permission/update/:rolePermissionId")
   async updateRolePermissionById(
     @Param("rolePermissionId") rolePermissionId: string,
     @Body() data: UpdateRolePermissionDTO,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(rolePermissionId);
 
@@ -51,19 +51,19 @@ export class RolePermissionController {
       data,
     );
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 
   @Delete("role-permission/delete/:rolePermissionId")
   async deleteRolePermissionById(
     @Param("rolePermissionId") rolePermissionId: string,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(rolePermissionId);
 
     const { codeHttp, ...response } =
       await this.rolePermissionService.inactivateFunctionPermissionById(rolePermissionId);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 }

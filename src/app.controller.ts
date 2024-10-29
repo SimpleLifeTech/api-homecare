@@ -4,7 +4,7 @@ import { Response } from "express";
 @Controller()
 export class AppController {
   @Get()
-  getRoot(@Res() res: Response): void {
+  getRoot(@Res({ passthrough: true }) res: Response): void {
     res.status(HttpStatus.OK).json({
       message: "API Homecare is running 🚀",
       time: new Date().toString(),

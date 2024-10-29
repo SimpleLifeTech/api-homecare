@@ -21,6 +21,7 @@ export class PersonPermissionRepository {
   async findPermissionByPersonId(personId: string): Promise<PersonPermissionModel[]> {
     return await this.prisma.person_permission.findMany({
       where: { person_id: personId, deleted_at: null },
+      include: { role_permission: true },
     });
   }
 

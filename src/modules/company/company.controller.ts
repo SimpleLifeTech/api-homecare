@@ -15,50 +15,59 @@ export class CompanyController {
   async createCompany(
     @Param("person_id") personId: string,
     @Body() body: CreateCompanyDTO,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
     const { codeHttp, ...response } = await this.companyService.createCompany(personId, body);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 
   @Get("/list/:companyId")
-  async getCompanyById(@Param("companyId") companyId: string, @Res() res: Response) {
+  async getCompanyById(
+    @Param("companyId") companyId: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     globalFunctions.IsEmptyParam(companyId);
 
     const { codeHttp, ...response } = await this.companyService.findCompanyById(companyId);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 
   @Get("/list-by-person/:personId")
-  async getCompanyByPersonId(@Param("personId") personId: string, @Res() res: Response) {
+  async getCompanyByPersonId(
+    @Param("personId") personId: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     globalFunctions.IsEmptyParam(personId);
 
     const { codeHttp, ...response } = await this.companyService.findCompanyByUserId(personId);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 
   @Put("/update/:companyId")
   async updateCompany(
     @Param("companyId") companyId: string,
     @Body() body: UpdateCompanyDTO,
-    @Res() res: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(companyId);
 
     const { codeHttp, ...response } = await this.companyService.updateCompany(companyId, body);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 
   @Delete("/delete/:companyId")
-  async inactivateCompany(@Param("companyId") companyId: string, @Res() res: Response) {
+  async inactivateCompany(
+    @Param("companyId") companyId: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     globalFunctions.IsEmptyParam(companyId);
 
     const { codeHttp, ...response } = await this.companyService.inactivateCompany(companyId);
 
-    return res.status(codeHttp).json(response);
+    res.status(codeHttp).json(response);
   }
 }
