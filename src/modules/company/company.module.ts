@@ -10,6 +10,7 @@ import { PrismaService } from "src/database/prisma/prisma.service";
 import { CompanyController } from "./company.controller";
 import { CompanyService } from "./company.service";
 import { CompanyRepository } from "./dao/company.repository";
+import { BrazilAPI } from "@shared/shared/externals/brazil-api/brazil.apis";
 
 @Module({
   imports: [PrismaModule],
@@ -19,6 +20,7 @@ import { CompanyRepository } from "./dao/company.repository";
     CompanyRepository,
     SupabaseService,
     FileStorage,
+    BrazilAPI,
     PersonRepository,
     PersonRoles,
     BusinessErrors,

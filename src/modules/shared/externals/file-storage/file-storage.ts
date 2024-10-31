@@ -24,7 +24,7 @@ export class FileStorage {
     }
 
     const supabase = this.supabaseService.getClient();
-    const fileName = `${origin}/${file.originalname + id}`;
+    const fileName = `${origin}/${id}-${file.originalname}`;
 
     const { error } = await supabase.storage.from(this.bucketName).upload(fileName, file.buffer, {
       contentType: file.mimetype,
@@ -34,6 +34,6 @@ export class FileStorage {
       throw new Error(`Erro ao fazer upload da imagem: ${error.message}`);
     }
 
-    return `${process.env.SUPABASE_URL}/storage/v1/object/public/imagens/${fileName}`;
+    return `${process.env.SUPABASE_URL}/storage/v1/object/public/${this.bucketName}/${fileName}`;
   }
 }

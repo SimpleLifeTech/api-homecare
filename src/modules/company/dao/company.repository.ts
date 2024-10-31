@@ -46,6 +46,11 @@ export class CompanyRepository {
           address_zipcode: data.address_zipcode,
         },
       });
+
+      await tx.person.update({
+        where: { id: personId },
+        data: { is_first_access: false },
+      });
     });
   }
 

@@ -20,12 +20,10 @@ export class CompanyService extends CompanyRoles {
     @Inject(PersonRepository)
     protected readonly personRepository: PersonRepository,
     protected readonly personRoles: PersonRoles,
+    private readonly brazilAPI: BrazilAPI,
   ) {
     super();
   }
-
-  private readonly brazilAPI = new BrazilAPI();
-
   async createCompany(
     personId: string,
     createCompanyDTO: CreateCompanyDTO,
@@ -41,6 +39,7 @@ export class CompanyService extends CompanyRoles {
 
     await this.companyAlreadyExists(isCompanyAlreadyExists);
 
+    // precisa lidar com erro de cnpj dessa requisição
     const cnpj = await this.brazilAPI.getCNPJ(createCompanyDTO.document);
 
     await this.documentDoesntExist(cnpj.data);

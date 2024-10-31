@@ -31,6 +31,8 @@ export class CompanyController {
     @Body() body: CreateCompanyDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
+    globalFunctions.IsEmptyParam(personId);
+
     const { codeHttp, ...response } = await this.companyService.createCompany(
       personId,
       body,
