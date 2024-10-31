@@ -17,9 +17,6 @@ export class CreatePersonDTO {
   @IsNotEmpty({ message: "O CPF do usuário deve ser preenchido" })
   document: string;
 
-  @IsString({ message: "A imagem do usuário deve ser uma string" })
-  image: string;
-
   @IsString({ message: "O número de telefone/celular do usuário deve ser uma string" })
   @IsNotEmpty({ message: "O número de telefone/celular do usuário deve ser preenchido" })
   phone: string;

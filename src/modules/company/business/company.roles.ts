@@ -1,6 +1,6 @@
 import { CompanyModel } from "@modules/models/company.model";
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { CNPJ_RESPONSE } from "@shared/shared/externals/brazil-api/external.types";
+import { CNPJ_RESPONSE } from "@shared/shared/externals/brazil-api/brazil.types";
 import { BusinessErrors } from "@shared/shared/utils/business-errors";
 
 @Injectable()

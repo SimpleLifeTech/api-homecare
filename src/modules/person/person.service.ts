@@ -18,7 +18,10 @@ export class PersonService extends PersonRoles {
     super();
   }
 
-  async createPerson(data: CreatePersonDTO): Promise<APIResponse<string, ErrorTypes>> {
+  async createPerson(
+    data: CreatePersonDTO,
+    file: Express.Multer.File,
+  ): Promise<APIResponse<string, ErrorTypes>> {
     const personExists = await this.personRepository.findPersonByDocument(data.document);
 
     await this.personAlreadyExists(personExists);
@@ -35,7 +38,7 @@ export class PersonService extends PersonRoles {
       address_zipcode: globalFunctions.removeSpecialCharacters(data.address_zipcode),
     };
 
-    await this.personRepository.createPerson(user);
+    await this.personRepository.createPerson(user, file);
 
     return response.success("Pessoa criada com sucesso!", HttpStatus.CREATED);
   }
@@ -53,12 +56,13 @@ export class PersonService extends PersonRoles {
   async updatePersonById(
     personId: string,
     data: UpdatePersonDTO,
+    file: Express.Multer.File,
   ): Promise<APIResponse<string, ErrorTypes>> {
     const person = await this.personRepository.findPersonById(personId);
 
     await this.personNotFound(person);
 
-    await this.personRepository.updatePersonById(personId, data);
+    await this.personRepository.updatePersonById(personId, data, file);
 
     return response.success("Pessoa atualizada com sucesso!");
   }

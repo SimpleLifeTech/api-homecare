@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { BANK_RESPONSE, CEP_RESPONSE, CNPJ_RESPONSE } from "./external.types";
+import { BANK_RESPONSE, CEP_RESPONSE, CNPJ_RESPONSE } from "./brazil.types";
 
 export class BrazilAPI {
   constructor(private readonly BRAZIL_API_URL = process.env.BRAZIL_API_URL) {}

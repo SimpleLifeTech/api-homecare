@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Res } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { Response } from "express";
 
@@ -13,8 +25,13 @@ export class PersonController {
   constructor(protected readonly personService: PersonService) {}
 
   @Post("/create")
-  async createPerson(@Body() data: CreatePersonDTO, @Res({ passthrough: true }) res: Response) {
-    const { codeHttp, ...response } = await this.personService.createPerson(data);
+  @UseInterceptors(FileInterceptor("image"))
+  async createPerson(
+    @UploadedFile() image: Express.Multer.File,
+    @Body() data: CreatePersonDTO,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { codeHttp, ...response } = await this.personService.createPerson(data, image);
 
     res.status(codeHttp).json(response);
   }
@@ -29,14 +46,20 @@ export class PersonController {
   }
 
   @Put("/update/:personId")
+  @UseInterceptors(FileInterceptor("image"))
   async updatePerson(
     @Param("personId") personId: string,
+    @UploadedFile() image: Express.Multer.File,
     @Body() data: UpdatePersonDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(personId);
 
-    const { codeHttp, ...response } = await this.personService.updatePersonById(personId, data);
+    const { codeHttp, ...response } = await this.personService.updatePersonById(
+      personId,
+      data,
+      image,
+    );
 
     res.status(codeHttp).json(response);
   }

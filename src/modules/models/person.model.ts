@@ -14,6 +14,7 @@ export class PersonModel implements person {
   address_city: string;
   address_state: string;
   address_zipcode: string;
+  is_first_access: boolean;
   created_at: Date;
   updated_at: Date;
   deleted_at: Date;

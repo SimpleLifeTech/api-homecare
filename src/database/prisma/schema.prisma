@@ -24,19 +24,20 @@ model person {
   created_at         DateTime            @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
   updated_at         DateTime            @updatedAt
   deleted_at         DateTime?
+  is_first_access    Boolean             @default(true)
   company            company[]
   person_permission  person_permission[]
 }
 
 model person_permission {
-  id                 String          @id @default(uuid()) @db.Uuid
-  person_id          String          @db.Uuid
-  role_permission_id String          @db.Uuid
-  created_at         DateTime        @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
-  updated_at         DateTime?       @updatedAt @db.Timestamp(6)
-  deleted_at         DateTime?       @db.Timestamp(6)
-  person             person          @relation(fields: [person_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_person")
-  role_permission    role_permission @relation(fields: [role_permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_permision")
+  id                 String           @id @default(uuid()) @db.Uuid
+  person_id          String           @db.Uuid
+  role_permission_id String           @db.Uuid
+  created_at         DateTime         @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
+  updated_at         DateTime?        @updatedAt @db.Timestamp(6)
+  deleted_at         DateTime?        @db.Timestamp(6)
+  person             person           @relation(fields: [person_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_person")
+  role_permission    role_permission? @relation(fields: [role_permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_permision")
 }
 
 model role {
@@ -70,7 +71,7 @@ model company {
   updated_at DateTime? @db.Timestamp(6)
   deleted_at DateTime? @db.Timestamp(6)
   branch     branch[]
-  person     person    @relation(fields: [person_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_person")
+  person     person?   @relation(fields: [person_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_person")
 }
 
 model branch {

@@ -10,9 +10,6 @@ export class UpdatePersonDTO {
   @IsString({ message: "O CPF do usuário deve ser uma string" })
   document: string;
 
-  @IsString({ message: "A imagem do usuário deve ser uma string" })
-  image: string;
-
   @IsString({ message: "O número de telefone/celular do usuário deve ser uma string" })
   phone: string;
 

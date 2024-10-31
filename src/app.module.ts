@@ -1,8 +1,8 @@
+import { AuthModule } from "@modules/auth/auth.module";
 import { BranchModule } from "@modules/branch/branch.module";
 import { CompanyModule } from "@modules/company/company.module";
 import { HomecareModule } from "@modules/homecare/homecare.module";
 import { PersonModule } from "@modules/person/person.module";
-import { AuthModule } from "@modules/auth/auth.module";
 import { RoleModule } from "@modules/role/role.module";
 import { RolePermissionModule } from "@modules/role_permission/role-permission.module";
 import { Module } from "@nestjs/common";
@@ -12,10 +12,13 @@ import { HttpExceptionFilter } from "@shared/shared/utils/errors/http-exeception
 
 import { AppController } from "./app.controller";
 import { PrismaService } from "./database/prisma/prisma.service";
+import { FileStorageModule } from "@shared/shared/externals/file-storage/file-storage.module";
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     AuthModule,
     BranchModule,
     CompanyModule,
@@ -23,6 +26,7 @@ import { PrismaService } from "./database/prisma/prisma.service";
     PersonModule,
     RoleModule,
     RolePermissionModule,
+    FileStorageModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Res } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { Response } from "express";
 
@@ -12,12 +24,18 @@ export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
   @Post("/create/:person_id")
+  @UseInterceptors(FileInterceptor("image"))
   async createCompany(
     @Param("person_id") personId: string,
+    @UploadedFile() image: Express.Multer.File,
     @Body() body: CreateCompanyDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { codeHttp, ...response } = await this.companyService.createCompany(personId, body);
+    const { codeHttp, ...response } = await this.companyService.createCompany(
+      personId,
+      body,
+      image,
+    );
 
     res.status(codeHttp).json(response);
   }
@@ -47,14 +65,20 @@ export class CompanyController {
   }
 
   @Put("/update/:companyId")
+  @UseInterceptors(FileInterceptor("image"))
   async updateCompany(
     @Param("companyId") companyId: string,
+    @UploadedFile() image: Express.Multer.File,
     @Body() body: UpdateCompanyDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(companyId);
 
-    const { codeHttp, ...response } = await this.companyService.updateCompany(companyId, body);
+    const { codeHttp, ...response } = await this.companyService.updateCompany(
+      companyId,
+      body,
+      image,
+    );
 
     res.status(codeHttp).json(response);
   }

@@ -2,7 +2,7 @@ import { CompanyModel } from "@modules/models/company.model";
 import { PersonRoles } from "@modules/person/business/person.roles";
 import { PersonRepository } from "@modules/person/dao/person.repository";
 import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { BrazilAPI } from "@shared/shared/externals/brazil-api/external.apis";
+import { BrazilAPI } from "@shared/shared/externals/brazil-api/brazil.apis";
 import { APIResponse, CoreResponse, ErrorTypes } from "@shared/shared/utils/response";
 
 import { CompanyRoles } from "./business/company.roles";
@@ -29,6 +29,7 @@ export class CompanyService extends CompanyRoles {
   async createCompany(
     personId: string,
     createCompanyDTO: CreateCompanyDTO,
+    file: Express.Multer.File,
   ): Promise<APIResponse<string, ErrorTypes>> {
     const personExists = await this.personRepository.findPersonById(personId);
 
@@ -46,7 +47,7 @@ export class CompanyService extends CompanyRoles {
 
     await this.documentsIsNotActive(cnpj.data.descricao_situacao_cadastral);
 
-    await this.companyRepository.createCompany(personId, createCompanyDTO);
+    await this.companyRepository.createCompanyAndBranch(personId, createCompanyDTO, file);
 
     return response.success("Empresa criada com sucesso!", HttpStatus.CREATED);
   }
@@ -74,12 +75,13 @@ export class CompanyService extends CompanyRoles {
   async updateCompany(
     companyId: string,
     company: UpdateCompanyDTO,
+    file: Express.Multer.File,
   ): Promise<APIResponse<string, ErrorTypes>> {
     const companyExists = await this.companyRepository.findCompanyById(companyId);
 
     await this.companyNotFound(companyExists);
 
-    await this.companyRepository.updateCompanyById(companyId, company);
+    await this.companyRepository.updateCompanyById(companyId, company, file);
 
     return response.success("Empresa atualizada com sucesso!");
   }
