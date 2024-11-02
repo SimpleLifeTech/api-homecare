@@ -10,12 +10,12 @@ export class MailClient implements MailProvider {
     sgMail.setApiKey(this.configService.get<string>("SENDGRID_API_KEY"));
   }
 
-  async sendEmail(to: string, subject: string, text: string) {
+  async sendEmail(to: string, subject: string, content: string) {
     const msg = {
       to,
       from: this.configService.get<string>("SENDGRID_SENDER"),
       subject,
-      text,
+      html: content,
     };
 
     let status: boolean;
