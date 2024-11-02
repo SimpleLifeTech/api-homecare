@@ -8,11 +8,12 @@ import { RolePermissionModule } from "@modules/role_permission/role-permission.m
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
+import { FileStorageModule } from "@shared/shared/externals/file-storage/file-storage.module";
+import { MailModule } from "@shared/shared/mail/email.module";
 import { HttpExceptionFilter } from "@shared/shared/utils/errors/http-exeception.filter";
 
 import { AppController } from "./app.controller";
 import { PrismaService } from "./database/prisma/prisma.service";
-import { FileStorageModule } from "@shared/shared/externals/file-storage/file-storage.module";
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { FileStorageModule } from "@shared/shared/externals/file-storage/file-st
     RoleModule,
     RolePermissionModule,
     FileStorageModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [
