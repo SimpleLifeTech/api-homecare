@@ -9,7 +9,6 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
 import { FileStorageModule } from "@shared/shared/externals/file-storage/file-storage.module";
-import { MailModule } from "@shared/shared/mail/email.module";
 import { HttpExceptionFilter } from "@shared/shared/utils/errors/http-exeception.filter";
 
 import { AppController } from "./app.controller";
@@ -28,7 +27,6 @@ import { PrismaService } from "./database/prisma/prisma.service";
     RoleModule,
     RolePermissionModule,
     FileStorageModule,
-    MailModule,
   ],
   controllers: [AppController],
   providers: [
