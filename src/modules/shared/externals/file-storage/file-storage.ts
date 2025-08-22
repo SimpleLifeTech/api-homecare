@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { OriginBucket } from "./filte-storage.types";
-import { SupabaseService } from "./file-storage.client";
+import { StorageService } from "./file-storage.client";
 
 @Injectable()
 export class FileStorage {
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(private readonly storageService: StorageService) {}
 
   private readonly bucketName = process.env.SUPABASE_BUCKET as string;
 
@@ -23,10 +23,10 @@ export class FileStorage {
       throw new Error("Tipo de imagem inválido");
     }
 
-    const supabase = this.supabaseService.getClient();
+    const bucket = this.storageService.getClient();
     const fileName = `${origin}/${id}-${file.originalname}`;
 
-    const { error } = await supabase.storage.from(this.bucketName).upload(fileName, file.buffer, {
+    const { error } = await bucket.storage.from(this.bucketName).upload(fileName, file.buffer, {
       contentType: file.mimetype,
     });
 
