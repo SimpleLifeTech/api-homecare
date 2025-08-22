@@ -87,5 +87,8 @@
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma"
+  },
+  "engines": {
+    "node": ">=22.18.0"
   }
 }
