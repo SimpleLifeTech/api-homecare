@@ -17,17 +17,17 @@ export class UpdatePersonDTO {
   address: string;
 
   @IsString({ message: "O numero do endereço do usuário deve ser uma string" })
-  address_number: string;
+  addressNumber: string;
 
   @IsString({ message: "O complemento do endereço do usuário deve ser uma string" })
-  address_complement: string;
+  addressComplement: string;
 
   @IsString({ message: "A cidade do usuário deve ser uma string" })
-  address_city: string;
+  addressCity: string;
 
   @IsString({ message: "O estado do usuário deve ser uma string" })
-  address_state: string;
+  addressState: string;
 
   @IsString({ message: "O CEP do usuário deve ser uma string" })
-  address_zipcode: string;
+  addressZipcode: string;
 }

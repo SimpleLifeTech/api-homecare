@@ -27,7 +27,7 @@ export class CompanyRepository {
 
       const company = await tx.company.create({
         data: {
-          person_id: personId,
+          personId: personId,
           name: data.name,
           image,
           document: data.document,
@@ -36,35 +36,35 @@ export class CompanyRepository {
 
       await tx.branch.create({
         data: {
-          company_id: company.id,
+          companyId: company.id,
           name: data.name,
           address: data.address,
-          address_number: data.address_number,
-          address_complement: data.address_complement ? data.address_complement : null,
-          address_city: data.address_city,
-          address_state: data.address_state,
-          address_zipcode: data.address_zipcode,
+          addressNumber: data.addressNumber,
+          addressComplement: data.addressComplement ? data.addressComplement : null,
+          addressCity: data.addressCity,
+          addressState: data.addressState,
+          addressZipcode: data.addressZipcode,
         },
       });
 
       await tx.person.update({
         where: { id: personId },
-        data: { is_first_access: false },
+        data: { isFirstAccess: false },
       });
     });
   }
 
   async findCompanyByDocument(document: string): Promise<CompanyModel> {
-    return await this.prisma.company.findFirst({ where: { document, deleted_at: null } });
+    return await this.prisma.company.findFirst({ where: { document, deletedAt: null } });
   }
 
   async findCompanyById(companyId: string): Promise<CompanyModel> {
-    return await this.prisma.company.findUnique({ where: { id: companyId, deleted_at: null } });
+    return await this.prisma.company.findUnique({ where: { id: companyId, deletedAt: null } });
   }
 
   async findCompanyByUserId(personId: string): Promise<CompanyModel> {
     return await this.prisma.company.findFirst({
-      where: { person_id: personId, deleted_at: null },
+      where: { personId: personId, deletedAt: null },
     });
   }
 
@@ -86,7 +86,7 @@ export class CompanyRepository {
   async inactivateCompanyById(companyId: string): Promise<CompanyModel> {
     return await this.prisma.company.update({
       where: { id: companyId },
-      data: { deleted_at: globalFunction.getCurrentDateAndTime() },
+      data: { deletedAt: globalFunction.getCurrentDateAndTime() },
     });
   }
 }

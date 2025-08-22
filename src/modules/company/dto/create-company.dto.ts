@@ -15,20 +15,20 @@ export class CreateCompanyDTO {
 
   @IsString({ message: "O numero do endereço da empresa deve ser uma string" })
   @IsNotEmpty({ message: "O numero do endereço da empresa deve ser preenchido" })
-  address_number: string;
+  addressNumber: string;
 
   @IsString({ message: "O complemento do endereço da empresa deve ser uma string" })
-  address_complement: string;
+  addressComplement: string;
 
   @IsString({ message: "A cidade da empresa deve ser uma string" })
   @IsNotEmpty({ message: "A cidade da empresa deve ser preenchido" })
-  address_city: string;
+  addressCity: string;
 
   @IsString({ message: "O estado da empresa deve ser uma string" })
   @IsNotEmpty({ message: "O estado da empresa deve ser preenchido" })
-  address_state: string;
+  addressState: string;
 
   @IsString({ message: "O CEP da empresa deve ser uma string" })
   @IsNotEmpty({ message: "O CEP da empresa deve ser preenchido" })
-  address_zipcode: string;
+  addressZipcode: string;
 }

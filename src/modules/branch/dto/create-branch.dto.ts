@@ -11,20 +11,20 @@ export class CreateBranchDTO {
 
   @IsString({ message: "O numero do endereço da filial deve ser uma string" })
   @IsNotEmpty({ message: "O numero do endereço da filial deve ser preenchido" })
-  address_number: string;
+  addressNumber: string;
 
   @IsString({ message: "O complemento do endereço da filial deve ser uma string" })
-  address_complement: string;
+  addressComplement: string;
 
   @IsString({ message: "A cidade da filial deve ser uma string" })
   @IsNotEmpty({ message: "A cidade da filial deve ser preenchido" })
-  address_city: string;
+  addressCity: string;
 
   @IsString({ message: "O estado da filial deve ser uma string" })
   @IsNotEmpty({ message: "O estado da filial deve ser preenchido" })
-  address_state: string;
+  addressState: string;
 
   @IsString({ message: "O CEP da filial deve ser uma string" })
   @IsNotEmpty({ message: "O CEP da filial deve ser preenchido" })
-  address_zipcode: string;
+  addressZipcode: string;
 }

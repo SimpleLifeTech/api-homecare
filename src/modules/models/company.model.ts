@@ -1,14 +1,14 @@
-import { company } from "@prisma/client";
+import { Company } from "@prisma/client";
 
-export class CompanyModel implements company {
+export class CompanyModel implements Company {
   id: string;
-  person_id: string;
+  personId: string;
   name: string;
   image: string;
   document: string;
-  created_at: Date;
-  updated_at: Date;
-  deleted_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 
   constructor(partial: Partial<CompanyModel>) {
     Object.assign(this, partial);

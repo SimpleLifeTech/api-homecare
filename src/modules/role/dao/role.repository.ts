@@ -16,15 +16,15 @@ export class RoleRepository {
   }
 
   async findRoleByName(name: string): Promise<RoleModel | null> {
-    return await this.prisma.role.findFirst({ where: { name, deleted_at: null } });
+    return await this.prisma.role.findFirst({ where: { name, deletedAt: null } });
   }
 
   async findRoleById(roleId: number): Promise<RoleModel | null> {
-    return await this.prisma.role.findUnique({ where: { id: roleId, deleted_at: null } });
+    return await this.prisma.role.findUnique({ where: { id: roleId, deletedAt: null } });
   }
 
   async findRoles(): Promise<RoleModel[] | null> {
-    return await this.prisma.role.findMany({ where: { deleted_at: null } });
+    return await this.prisma.role.findMany({ where: { deletedAt: null } });
   }
 
   async updateRoleById(roleId: number, data: CreateOrUpdateRoleDTO): Promise<RoleModel> {
@@ -34,7 +34,7 @@ export class RoleRepository {
   async inactivateRoleById(roleId: number): Promise<RoleModel> {
     return await this.prisma.role.update({
       where: { id: roleId },
-      data: { deleted_at: globalFunction.getCurrentDateAndTime() },
+      data: { deletedAt: globalFunction.getCurrentDateAndTime() },
     });
   }
 }

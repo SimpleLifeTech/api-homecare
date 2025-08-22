@@ -16,24 +16,24 @@ export class RolePermissionRepository {
     roleId: number,
     data: CreateRolePermissionDTO,
   ): Promise<RolePermissionModel> {
-    return await this.prisma.role_permission.create({
+    return await this.prisma.rolePermission.create({
       data: {
         feed: data.feed,
         delete: data.delete,
-        role_id: roleId,
+        roleId: roleId,
       },
     });
   }
 
   async findRolePermissionById(rolePermissionId: string): Promise<RolePermissionModel> {
-    return await this.prisma.role_permission.findUnique({
-      where: { id: rolePermissionId, deleted_at: null },
+    return await this.prisma.rolePermission.findUnique({
+      where: { id: rolePermissionId, deletedAt: null },
     });
   }
 
   async findRolePermissionByRoleId(roleId: number): Promise<RolePermissionModel> {
-    return await this.prisma.role_permission.findFirst({
-      where: { role_id: roleId, deleted_at: null },
+    return await this.prisma.rolePermission.findFirst({
+      where: { roleId: roleId, deletedAt: null },
     });
   }
 
@@ -41,16 +41,16 @@ export class RolePermissionRepository {
     rolePermissionId: string,
     data: UpdateRolePermissionDTO,
   ): Promise<RolePermissionModel> {
-    return await this.prisma.role_permission.update({
+    return await this.prisma.rolePermission.update({
       where: { id: rolePermissionId },
       data: { ...data },
     });
   }
 
   async inactivateRolePermissionById(rolePermissionId: string): Promise<RolePermissionModel> {
-    return await this.prisma.role_permission.update({
+    return await this.prisma.rolePermission.update({
       where: { id: rolePermissionId },
-      data: { deleted_at: globalFunction.getCurrentDateAndTime() },
+      data: { deletedAt: globalFunction.getCurrentDateAndTime() },
     });
   }
 }

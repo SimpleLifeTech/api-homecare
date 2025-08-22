@@ -8,17 +8,17 @@ export class UpdateBranchDTO {
   address: string;
 
   @IsString({ message: "O numero do endereço da filial deve ser uma string" })
-  address_number: string;
+  addressNumber: string;
 
   @IsString({ message: "O complemento do endereço da filial deve ser uma string" })
-  address_complement: string;
+  addressComplement: string;
 
   @IsString({ message: "A cidade da filial deve ser uma string" })
-  address_city: string;
+  addressCity: string;
 
   @IsString({ message: "O estado da filial deve ser uma string" })
-  address_state: string;
+  addressState: string;
 
   @IsString({ message: "O CEP da filial deve ser uma string" })
-  address_zipcode: string;
+  addressZipcode: string;
 }

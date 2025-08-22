@@ -1,18 +1,18 @@
-import { homecare } from "@prisma/client";
+import { Homecare } from "@prisma/client";
 
-export class HomecareModel implements homecare {
+export class HomecareModel implements Homecare {
   id: string;
-  branch_id: string;
+  branchId: string;
   name: string;
   address: string;
-  address_number: string;
-  address_complement: string;
-  address_city: string;
-  address_state: string;
-  address_zipcode: string;
-  created_at: Date;
-  updated_at: Date;
-  deleted_at: Date;
+  addressNumber: string;
+  addressComplement: string;
+  addressCity: string;
+  addressState: string;
+  addressZipcode: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 
   constructor(partial: Partial<HomecareModel>) {
     Object.assign(this, partial);

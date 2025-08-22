@@ -23,10 +23,10 @@ const globalFunctions = new GlobalFunctions();
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
-  @Post("/create/:person_id")
+  @Post("/create/:personId")
   @UseInterceptors(FileInterceptor("image"))
   async createCompany(
-    @Param("person_id") personId: string,
+    @Param("personId") personId: string,
     @UploadedFile() image: Express.Multer.File,
     @Body() body: CreateCompanyDTO,
     @Res({ passthrough: true }) res: Response,

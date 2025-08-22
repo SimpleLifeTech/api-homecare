@@ -1,6 +1,6 @@
-import { person } from "@prisma/client";
+import { Person } from "@prisma/client";
 
-export class PersonModel implements person {
+export class PersonModel implements Person {
   id: string;
   name: string;
   email: string;
@@ -9,15 +9,15 @@ export class PersonModel implements person {
   image: string;
   phone: string;
   address: string;
-  address_number: string;
-  address_complement: string;
-  address_city: string;
-  address_state: string;
-  address_zipcode: string;
-  is_first_access: boolean;
-  created_at: Date;
-  updated_at: Date;
-  deleted_at: Date;
+  addressNumber: string;
+  addressComplement: string;
+  addressCity: string;
+  addressState: string;
+  addressZipcode: string;
+  isFirstAccess: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 
   constructor(partial: Partial<PersonModel>) {
     Object.assign(this, partial);

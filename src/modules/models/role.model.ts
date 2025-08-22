@@ -1,11 +1,11 @@
-import { role } from "@prisma/client";
+import { Role } from "@prisma/client";
 
-export class RoleModel implements role {
+export class RoleModel implements Role {
   id: number;
   name: string;
-  created_at: Date;
-  updated_at: Date;
-  deleted_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 
   constructor(partial: Partial<RoleModel>) {
     Object.assign(this, partial);

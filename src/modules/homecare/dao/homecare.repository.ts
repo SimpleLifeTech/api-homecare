@@ -13,21 +13,21 @@ export class HomecareRepository {
   constructor(private prisma: PrismaService) {}
 
   async createHomecare(branchId: string, data: CreateHomecareDTO): Promise<HomecareModel> {
-    return this.prisma.homecare.create({ data: { branch_id: branchId, ...data } });
+    return this.prisma.homecare.create({ data: { branchId: branchId, ...data } });
   }
 
   async findHomecareByName(branchId: string, name: string): Promise<HomecareModel> {
     return this.prisma.homecare.findFirst({
-      where: { branch_id: branchId, name, deleted_at: null },
+      where: { branchId: branchId, name, deletedAt: null },
     });
   }
 
   async findHomecaresByBranchId(branchId: string): Promise<HomecareModel[]> {
-    return this.prisma.homecare.findMany({ where: { branch_id: branchId, deleted_at: null } });
+    return this.prisma.homecare.findMany({ where: { branchId: branchId, deletedAt: null } });
   }
 
   async findHomecareById(homecareId: string): Promise<HomecareModel> {
-    return this.prisma.homecare.findUnique({ where: { id: homecareId, deleted_at: null } });
+    return this.prisma.homecare.findUnique({ where: { id: homecareId, deletedAt: null } });
   }
 
   async updateHomecareById(homecareId: string, data: UpdateHomecareDTO): Promise<HomecareModel> {
@@ -37,7 +37,7 @@ export class HomecareRepository {
   async inactivateHomecareById(homecareId: string): Promise<HomecareModel> {
     return this.prisma.homecare.update({
       where: { id: homecareId },
-      data: { deleted_at: globalFunction.getCurrentDateAndTime() },
+      data: { deletedAt: globalFunction.getCurrentDateAndTime() },
     });
   }
 }

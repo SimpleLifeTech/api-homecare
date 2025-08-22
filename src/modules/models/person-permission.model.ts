@@ -1,12 +1,12 @@
-import { person_permission } from "@prisma/client";
+import { PersonPermission } from "@prisma/client";
 
-export class PersonPermissionModel implements person_permission {
+export class PersonPermissionModel implements PersonPermission {
   id: string;
-  person_id: string;
-  role_permission_id: string;
-  created_at: Date;
-  updated_at: Date;
-  deleted_at: Date;
+  personId: string;
+  rolePermissionId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 
   constructor(partial: Partial<PersonPermissionModel>) {
     Object.assign(this, partial);

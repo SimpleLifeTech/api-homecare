@@ -1,13 +1,13 @@
-import { role_permission } from "@prisma/client";
+import { RolePermission } from "@prisma/client";
 
-export class RolePermissionModel implements role_permission {
+export class RolePermissionModel implements RolePermission {
   id: string;
-  role_id: number;
+  roleId: number;
   feed: boolean;
   delete: boolean;
-  created_at: Date;
-  updated_at: Date;
-  deleted_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 
   constructor(partial: Partial<RolePermissionModel>) {
     Object.assign(this, partial);

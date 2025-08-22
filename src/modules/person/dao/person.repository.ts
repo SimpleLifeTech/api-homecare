@@ -20,7 +20,7 @@ export class PersonRepository {
   async createPerson(data: CreatePersonDTO, file: Express.Multer.File): Promise<PersonModel> {
     return await this.prisma.$transaction(async (tx) => {
       const user = await tx.person.create({
-        data: { ...data, image: null, is_first_access: false },
+        data: { ...data, image: null, isFirstAccess: false },
       });
 
       const image = await this.fileStorage.uploadImage(user.id, OriginBucket.PERSON, file);
@@ -33,15 +33,15 @@ export class PersonRepository {
   }
 
   async findPersonById(personId: string): Promise<PersonModel | null> {
-    return await this.prisma.person.findUnique({ where: { id: personId, deleted_at: null } });
+    return await this.prisma.person.findUnique({ where: { id: personId, deletedAt: null } });
   }
 
   async findPersonByDocument(document: string): Promise<PersonModel | null> {
-    return await this.prisma.person.findFirst({ where: { document, deleted_at: null } });
+    return await this.prisma.person.findFirst({ where: { document, deletedAt: null } });
   }
 
   async findPersonByEmail(email: string): Promise<PersonModel | null> {
-    return await this.prisma.person.findFirst({ where: { email, deleted_at: null } });
+    return await this.prisma.person.findFirst({ where: { email, deletedAt: null } });
   }
 
   async updatePersonById(
@@ -59,7 +59,7 @@ export class PersonRepository {
   async inactivatePersonById(personId: string): Promise<PersonModel> {
     return this.prisma.person.update({
       where: { id: personId },
-      data: { deleted_at: globalFunction.getCurrentDateAndTime() },
+      data: { deletedAt: globalFunction.getCurrentDateAndTime() },
     });
   }
 }

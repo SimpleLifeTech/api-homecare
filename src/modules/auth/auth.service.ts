@@ -59,7 +59,7 @@ export class AuthService extends AuthRoles {
 
   async checkUser(user: Person) {
     await this.userNotFind(user?.id);
-    await this.userDeleted(user?.deleted_at);
+    await this.userDeleted(user?.deletedAt);
   }
 
   async checkPassword(hashedPassword: string, plainPassword: string) {

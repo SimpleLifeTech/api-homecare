@@ -17,9 +17,9 @@ export class AuthRoles {
     });
   }
 
-  public async userDeleted(deleted_at: Date) {
+  public async userDeleted(deletedAt: Date) {
     this.businessErrors.addError({
-      condition: !!deleted_at,
+      condition: !!deletedAt,
       message: "Usuário inativado",
       messageCode: "UserNotFound",
       statusCode: HttpStatus.BAD_REQUEST,

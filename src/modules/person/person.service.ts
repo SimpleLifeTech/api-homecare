@@ -35,7 +35,7 @@ export class PersonService extends PersonRoles {
       ...data,
       password: hashedPassword,
       document: globalFunctions.removeSpecialCharacters(data.document),
-      address_zipcode: globalFunctions.removeSpecialCharacters(data.address_zipcode),
+      addressZipcode: globalFunctions.removeSpecialCharacters(data.addressZipcode),
     };
 
     await this.personRepository.createPerson(user, file);

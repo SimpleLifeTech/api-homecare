@@ -13,20 +13,20 @@ export class BranchRepository {
   constructor(private prisma: PrismaService) {}
 
   async createBranch(companyId: string, data: CreateBranchDTO): Promise<BranchModel> {
-    return this.prisma.branch.create({ data: { company_id: companyId, ...data } });
+    return this.prisma.branch.create({ data: { companyId: companyId, ...data } });
   }
 
   async findBranchesByCompanyId(companyId: string): Promise<BranchModel[]> {
-    return this.prisma.branch.findMany({ where: { company_id: companyId, deleted_at: null } });
+    return this.prisma.branch.findMany({ where: { companyId: companyId, deletedAt: null } });
   }
 
   async findBranchById(branchId: string): Promise<BranchModel> {
-    return this.prisma.branch.findUnique({ where: { id: branchId, deleted_at: null } });
+    return this.prisma.branch.findUnique({ where: { id: branchId, deletedAt: null } });
   }
 
   async findBranchByName(companyId: string, name: string): Promise<BranchModel> {
     return this.prisma.branch.findFirst({
-      where: { company_id: companyId, name, deleted_at: null },
+      where: { companyId: companyId, name, deletedAt: null },
     });
   }
 
@@ -37,7 +37,7 @@ export class BranchRepository {
   async inactivateBranchById(branchId: string): Promise<BranchModel> {
     return this.prisma.branch.update({
       where: { id: branchId },
-      data: { deleted_at: globalFunction.getCurrentDateAndTime() },
+      data: { deletedAt: globalFunction.getCurrentDateAndTime() },
     });
   }
 }
