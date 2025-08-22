@@ -29,6 +29,11 @@
 ## Installation
 
 ```bash
+$ nvm install 22.18.0
+$ nvm use 22.18.0
+```
+
+```bash
 $ npm install
 ```
 
