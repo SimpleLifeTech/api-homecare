@@ -7,102 +7,236 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model person {
-  id                 String              @id @default(uuid()) @db.Uuid
-  name               String
-  email              String
-  password           String
-  document           String
-  image              String
-  phone              String
-  address            String
-  address_number     String
-  address_complement String?
-  address_city       String
-  address_state      String
-  address_zipcode    String
-  created_at         DateTime            @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
-  updated_at         DateTime            @updatedAt
-  deleted_at         DateTime?
-  is_first_access    Boolean             @default(true)
-  company            company[]
-  person_permission  person_permission[]
-}
-
-model person_permission {
-  id                 String           @id @default(uuid()) @db.Uuid
-  person_id          String           @db.Uuid
-  role_permission_id String           @db.Uuid
-  created_at         DateTime         @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
-  updated_at         DateTime?        @updatedAt @db.Timestamp(6)
-  deleted_at         DateTime?        @db.Timestamp(6)
-  person             person           @relation(fields: [person_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_person")
-  role_permission    role_permission? @relation(fields: [role_permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_permision")
-}
-
-model role {
+model Person {
+  id              String             @id @default(uuid()) @db.Uuid
   name            String
-  created_at      DateTime          @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
-  updated_at      DateTime?         @updatedAt
-  deleted_at      DateTime?
-  id              Int               @id @default(autoincrement())
-  role_permission role_permission[]
+  email           String
+  password        String
+  document        String
+  image           String
+  phone           String
+  address         String
+  addressNumber   String             @map("address_number")
+  addressComplement String?          @map("address_complement")
+  addressCity     String             @map("address_city")
+  addressState    String             @map("address_state")
+  addressZipcode  String             @map("address_zipcode")
+  createdAt       DateTime           @map("created_at") @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
+  updatedAt       DateTime           @map("updated_at") @updatedAt
+  deletedAt       DateTime?          @map("deleted_at")
+  isFirstAccess   Boolean            @map("is_first_access") @default(true)
+
+  company          Company[]
+  personPermission PersonPermission[]
+  employee         Employee[]
+  patient          Patient[]
+
+  @@map("person")
 }
 
-model role_permission {
-  id                String              @id @default(uuid()) @db.Uuid
-  role_id           Int
-  feed              Boolean
-  delete            Boolean
-  created_at        DateTime            @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
-  updated_at        DateTime?           @updatedAt
-  deleted_at        DateTime?
-  person_permission person_permission[]
-  role              role                @relation(fields: [role_id], references: [id])
+model PersonPermission {
+  id              String            @id @default(uuid()) @db.Uuid
+  personId        String            @map("person_id") @db.Uuid
+  rolePermissionId String           @map("role_permission_id") @db.Uuid
+  createdAt       DateTime          @map("created_at") @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
+  updatedAt       DateTime?         @map("updated_at") @updatedAt @db.Timestamp(6)
+  deletedAt       DateTime?         @map("deleted_at") @db.Timestamp(6)
+
+  person          Person            @relation(fields: [personId], references: [id], map: "fk_person")
+  rolePermission  RolePermission?   @relation(fields: [rolePermissionId], references: [id], map: "fk_role_permision")
+
+  @@map("person_permission")
 }
 
-model company {
+model Role {
+  id             Int               @id @default(autoincrement())
+  name           String
+  createdAt      DateTime          @map("created_at") @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
+  updatedAt      DateTime?         @map("updated_at") @updatedAt
+  deletedAt      DateTime?         @map("deleted_at")
+
+  rolePermission RolePermission[]
+
+  @@map("role")
+}
+
+model RolePermission {
+  id              String              @id @default(uuid()) @db.Uuid
+  roleId          Int                 @map("role_id")
+  feed            Boolean
+  delete          Boolean
+  createdAt       DateTime            @map("created_at") @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)"))
+  updatedAt       DateTime?           @map("updated_at") @updatedAt
+  deletedAt       DateTime?           @map("deleted_at")
+
+  role            Role                @relation(fields: [roleId], references: [id])
+  personPermission PersonPermission[]
+
+  @@map("role_permission")
+}
+
+model Company {
+  id         String     @id @default(uuid()) @db.Uuid
+  personId   String     @map("person_id") @db.Uuid
+  name       String     @db.VarChar(255)
+  image      String?    @db.VarChar(255)
+  document   String     @db.VarChar(255)
+  createdAt  DateTime   @map("created_at") @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
+  updatedAt  DateTime?  @map("updated_at") @db.Timestamp(6)
+  deletedAt  DateTime?  @map("deleted_at") @db.Timestamp(6)
+
+  branch     Branch[]
+  service    Service[]
+  person     Person?    @relation(fields: [personId], references: [id], map: "fk_person")
+
+  @@map("company")
+}
+
+model Branch {
+  id                String     @id @default(uuid()) @db.Uuid
+  companyId         String     @map("company_id") @db.Uuid
+  name              String     @db.VarChar(255)
+  address           String     @db.VarChar(255)
+  addressNumber     String     @map("address_number") @db.VarChar(255)
+  addressComplement String?    @map("address_complement") @db.VarChar(255)
+  addressCity       String     @map("address_city") @db.VarChar(255)
+  addressState      String     @map("address_state") @db.VarChar(255)
+  addressZipcode    String     @map("address_zipcode") @db.VarChar(255)
+  createdAt         DateTime   @map("created_at") @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'::text)")) @db.Timestamp(6)
+  updatedAt         DateTime?  @map("updated_at") @db.Timestamp(6)
+  deletedAt         DateTime?  @map("deleted_at") @db.Timestamp(6)
+
+  company           Company    @relation(fields: [companyId], references: [id], map: "fk_company")
+  homecare          Homecare[]
+  employee          Employee[]
+  profile           Profile[]
+
+  @@map("branch")
+}
+
+model Homecare {
+  id                String    @id @default(uuid()) @db.Uuid
+  branchId          String    @map("branch_id") @db.Uuid
+  name              String    @db.VarChar(255)
+  address           String    @db.VarChar(255)
+  addressNumber     String    @map("address_number") @db.VarChar(255)
+  addressComplement String?   @map("address_complement") @db.VarChar(255)
+  addressCity       String    @map("address_city") @db.VarChar(255)
+  addressState      String    @map("address_state") @db.VarChar(255)
+  addressZipcode    String    @map("address_zipcode") @db.VarChar(255)
+  createdAt         DateTime  @map("created_at") @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
+  updatedAt         DateTime? @map("updated_at") @db.Timestamp(6)
+  deletedAt         DateTime? @map("deleted_at") @db.Timestamp(6)
+
+  branch            Branch    @relation(fields: [branchId], references: [id], map: "fk_branch")
+  planning          Planning[]
+  patient           Patient[]
+
+  @@map("homecare")
+}
+
+model Planning {
+  id         String           @id @default(uuid()) @db.Uuid
+  homecareId String              @map("homecare_id") @db.Uuid
+  month      String
+  year       String
+  createdBy  String           @map("created_by") @db.Uuid
+  createdAt  DateTime         @map("created_at") @default(now()) @db.Timestamptz
+  updatedAt  DateTime?        @map("updated_at") @db.Timestamptz
+  deletedAt  DateTime?        @map("deleted_at") @db.Timestamptz
+
+  homecare   Homecare         @relation(fields: [homecareId], references: [id])
+  statuses   PlanningStatus[]
+
+  @@map("planning")
+}
+
+model PlanningStatus {
   id         String    @id @default(uuid()) @db.Uuid
-  person_id  String    @db.Uuid
-  name       String    @db.VarChar(255)
-  image      String?   @db.VarChar(255)
-  document   String    @db.VarChar(255)
-  created_at DateTime  @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
-  updated_at DateTime? @db.Timestamp(6)
-  deleted_at DateTime? @db.Timestamp(6)
-  branch     branch[]
-  person     person?   @relation(fields: [person_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_person")
+  planningId String    @map("planning_id") @db.Uuid
+  name       String
+  createdBy  String    @map("created_by") @db.Uuid
+  createdAt  DateTime  @map("created_at") @default(now()) @db.Timestamptz
+  updatedAt  DateTime? @map("updated_at") @db.Timestamptz
+  deletedAt  DateTime? @map("deleted_at") @db.Timestamptz
+
+  planning   Planning  @relation(fields: [planningId], references: [id])
+
+  @@map("planning_status")
 }
 
-model branch {
-  id                 String     @id @default(uuid()) @db.Uuid
-  company_id         String     @db.Uuid
-  name               String     @db.VarChar(255)
-  address            String     @db.VarChar(255)
-  address_number     String     @db.VarChar(255)
-  address_complement String?    @db.VarChar(255)
-  address_city       String     @db.VarChar(255)
-  address_state      String     @db.VarChar(255)
-  address_zipcode    String     @db.VarChar(255)
-  created_at         DateTime   @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'::text)")) @db.Timestamp(6)
-  updated_at         DateTime?  @db.Timestamp(6)
-  deleted_at         DateTime?  @db.Timestamp(6)
-  company            company    @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_company")
-  homecare           homecare[]
+model Employee {
+  id         String    @id @default(uuid()) @db.Uuid
+  personId   String    @map("person_id") @db.Uuid
+  branchId   String?   @map("branch_id") @db.Uuid
+  workRole   String?   @map("work_role")
+  document   String?
+  salary     Float?
+  createdAt  DateTime  @map("created_at") @default(now()) @db.Timestamptz
+  updatedAt  DateTime? @map("updated_at") @db.Timestamptz
+  deletedAt  DateTime? @map("deleted_at") @db.Timestamptz
+
+  person     Person    @relation(fields: [personId], references: [id])
+  branch     Branch?   @relation(fields: [branchId], references: [id])
+  profiles   Profile[]
+  services   Service[]
+
+  @@map("employee")
 }
 
-model homecare {
-  id                 String    @id @default(uuid()) @db.Uuid
-  branch_id          String    @db.Uuid
-  name               String    @db.VarChar(255)
-  address            String    @db.VarChar(255)
-  address_number     String    @db.VarChar(255)
-  address_complement String?   @db.VarChar(255)
-  address_city       String    @db.VarChar(255)
-  address_state      String    @db.VarChar(255)
-  address_zipcode    String    @db.VarChar(255)
-  created_at         DateTime  @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @db.Timestamp(6)
-  updated_at         DateTime? @db.Timestamp(6)
-  deleted_at         DateTime? @db.Timestamp(6)
-  branch             branch    @relation(fields: [branch_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_branch")
+model Profile {
+  id         String    @id @default(uuid()) @db.Uuid
+  branchId   String?   @map("branch_id") @db.Uuid
+  employeeId String    @map("employee_id") @db.Uuid
+  createdAt  DateTime  @map("created_at") @default(now()) @db.Timestamptz
+  updatedAt  DateTime? @map("updated_at") @db.Timestamptz
+  deletedAt  DateTime? @map("deleted_at") @db.Timestamptz
+
+  branch     Branch?   @relation(fields: [branchId], references: [id])
+  employee   Employee  @relation(fields: [employeeId], references: [id])
+
+  @@map("profile")
+}
+
+model Patient {
+  id             String    @id @default(uuid()) @db.Uuid
+  homecareId     String       @map("homecare_id") @db.Uuid
+  personId       String    @map("person_id") @db.Uuid
+  complexity     String
+  careHour       String?   @map("care_hour")
+  carePrice      Float?    @map("care_price")
+  careExpiresAt  DateTime? @map("care_expires_at")
+  document       String?
+  observation    String?
+  createdAt      DateTime  @map("created_at") @default(now()) @db.Timestamptz
+  updatedAt      DateTime? @map("updated_at") @db.Timestamptz
+  deletedAt      DateTime? @map("deleted_at") @db.Timestamptz
+
+  homecare       Homecare  @relation(fields: [homecareId], references: [id])
+  person         Person    @relation(fields: [personId], references: [id])
+  services       Service[]
+
+  @@map("patient")
+}
+
+model Service {
+  id         String    @id @default(uuid()) @db.Uuid
+  companyId  String    @map("company_id") @db.Uuid
+  patientId  String    @map("patient_id") @db.Uuid
+  employeeId String    @map("employee_id") @db.Uuid
+  title      String
+  description String?
+  startAt    DateTime? @map("start_at") @db.Timestamptz
+  startTime  String?   @map("start_time")
+  endAt      DateTime? @map("end_at") @db.Timestamptz
+  endTime    String?   @map("end_time")
+  createdAt  DateTime  @map("created_at") @default(now()) @db.Timestamptz
+  updatedAt  DateTime? @map("updated_at") @db.Timestamptz
+  deletedAt  DateTime? @map("deleted_at") @db.Timestamptz
+
+  company    Company   @relation(fields: [companyId], references: [id])
+  patient    Patient   @relation(fields: [patientId], references: [id])
+  employee   Employee  @relation(fields: [employeeId], references: [id])
+
+  @@map("service")
 }
