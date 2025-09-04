@@ -229,30 +229,30 @@ model Patient {
 }
 
 model PatientRelationships {
-  id                  String              @id @default(uuid()) @db.Uuid
-  supplierId          String              @map("supplier_id") @db.Uuid
-  homecareId          String              @map("homecare_id") @db.Uuid
-  patientId           String              @map("patient_id") @db.Uuid
-  healthPlanId        String              @map("health_plan_id") @db.Uuid
-  healthPlanPayment   Float               @map("health_plan_payment")
-  homecarePayment     Float               @map("homecare_payment")
+  id                  String               @id @default(uuid()) @db.Uuid
+  supplierId          String?              @map("supplier_id") @db.Uuid
+  homecareId          String?              @map("homecare_id") @db.Uuid
+  patientId           String               @map("patient_id") @db.Uuid
+  healthPlanId        String?              @map("health_plan_id") @db.Uuid
+  healthPlanPayment   Float?               @map("health_plan_payment")
+  homecarePayment     Float?               @map("homecare_payment")
   schedule            Int
-  customFields        Json                @map("custom_fields")
-  patientRecord       String              @map("patient_record")
-  notations           String
-  allowanceCostOrigin AllowanceCostOrigin @map("allowance_cost_origin")
-  allowanceCostPrice  Float?              @map("allowance_cost_price")
-  createdAt           DateTime            @default(now()) @map("created_at") @db.Timestamptz
-  createdBy           String              @map("created_by") @db.Uuid
-  updatedAt           DateTime?           @updatedAt @map("updated_at") @db.Timestamptz
-  updatedBy           String?             @map("updated_by") @db.Uuid
-  deletedAt           DateTime?           @map("deleted_at") @db.Timestamptz
-  deletedBy           String?             @map("deleted_by") @db.Uuid
+  customFields        Json?                @map("custom_fields")
+  patientRecord       String?              @map("patient_record")
+  notations           String?
+  allowanceCostOrigin AllowanceCostOrigin  @default(PATIENT_FAMILY) @map("allowance_cost_origin")
+  allowanceCostPrice  Float?               @map("allowance_cost_price")
+  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamptz
+  createdBy           String               @map("created_by") @db.Uuid
+  updatedAt           DateTime?            @updatedAt @map("updated_at") @db.Timestamptz
+  updatedBy           String?              @map("updated_by") @db.Uuid
+  deletedAt           DateTime?            @map("deleted_at") @db.Timestamptz
+  deletedBy           String?              @map("deleted_by") @db.Uuid
 
   patient    Patient         @relation(fields: [patientId], references: [id])
-  healthPlan HealthPlan      @relation(fields: [healthPlanId], references: [id])
-  supplier   Company         @relation("SupplierCompany", fields: [supplierId], references: [id])
-  homecare   Company         @relation("HomecareCompany", fields: [homecareId], references: [id])
+  healthPlan HealthPlan?     @relation(fields: [healthPlanId], references: [id])
+  supplier   Company?        @relation("SupplierCompany", fields: [supplierId], references: [id])
+  homecare   Company?        @relation("HomecareCompany", fields: [homecareId], references: [id])
   record     PatientRecord[]
 
   @@map("patient_relationships")

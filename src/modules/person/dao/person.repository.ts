@@ -37,8 +37,11 @@ export class PersonRepository {
     return user;
   }
 
-  async findPersonById(personId: string): Promise<PersonModel | null> {
-    return await this.prisma.person.findUnique({ where: { id: personId, deletedAt: null } });
+  async findPersonById(personId: string, include?: { company: boolean }) {
+    return await this.prisma.person.findUnique({
+      where: { id: personId, deletedAt: null },
+      include: include,
+    } );
   }
 
   async findPersonByDocument(document: string): Promise<PersonModel | null> {
@@ -47,6 +50,16 @@ export class PersonRepository {
 
   async findPersonByEmail(email: string): Promise<PersonModel | null> {
     return await this.prisma.person.findFirst({ where: { email, deletedAt: null } });
+  }
+
+  async findOrCreatePerson(data: CreatePersonDTO): Promise<PersonModel> {
+    const person = await this.prisma.person.findFirst({
+      where: { OR: [{ document: data.document }, { email: data.email }], deletedAt: null }
+    });
+
+    if (person) return person;
+
+    return await this.prisma.person.create({ data });
   }
 
   async updatePersonById(
