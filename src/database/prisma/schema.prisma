@@ -26,7 +26,7 @@ model Person {
   password          String
   document          String    @unique
   birthdate         DateTime
-  profileImageUrl   String    @map("profile_image_url")
+  profileImageUrl   String?    @map("profile_image_url")
   phone             String
   address           String
   addressNumber     String    @map("address_number")
@@ -102,7 +102,7 @@ model Company {
   addressZipcode    String      @map("address_zipcode")
   document          String      @db.VarChar(255)
   createdAt         DateTime    @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @map("created_at") @db.Timestamp(6)
-  updatedAt         DateTime?   @map("updated_at") @db.Timestamp(6)
+  updatedAt         DateTime?   @map("updated_at") @db.Timestamp(6) @updatedAt
   deletedAt         DateTime?   @map("deleted_at") @db.Timestamp(6)
 
   branch  Branch[]
@@ -122,7 +122,7 @@ model Branch {
   name      String    @db.VarChar(255)
   document  String    @db.VarChar(255)
   createdAt DateTime  @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'::text)")) @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime? @map("updated_at") @db.Timestamp(6)
+  updatedAt DateTime? @map("updated_at") @db.Timestamp(6) @updatedAt
   deletedAt DateTime? @map("deleted_at") @db.Timestamp(6)
 
   company  Company    @relation(fields: [companyId], references: [id], map: "fk_company")
@@ -138,7 +138,7 @@ model Planning {
   year       String
   createdBy  String    @map("created_by") @db.Uuid
   createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt  DateTime? @map("updated_at") @db.Timestamptz
+  updatedAt  DateTime? @map("updated_at") @db.Timestamptz @updatedAt
   deletedAt  DateTime? @map("deleted_at") @db.Timestamptz
 
   statuses PlanningStatus[]
@@ -152,7 +152,7 @@ model PlanningStatus {
   name       String
   createdBy  String    @map("created_by") @db.Uuid
   createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt  DateTime? @map("updated_at") @db.Timestamptz
+  updatedAt  DateTime? @map("updated_at") @db.Timestamptz @updatedAt
   deletedAt  DateTime? @map("deleted_at") @db.Timestamptz
 
   planning Planning @relation(fields: [planningId], references: [id])
@@ -168,7 +168,7 @@ model Employee {
   document  String?
   salary    Float?
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt DateTime? @map("updated_at") @db.Timestamptz
+  updatedAt DateTime? @map("updated_at") @db.Timestamptz @updatedAt
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz
 
   person   Person    @relation(fields: [personId], references: [id])
@@ -184,7 +184,7 @@ model Profile {
   branchId   String?   @map("branch_id") @db.Uuid
   employeeId String    @map("employee_id") @db.Uuid
   createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt  DateTime? @map("updated_at") @db.Timestamptz
+  updatedAt  DateTime? @map("updated_at") @db.Timestamptz @updatedAt
   deletedAt  DateTime? @map("deleted_at") @db.Timestamptz
 
   branch   Branch?  @relation(fields: [branchId], references: [id])
@@ -285,7 +285,7 @@ model Service {
   endAt       DateTime? @map("end_at") @db.Timestamptz
   endTime     String?   @map("end_time")
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt   DateTime? @map("updated_at") @db.Timestamptz
+  updatedAt   DateTime? @map("updated_at") @db.Timestamptz @updatedAt
   deletedAt   DateTime? @map("deleted_at") @db.Timestamptz
 
   company  Company  @relation(fields: [companyId], references: [id])
