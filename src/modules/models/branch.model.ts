@@ -4,12 +4,7 @@ export class BranchModel implements Branch {
   id: string;
   companyId: string;
   name: string;
-  address: string;
-  addressNumber: string;
-  addressComplement: string;
-  addressCity: string;
-  addressState: string;
-  addressZipcode: string;
+  document: string;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;

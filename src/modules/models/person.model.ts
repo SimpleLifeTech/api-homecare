@@ -6,11 +6,12 @@ export class PersonModel implements Person {
   email: string;
   password: string;
   document: string;
-  image: string;
+  birthdate: Date;
+  profileImageUrl: string;
   phone: string;
   address: string;
   addressNumber: string;
-  addressComplement: string;
+  addressComplement: string | null;
   addressCity: string;
   addressState: string;
   addressZipcode: string;

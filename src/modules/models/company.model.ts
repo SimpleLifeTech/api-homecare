@@ -1,11 +1,18 @@
-import { Company } from "@prisma/client";
+import { Company, CompanyType,  } from "@prisma/client";
 
 export class CompanyModel implements Company {
   id: string;
-  personId: string;
+  ownerId: string;
+  type: CompanyType;
   name: string;
-  image: string;
+  companyImageUrl: string | null;
   document: string;
+  address: string;
+  addressNumber: string;
+  addressComplement: string | null;
+  addressCity: string;
+  addressState: string;
+  addressZipcode: string;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
