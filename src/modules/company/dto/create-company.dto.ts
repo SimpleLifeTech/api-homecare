@@ -1,5 +1,5 @@
 import { CompanyType } from "@prisma/client";
-import { IsEnum, IsNotEmpty, isString, IsString } from "class-validator";
+import { IsEnum, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateCompanyDTO {
   @IsEnum(CompanyType, { message: "O tipo da empresa é inválido" })
