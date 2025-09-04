@@ -13,24 +13,31 @@ const globalFunction = new GlobalFunctions();
 @Injectable()
 export class CompanyRepository {
   constructor(
-    private prisma: PrismaService,
-    private fileStorage: FileStorage,
+    private readonly prisma: PrismaService,
+    private readonly fileStorage: FileStorage,
   ) {}
 
   async createCompanyAndBranch(
-    personId: string,
+    ownerId: string,
     data: CreateCompanyDTO,
-    file: Express.Multer.File,
+    file?: Express.Multer.File,
   ): Promise<void> {
     return await this.prisma.$transaction(async (tx) => {
-      const image = await this.fileStorage.uploadImage(data.document, OriginBucket.COMPANY, file);
+      let companyImageUrl = null;
+
+      if (file) {
+        companyImageUrl = await this.fileStorage.uploadImage(
+          data.document,
+          OriginBucket.COMPANY,
+          file,
+        );
+      }
 
       const company = await tx.company.create({
         data: {
-          personId: personId,
-          name: data.name,
-          image,
-          document: data.document,
+          ...data,
+          ownerId,
+          companyImageUrl,
         },
       });
 
@@ -38,17 +45,12 @@ export class CompanyRepository {
         data: {
           companyId: company.id,
           name: data.name,
-          address: data.address,
-          addressNumber: data.addressNumber,
-          addressComplement: data.addressComplement ? data.addressComplement : null,
-          addressCity: data.addressCity,
-          addressState: data.addressState,
-          addressZipcode: data.addressZipcode,
+          document: data.document,
         },
       });
 
       await tx.person.update({
-        where: { id: personId },
+        where: { id: ownerId },
         data: { isFirstAccess: false },
       });
     });
@@ -62,24 +64,26 @@ export class CompanyRepository {
     return await this.prisma.company.findUnique({ where: { id: companyId, deletedAt: null } });
   }
 
-  async findCompanyByUserId(personId: string): Promise<CompanyModel> {
+  async findCompanyByUserId(ownerId: string): Promise<CompanyModel> {
     return await this.prisma.company.findFirst({
-      where: { personId: personId, deletedAt: null },
+      where: { ownerId, deletedAt: null },
     });
   }
 
   async updateCompanyById(
     companyId: string,
     data: UpdateCompanyDTO,
-    file: Express.Multer.File,
+    file?: Express.Multer.File,
   ): Promise<CompanyModel> {
-    return await this.prisma.$transaction(async (tx) => {
-      const image = await this.fileStorage.uploadImage(companyId, OriginBucket.COMPANY, file);
+    const company = await this.findCompanyById(companyId);
 
-      return await tx.company.update({
-        where: { id: companyId },
-        data: { ...data, image },
-      });
+    const companyImageUrl = file
+      ? await this.fileStorage.uploadImage(companyId, OriginBucket.COMPANY, file)
+      : company?.companyImageUrl;
+
+    return await this.prisma.company.update({
+      where: { id: companyId },
+      data: { ...data, companyImageUrl },
     });
   }
 

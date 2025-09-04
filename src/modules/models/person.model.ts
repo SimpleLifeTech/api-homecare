@@ -7,7 +7,7 @@ export class PersonModel implements Person {
   password: string;
   document: string;
   birthdate: Date;
-  profileImageUrl: string;
+  profileImageUrl: string | null;
   phone: string;
   address: string;
   addressNumber: string;

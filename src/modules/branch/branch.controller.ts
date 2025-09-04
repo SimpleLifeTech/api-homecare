@@ -18,7 +18,6 @@ export class BranchController {
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(companyId);
-
     const { codeHttp, ...response } = await this.branchService.createBranch(companyId, data);
 
     res.status(codeHttp).json(response);
@@ -30,7 +29,6 @@ export class BranchController {
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(companyId);
-
     const { codeHttp, ...response } = await this.branchService.findBranchesByCompanyId(companyId);
 
     res.status(codeHttp).json(response);
@@ -42,7 +40,6 @@ export class BranchController {
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(branchId);
-
     const { codeHttp, ...response } = await this.branchService.findBranchById(branchId);
 
     res.status(codeHttp).json(response);
@@ -55,7 +52,6 @@ export class BranchController {
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(branchId);
-
     const { codeHttp, ...response } = await this.branchService.updateBranchById(branchId, data);
 
     res.status(codeHttp).json(response);
@@ -67,7 +63,6 @@ export class BranchController {
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(branchId);
-
     const { codeHttp, ...response } = await this.branchService.inactivateBranchById(branchId);
 
     res.status(codeHttp).json(response);

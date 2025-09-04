@@ -10,7 +10,7 @@ const globalFunction = new GlobalFunctions();
 
 @Injectable()
 export class BranchRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async createBranch(companyId: string, data: CreateBranchDTO): Promise<BranchModel> {
     return this.prisma.branch.create({ data: { companyId: companyId, ...data } });

@@ -5,26 +5,7 @@ export class CreateBranchDTO {
   @IsNotEmpty({ message: "O nome da filial deve ser preenchido" })
   name: string;
 
-  @IsString({ message: "O endereço da filial deve ser uma string" })
-  @IsNotEmpty({ message: "O endereço da filial deve ser preenchida" })
-  address: string;
-
-  @IsString({ message: "O numero do endereço da filial deve ser uma string" })
-  @IsNotEmpty({ message: "O numero do endereço da filial deve ser preenchido" })
-  addressNumber: string;
-
-  @IsString({ message: "O complemento do endereço da filial deve ser uma string" })
-  addressComplement: string;
-
-  @IsString({ message: "A cidade da filial deve ser uma string" })
-  @IsNotEmpty({ message: "A cidade da filial deve ser preenchido" })
-  addressCity: string;
-
-  @IsString({ message: "O estado da filial deve ser uma string" })
-  @IsNotEmpty({ message: "O estado da filial deve ser preenchido" })
-  addressState: string;
-
-  @IsString({ message: "O CEP da filial deve ser uma string" })
-  @IsNotEmpty({ message: "O CEP da filial deve ser preenchido" })
-  addressZipcode: string;
+  @IsString({ message: "O documento da filial deve ser uma string" })
+  @IsNotEmpty({ message: "O documento da filial deve ser preenchido" })
+  document: string;
 }

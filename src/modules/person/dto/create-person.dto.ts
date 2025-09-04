@@ -13,6 +13,10 @@ export class CreatePersonDTO {
   @IsNotEmpty({ message: "A senha do usuário deve ser preenchido" })
   password: string;
 
+  @IsString({ message: "A data de nascimento do usuário deve ser uma string" })
+  @IsNotEmpty({ message: "A data de nascimento do usuário deve ser preenchida" })
+  birthdate: string;
+
   @IsString({ message: "O CPF do usuário deve ser uma string" })
   @IsNotEmpty({ message: "O CPF do usuário deve ser preenchido" })
   document: string;

@@ -13,23 +13,28 @@ const globalFunction = new GlobalFunctions();
 @Injectable()
 export class PersonRepository {
   constructor(
-    private prisma: PrismaService,
-    private fileStorage: FileStorage,
+    private readonly prisma: PrismaService,
+    private readonly fileStorage: FileStorage,
   ) {}
 
   async createPerson(data: CreatePersonDTO, file: Express.Multer.File): Promise<PersonModel> {
-    return await this.prisma.$transaction(async (tx) => {
-      const user = await tx.person.create({
-        data: { ...data, image: null, isFirstAccess: false },
-      });
-
-      const image = await this.fileStorage.uploadImage(user.id, OriginBucket.PERSON, file);
-
-      return await tx.person.update({
-        where: { id: user.id },
-        data: { image },
-      });
+    const user = await this.prisma.person.create({
+      data: { ...data, profileImageUrl: null, isFirstAccess: true },
     });
+
+    if (file) {
+      const profileImageUrl = await this.fileStorage.uploadImage(
+        user.id,
+        OriginBucket.PERSON,
+        file,
+      );
+      return await this.prisma.person.update({
+        where: { id: user.id },
+        data: { profileImageUrl },
+      });
+    }
+
+    return user;
   }
 
   async findPersonById(personId: string): Promise<PersonModel | null> {
@@ -47,12 +52,17 @@ export class PersonRepository {
   async updatePersonById(
     personId: string,
     data: UpdatePersonDTO,
-    file: Express.Multer.File,
+    file?: Express.Multer.File,
   ): Promise<PersonModel> {
-    return this.prisma.$transaction(async (tx) => {
-      const image = await this.fileStorage.uploadImage(personId, OriginBucket.PERSON, file);
+    const person = await this.findPersonById(personId);
 
-      return await tx.person.update({ where: { id: personId }, data: { ...data, image } });
+    const profileImageUrl = file
+      ? await this.fileStorage.uploadImage(personId, OriginBucket.PERSON, file)
+      : person?.profileImageUrl;
+
+    return await this.prisma.person.update({
+      where: { id: personId },
+      data: { ...data, profileImageUrl },
     });
   }
 

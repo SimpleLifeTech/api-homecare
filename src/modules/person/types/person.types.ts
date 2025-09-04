@@ -3,11 +3,12 @@ export interface Person {
   name: string;
   email: string;
   document: string;
-  image: string;
+  birthdate: Date;
+  profileImageUrl: string | null;
   phone: string;
   address: string;
   addressNumber: string;
-  addressComplement: string;
+  addressComplement: string | null;
   addressCity: string;
   addressState: string;
   addressZipcode: string;

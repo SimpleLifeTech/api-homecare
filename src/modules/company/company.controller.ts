@@ -32,7 +32,6 @@ export class CompanyController {
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(personId);
-
     const { codeHttp, ...response } = await this.companyService.createCompany(
       personId,
       body,
@@ -48,7 +47,6 @@ export class CompanyController {
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(companyId);
-
     const { codeHttp, ...response } = await this.companyService.findCompanyById(companyId);
 
     res.status(codeHttp).json(response);
@@ -60,7 +58,6 @@ export class CompanyController {
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(personId);
-
     const { codeHttp, ...response } = await this.companyService.findCompanyByUserId(personId);
 
     res.status(codeHttp).json(response);
@@ -75,7 +72,6 @@ export class CompanyController {
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(companyId);
-
     const { codeHttp, ...response } = await this.companyService.updateCompany(
       companyId,
       body,
@@ -91,7 +87,6 @@ export class CompanyController {
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(companyId);
-
     const { codeHttp, ...response } = await this.companyService.inactivateCompany(companyId);
 
     res.status(codeHttp).json(response);

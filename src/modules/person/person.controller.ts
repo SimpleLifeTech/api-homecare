@@ -39,7 +39,6 @@ export class PersonController {
   @Get("/list/:personId")
   async listPerson(@Param("personId") personId: string, @Res({ passthrough: true }) res: Response) {
     globalFunctions.IsEmptyParam(personId);
-
     const { codeHttp, ...response } = await this.personService.findPersonById(personId);
 
     res.status(codeHttp).json(response);
@@ -54,7 +53,6 @@ export class PersonController {
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(personId);
-
     const { codeHttp, ...response } = await this.personService.updatePersonById(
       personId,
       data,
@@ -70,7 +68,6 @@ export class PersonController {
     @Res({ passthrough: true }) res: Response,
   ) {
     globalFunctions.IsEmptyParam(personId);
-
     const { codeHttp, ...response } = await this.personService.inactivatePersonById(personId);
 
     res.status(codeHttp).json(response);

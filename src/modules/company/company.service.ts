@@ -1,50 +1,37 @@
 import { CompanyModel } from "@modules/models/company.model";
-import { PersonRoles } from "@modules/person/business/person.roles";
 import { PersonRepository } from "@modules/person/dao/person.repository";
-import { HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { BrazilAPI } from "@shared/shared/externals/brazil-api/brazil.apis";
+import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { APIResponse, CoreResponse, ErrorTypes } from "@shared/shared/utils/response";
 
-import { CompanyRoles } from "./business/company.roles";
 import { CompanyRepository } from "./dao/company.repository";
 import { CreateCompanyDTO } from "./dto/create-company.dto";
 import { UpdateCompanyDTO } from "./dto/update-company.dto";
 
 const response = new CoreResponse();
+const globalFunctions = new GlobalFunctions();
 
 @Injectable()
-export class CompanyService extends CompanyRoles {
+export class CompanyService {
   constructor(
     @Inject(CompanyRepository)
     protected readonly companyRepository: CompanyRepository,
     @Inject(PersonRepository)
     protected readonly personRepository: PersonRepository,
-    protected readonly personRoles: PersonRoles,
-    private readonly brazilAPI: BrazilAPI,
-  ) {
-    super();
-  }
+  ) {}
   async createCompany(
     personId: string,
     createCompanyDTO: CreateCompanyDTO,
-    file: Express.Multer.File,
+    file?: Express.Multer.File,
   ): Promise<APIResponse<string, ErrorTypes>> {
-    const personExists = await this.personRepository.findPersonById(personId);
-
-    await this.personRoles.personNotFound(personExists);
-
+    await this.personExists(personId);
     const isCompanyAlreadyExists = await this.companyRepository.findCompanyByDocument(
       createCompanyDTO.document,
     );
 
-    await this.companyAlreadyExists(isCompanyAlreadyExists);
-
-    // precisa lidar com erro de cnpj dessa requisição
-    const cnpj = await this.brazilAPI.getCNPJ(createCompanyDTO.document);
-
-    await this.documentDoesntExist(cnpj.data);
-
-    await this.documentsIsNotActive(cnpj.data.descricao_situacao_cadastral);
+    if (globalFunctions.filled(isCompanyAlreadyExists))
+      throw new BadRequestException("Empresa já cadastrada");
 
     await this.companyRepository.createCompanyAndBranch(personId, createCompanyDTO, file);
 
@@ -52,21 +39,15 @@ export class CompanyService extends CompanyRoles {
   }
 
   async findCompanyById(companyId: string): Promise<APIResponse<CompanyModel, ErrorTypes>> {
-    const company = await this.companyRepository.findCompanyById(companyId);
-
-    await this.companyNotFound(company);
-
+    const company = await this.companyExists(companyId);
     return response.success(company);
   }
 
   async findCompanyByUserId(personId: string): Promise<APIResponse<CompanyModel, ErrorTypes>> {
-    const personExists = await this.personRepository.findPersonById(personId);
-
-    await this.personRoles.personNotFound(personExists);
-
+    await this.personExists(personId);
     const company = await this.companyRepository.findCompanyByUserId(personId);
 
-    await this.companyNotFound(company);
+    if (globalFunctions.blank(company)) throw new BadRequestException("Empresa não encontrada");
 
     return response.success(company);
   }
@@ -74,24 +55,35 @@ export class CompanyService extends CompanyRoles {
   async updateCompany(
     companyId: string,
     company: UpdateCompanyDTO,
-    file: Express.Multer.File,
+    file?: Express.Multer.File,
   ): Promise<APIResponse<string, ErrorTypes>> {
-    const companyExists = await this.companyRepository.findCompanyById(companyId);
-
-    await this.companyNotFound(companyExists);
-
+    await this.companyExists(companyId);
     await this.companyRepository.updateCompanyById(companyId, company, file);
 
     return response.success("Empresa atualizada com sucesso!");
   }
 
   async inactivateCompany(companyId: string): Promise<APIResponse<string, ErrorTypes>> {
-    const companyExists = await this.companyRepository.findCompanyById(companyId);
-
-    await this.companyNotFound(companyExists);
-
+    await this.companyExists(companyId);
     await this.companyRepository.inactivateCompanyById(companyId);
 
     return response.success("Empresa deletada com sucesso!");
+  }
+
+  private async companyExists(companyId: string) {
+    const company = await this.companyRepository.findCompanyById(companyId);
+
+    if (globalFunctions.blank(company))
+      throw new BadRequestException("Empresa não encontrada");
+
+    return company;
+  }
+
+  private async personExists(personId: string) {
+    const person = await this.personRepository.findPersonById(personId);
+
+    if (globalFunctions.blank(person)) throw new BadRequestException("Pessoa não encontrada");
+
+    return person;
   }
 }
