@@ -9,7 +9,7 @@ import { UpdatePersonDTO } from "./dto/update-person.dto";
 import { Person } from "./types/person.types";
 
 const response = new CoreResponse();
-const globalFunctions = new GlobalFunctions();
+const { blank, removeSpecialCharacters, excludeFromObject } = new GlobalFunctions();
 
 @Injectable()
 export class PersonService {
@@ -21,18 +21,18 @@ export class PersonService {
   ): Promise<APIResponse<string, ErrorTypes>> {
     const personExists = await this.personRepository.findPersonByDocument(data.document);
 
-    if (globalFunctions.blank(personExists)) throw new BadRequestException("Pessoa já cadastrada");
+    if (blank(personExists)) throw new BadRequestException("Pessoa já cadastrada");
 
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(data.password, salt);
 
-    if (globalFunctions.blank(hashedPassword)) throw new BadRequestException("Senha não criada");
+    if (blank(hashedPassword)) throw new BadRequestException("Senha não criada");
 
     const user = {
       ...data,
       password: hashedPassword,
-      document: globalFunctions.removeSpecialCharacters(data.document),
-      addressZipcode: globalFunctions.removeSpecialCharacters(data.addressZipcode),
+      document: removeSpecialCharacters(data.document),
+      addressZipcode: removeSpecialCharacters(data.addressZipcode),
     };
 
     await this.personRepository.createPerson(user, file);
@@ -42,7 +42,7 @@ export class PersonService {
 
   async findPersonById(personId: string): Promise<APIResponse<Person, ErrorTypes>> {
     const person = await this.getPersonById(personId);
-    const formatted = globalFunctions.excludeFromObject(person, ["password"]);
+    const formatted = excludeFromObject(person, ["password"]);
 
     return response.success(formatted);
   }
@@ -68,7 +68,7 @@ export class PersonService {
   private async getPersonById(personId: string) {
     const person = await this.personRepository.findPersonById(personId);
 
-    if (globalFunctions.blank(person)) throw new BadRequestException("Pessoa não encontrada");
+    if (blank(person)) throw new BadRequestException("Pessoa não encontrada");
 
     return person;
   }

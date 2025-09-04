@@ -3,11 +3,12 @@ import { PatientRepository } from './dao/patient.repository';
 import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdatePatientDto } from './dto/update-patient.dto';
 import { PersonRepository } from '@modules/person/dao/person.repository';
-import { blank } from '@shared/shared/utils/helpers';
 import { CoreResponse } from '@shared/shared/utils/response';
 import { CompanyType } from '@prisma/client';
+import { GlobalFunctions } from '@shared/shared/utils/functions';
 
 const response = new CoreResponse();
+const { blank } = new GlobalFunctions();
 
 @Injectable()
 export class PatientService {
