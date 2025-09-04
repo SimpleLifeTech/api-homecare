@@ -2,7 +2,6 @@ import { Planning } from "@prisma/client";
 
 export class PlanningModel implements Planning {
   id: string;
-  homecareId: string;
   month: string;
   year: string;
   createdBy: string;

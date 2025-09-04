@@ -12,6 +12,13 @@ enum CompanyType {
   SUPPLIER
 }
 
+enum AllowanceCostOrigin {
+  SUPPLIER
+  HOMECARE
+  PATIENT_FAMILY
+  EMPLOYEE
+}
+
 model Person {
   id                String    @id @default(uuid()) @db.Uuid
   name              String
@@ -100,7 +107,11 @@ model Company {
 
   branch  Branch[]
   service Service[]
+  healthPlan HealthPlan[]
   person  Person?   @relation(fields: [ownerId], references: [id], map: "fk_person")
+
+  supplierPatient PatientRelationships[] @relation("SupplierCompany")
+  homecarePatient PatientRelationships[] @relation("HomecareCompany")
 
   @@map("company")
 }
@@ -115,37 +126,14 @@ model Branch {
   deletedAt DateTime? @map("deleted_at") @db.Timestamp(6)
 
   company  Company    @relation(fields: [companyId], references: [id], map: "fk_company")
-  homecare Homecare[]
   employee Employee[]
   profile  Profile[]
 
   @@map("branch")
 }
 
-model Homecare {
-  id                String    @id @default(uuid()) @db.Uuid
-  branchId          String    @map("branch_id") @db.Uuid
-  name              String    @db.VarChar(255)
-  address           String    @db.VarChar(255)
-  addressNumber     String    @map("address_number") @db.VarChar(255)
-  addressComplement String?   @map("address_complement") @db.VarChar(255)
-  addressCity       String    @map("address_city") @db.VarChar(255)
-  addressState      String    @map("address_state") @db.VarChar(255)
-  addressZipcode    String    @map("address_zipcode") @db.VarChar(255)
-  createdAt         DateTime  @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @map("created_at") @db.Timestamp(6)
-  updatedAt         DateTime? @map("updated_at") @db.Timestamp(6)
-  deletedAt         DateTime? @map("deleted_at") @db.Timestamp(6)
-
-  branch   Branch     @relation(fields: [branchId], references: [id], map: "fk_branch")
-  planning Planning[]
-  patient  Patient[]
-
-  @@map("homecare")
-}
-
 model Planning {
   id         String    @id @default(uuid()) @db.Uuid
-  homecareId String    @map("homecare_id") @db.Uuid
   month      String
   year       String
   createdBy  String    @map("created_by") @db.Uuid
@@ -153,7 +141,6 @@ model Planning {
   updatedAt  DateTime? @map("updated_at") @db.Timestamptz
   deletedAt  DateTime? @map("deleted_at") @db.Timestamptz
 
-  homecare Homecare         @relation(fields: [homecareId], references: [id])
   statuses PlanningStatus[]
 
   @@map("planning")
@@ -206,25 +193,84 @@ model Profile {
   @@map("profile")
 }
 
-model Patient {
-  id            String    @id @default(uuid()) @db.Uuid
-  homecareId    String    @map("homecare_id") @db.Uuid
-  personId      String    @map("person_id") @db.Uuid
-  complexity    String
-  careHour      String?   @map("care_hour")
-  carePrice     Float?    @map("care_price")
-  careExpiresAt DateTime? @map("care_expires_at")
-  document      String?
-  observation   String?
-  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt     DateTime? @map("updated_at") @db.Timestamptz
-  deletedAt     DateTime? @map("deleted_at") @db.Timestamptz
+model PatientRecord {
+  id                     String    @id @default(uuid()) @db.Uuid
+  patientRelationshipsId String    @map("patient_relationships_id") @db.Uuid
+  actionType             String    @map("action_type")
+  description            String
+  attachmentUrl          String?   @map("attachment_url")
+  createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  createdBy              String    @map("created_by") @db.Uuid
+  updatedAt              DateTime? @map("updated_at") @db.Timestamptz @updatedAt
+  updatedBy              String?   @map("updated_by") @db.Uuid
+  deletedAt              DateTime? @map("deleted_at") @db.Timestamptz
+  deletedBy              String?   @map("deleted_by") @db.Uuid
 
-  homecare Homecare  @relation(fields: [homecareId], references: [id])
-  person   Person    @relation(fields: [personId], references: [id])
-  services Service[]
+  patientRelationships PatientRelationships @relation(fields: [patientRelationshipsId], references: [id])
+
+  @@map("patient_record")
+}
+
+model Patient {
+  id               String    @id @default(uuid()) @db.Uuid
+  personId         String    @map("person_id") @db.Uuid @unique
+  responsibleName  String?   @map("responsible_name")
+  responsibleEmail String?   @map("responsible_email")
+  responsiblePhone String?   @map("responsible_phone")
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime? @map("updated_at") @db.Timestamptz @updatedAt
+  deletedAt        DateTime? @map("deleted_at") @db.Timestamptz
+
+  person        Person                 @relation(fields: [personId], references: [id])
+  relationships PatientRelationships[]
+  service       Service[]
 
   @@map("patient")
+}
+
+model PatientRelationships {
+  id                  String              @id @default(uuid()) @db.Uuid
+  supplierId          String              @map("supplier_id") @db.Uuid
+  homecareId          String              @map("homecare_id") @db.Uuid
+  patientId           String              @map("patient_id") @db.Uuid
+  healthPlanId        String              @map("health_plan_id") @db.Uuid
+  healthPlanPayment   Float               @map("health_plan_payment")
+  homecarePayment     Float               @map("homecare_payment")
+  schedule            Int
+  customFields        Json                @map("custom_fields")
+  patientRecord       String              @map("patient_record")
+  notations           String
+  allowanceCostOrigin AllowanceCostOrigin @map("allowance_cost_origin")
+  allowanceCostPrice  Float?              @map("allowance_cost_price")
+  createdAt           DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  createdBy           String              @map("created_by") @db.Uuid
+  updatedAt           DateTime?           @map("updated_at") @db.Timestamptz @updatedAt
+  updatedBy           String?             @map("updated_by") @db.Uuid
+  deletedAt           DateTime?           @map("deleted_at") @db.Timestamptz
+  deletedBy           String?             @map("deleted_by") @db.Uuid
+
+  patient    Patient         @relation(fields: [patientId], references: [id])
+  healthPlan HealthPlan      @relation(fields: [healthPlanId], references: [id])
+  supplier   Company         @relation("SupplierCompany", fields: [supplierId], references: [id])
+  homecare   Company         @relation("HomecareCompany", fields: [homecareId], references: [id])
+  record     PatientRecord[]
+
+  @@map("patient_relationships")
+}
+
+model HealthPlan {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String
+  document  String
+  companyId String    @map("company_id") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime? @map("updated_at") @db.Timestamptz @updatedAt
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+
+  company  Company                @relation(fields: [companyId], references: [id])
+  patient  PatientRelationships[]
+
+  @@map("health_plan")
 }
 
 model Service {
