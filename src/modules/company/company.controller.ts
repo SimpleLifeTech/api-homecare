@@ -18,7 +18,8 @@ import { CompanyService } from "./company.service";
 import { CreateCompanyDTO } from "./dto/create-company.dto";
 import { UpdateCompanyDTO } from "./dto/update-company.dto";
 
-const globalFunctions = new GlobalFunctions();
+const { IsEmptyParam } = new GlobalFunctions();
+
 @Controller("company")
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
@@ -31,7 +32,7 @@ export class CompanyController {
     @Body() body: CreateCompanyDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
-    globalFunctions.IsEmptyParam(personId);
+    IsEmptyParam(personId);
     const { codeHttp, ...response } = await this.companyService.createCompany(
       personId,
       body,
@@ -46,7 +47,7 @@ export class CompanyController {
     @Param("companyId") companyId: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    globalFunctions.IsEmptyParam(companyId);
+    IsEmptyParam(companyId);
     const { codeHttp, ...response } = await this.companyService.findCompanyById(companyId);
 
     res.status(codeHttp).json(response);
@@ -57,7 +58,7 @@ export class CompanyController {
     @Param("personId") personId: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    globalFunctions.IsEmptyParam(personId);
+    IsEmptyParam(personId);
     const { codeHttp, ...response } = await this.companyService.findCompanyByUserId(personId);
 
     res.status(codeHttp).json(response);
@@ -71,7 +72,7 @@ export class CompanyController {
     @Body() body: UpdateCompanyDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
-    globalFunctions.IsEmptyParam(companyId);
+    IsEmptyParam(companyId);
     const { codeHttp, ...response } = await this.companyService.updateCompany(
       companyId,
       body,
@@ -86,7 +87,7 @@ export class CompanyController {
     @Param("companyId") companyId: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    globalFunctions.IsEmptyParam(companyId);
+    IsEmptyParam(companyId);
     const { codeHttp, ...response } = await this.companyService.inactivateCompany(companyId);
 
     res.status(codeHttp).json(response);

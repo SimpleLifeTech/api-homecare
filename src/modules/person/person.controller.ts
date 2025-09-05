@@ -18,7 +18,7 @@ import { CreatePersonDTO } from "./dto/create-person.dto";
 import { UpdatePersonDTO } from "./dto/update-person.dto";
 import { PersonService } from "./person.service";
 
-const globalFunctions = new GlobalFunctions();
+const { IsEmptyParam } = new GlobalFunctions();
 
 @Controller("person")
 export class PersonController {
@@ -38,7 +38,7 @@ export class PersonController {
 
   @Get("/list/:personId")
   async listPerson(@Param("personId") personId: string, @Res({ passthrough: true }) res: Response) {
-    globalFunctions.IsEmptyParam(personId);
+    IsEmptyParam(personId);
     const { codeHttp, ...response } = await this.personService.findPersonById(personId);
 
     res.status(codeHttp).json(response);
@@ -52,7 +52,7 @@ export class PersonController {
     @Body() data: UpdatePersonDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
-    globalFunctions.IsEmptyParam(personId);
+    IsEmptyParam(personId);
     const { codeHttp, ...response } = await this.personService.updatePersonById(
       personId,
       data,
@@ -67,7 +67,7 @@ export class PersonController {
     @Param("personId") personId: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    globalFunctions.IsEmptyParam(personId);
+    IsEmptyParam(personId);
     const { codeHttp, ...response } = await this.personService.inactivatePersonById(personId);
 
     res.status(codeHttp).json(response);

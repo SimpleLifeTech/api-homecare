@@ -1,7 +1,6 @@
 import { CompanyModel } from "@modules/models/company.model";
 import { PersonRepository } from "@modules/person/dao/person.repository";
 import { BadRequestException, HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { BrazilAPI } from "@shared/shared/externals/brazil-api/brazil.apis";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { APIResponse, CoreResponse, ErrorTypes } from "@shared/shared/utils/response";
 
@@ -10,7 +9,7 @@ import { CreateCompanyDTO } from "./dto/create-company.dto";
 import { UpdateCompanyDTO } from "./dto/update-company.dto";
 
 const response = new CoreResponse();
-const globalFunctions = new GlobalFunctions();
+const { filled, blank } = new GlobalFunctions();
 
 @Injectable()
 export class CompanyService {
@@ -30,8 +29,7 @@ export class CompanyService {
       createCompanyDTO.document,
     );
 
-    if (globalFunctions.filled(isCompanyAlreadyExists))
-      throw new BadRequestException("Empresa já cadastrada");
+    if (filled(isCompanyAlreadyExists)) throw new BadRequestException("Empresa já cadastrada");
 
     await this.companyRepository.createCompanyAndBranch(personId, createCompanyDTO, file);
 
@@ -47,7 +45,7 @@ export class CompanyService {
     await this.personExists(personId);
     const company = await this.companyRepository.findCompanyByUserId(personId);
 
-    if (globalFunctions.blank(company)) throw new BadRequestException("Empresa não encontrada");
+    if (blank(company)) throw new BadRequestException("Empresa não encontrada");
 
     return response.success(company);
   }
@@ -73,8 +71,7 @@ export class CompanyService {
   private async companyExists(companyId: string) {
     const company = await this.companyRepository.findCompanyById(companyId);
 
-    if (globalFunctions.blank(company))
-      throw new BadRequestException("Empresa não encontrada");
+    if (blank(company)) throw new BadRequestException("Empresa não encontrada");
 
     return company;
   }
@@ -82,7 +79,7 @@ export class CompanyService {
   private async personExists(personId: string) {
     const person = await this.personRepository.findPersonById(personId);
 
-    if (globalFunctions.blank(person)) throw new BadRequestException("Pessoa não encontrada");
+    if (blank(person)) throw new BadRequestException("Pessoa não encontrada");
 
     return person;
   }
