@@ -9,7 +9,7 @@ import { UpdatePersonDTO } from "./dto/update-person.dto";
 import { Person } from "./types/person.types";
 
 const response = new CoreResponse();
-const { blank, removeSpecialCharacters, excludeFromObject } = new GlobalFunctions();
+const { blank, filled, removeSpecialCharacters, excludeFromObject } = new GlobalFunctions();
 
 @Injectable()
 export class PersonService {
@@ -21,7 +21,7 @@ export class PersonService {
   ): Promise<APIResponse<string, ErrorTypes>> {
     const personExists = await this.personRepository.findPersonByDocument(data.document);
 
-    if (blank(personExists)) throw new BadRequestException("Pessoa já cadastrada");
+    if (filled(personExists)) throw new BadRequestException("Pessoa já cadastrada");
 
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(data.password, salt);
@@ -42,7 +42,7 @@ export class PersonService {
 
   async findPersonById(personId: string): Promise<APIResponse<Person, ErrorTypes>> {
     const person = await this.getPersonById(personId);
-    const formatted = excludeFromObject(person, ["password"]);
+    const formatted = excludeFromObject(person, ["password"]) as unknown as Person; // melhorar isso aqui.
 
     return response.success(formatted);
   }

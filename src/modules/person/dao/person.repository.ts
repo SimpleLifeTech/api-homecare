@@ -37,11 +37,14 @@ export class PersonRepository {
     return user;
   }
 
-  async findPersonById(personId: string, include?: { company: boolean }) {
+  async findPersonById(
+    personId: string,
+    include?: { company: boolean },
+  ): Promise<PersonModel | any> {
     return await this.prisma.person.findUnique({
       where: { id: personId, deletedAt: null },
       include: include,
-    } );
+    });
   }
 
   async findPersonByDocument(document: string): Promise<PersonModel | null> {
@@ -54,7 +57,7 @@ export class PersonRepository {
 
   async findOrCreatePerson(data: CreatePersonDTO): Promise<PersonModel> {
     const person = await this.prisma.person.findFirst({
-      where: { OR: [{ document: data.document }, { email: data.email }], deletedAt: null }
+      where: { OR: [{ document: data.document }, { email: data.email }], deletedAt: null },
     });
 
     if (person) return person;

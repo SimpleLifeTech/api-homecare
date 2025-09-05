@@ -4,6 +4,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { mockCreatePersonDTO, mockPersonModel, mockUpdatePersonDTO } from "./person.mock";
 import { APIResponse } from "@modules/shared/utils/response";
 import { PersonModel } from "@modules/models/person.model";
+import { BadRequestException } from "@nestjs/common";
 
 describe("PersonService", () => {
   let service: PersonService;
@@ -41,9 +42,9 @@ describe("PersonService", () => {
 
       const result = await service.createPerson(mockCreatePersonDTO, mockFile);
 
-      const expectedResponse: APIResponse<PersonModel, null> = {
+      const expectedResponse: APIResponse<string, null> = {
         status: true,
-        data: mockPersonModel,
+        data: "Pessoa criada com sucesso!",
         error: null,
         codeHttp: 201,
       };
@@ -51,34 +52,27 @@ describe("PersonService", () => {
       expect(result).toEqual(expectedResponse);
     });
 
-    it("should return error if document already exists", async () => {
+    it("should throw BadRequestException if document already exists", async () => {
       jest.spyOn(repository, "findPersonByDocument").mockResolvedValue(mockPersonModel);
 
-      const result = await service.createPerson(mockCreatePersonDTO, null);
-
-      const expectedResponse: APIResponse<null, string> = {
-        status: false,
-        data: null,
-        error: "Document already exists",
-        codeHttp: 400,
-      };
-
-      expect(result).toEqual(expectedResponse);
+      await expect(service.createPerson(mockCreatePersonDTO, null)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
   describe("updatePersonById", () => {
     it("should update a person successfully", async () => {
       const updatedPerson = { ...mockPersonModel, ...mockUpdatePersonDTO };
-      
+
       jest.spyOn(repository, "findPersonById").mockResolvedValue(mockPersonModel);
       jest.spyOn(repository, "updatePersonById").mockResolvedValue(updatedPerson);
 
       const result = await service.updatePersonById(mockPersonModel.id, mockUpdatePersonDTO, null);
 
-      const expectedResponse: APIResponse<PersonModel, null> = {
+      const expectedResponse: APIResponse<string, null> = {
         status: true,
-        data: updatedPerson,
+        data: "Pessoa atualizada com sucesso!",
         error: null,
         codeHttp: 200,
       };
