@@ -1,8 +1,10 @@
 import { BadRequestException, ClassSerializerInterceptor, ValidationPipe } from "@nestjs/common";
 import { NestFactory, Reflector } from "@nestjs/core";
-import { AppModule } from "./app.module";
 import { errorLogger, requestLogger } from "@shared/shared/utils/log/logger.http";
 import * as dotenv from "dotenv";
+import helmet from "helmet";
+
+import { AppModule } from "./app.module";
 
 dotenv.config();
 async function bootstrap() {
@@ -16,6 +18,7 @@ async function bootstrap() {
     logger: ["error", "warn", "debug", "log", "verbose"],
   });
 
+  app.use(helmet());
   app.use(requestLogger);
   app.use(errorLogger);
 
