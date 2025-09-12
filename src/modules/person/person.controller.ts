@@ -38,8 +38,8 @@ export class PersonController {
   @UseInterceptors(FileInterceptor("image"))
   async updatePerson(
     @Param("personId") personId: string,
-    @UploadedFile() image: Express.Multer.File,
     @Body() data: UpdatePersonDTO,
+    @UploadedFile() image?: Express.Multer.File,
   ) {
     IsEmptyParam(personId);
     return this.personService.updatePersonById(personId, data, image);

@@ -6,7 +6,7 @@ import { MailProvider } from "./email.type";
 
 @Injectable()
 export class MailClient implements MailProvider {
-  constructor(private configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {
     sgMail.setApiKey(this.configService.get<string>("SENDGRID_API_KEY"));
   }
 

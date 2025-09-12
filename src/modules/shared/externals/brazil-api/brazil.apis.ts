@@ -6,9 +6,9 @@ import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class BrazilAPI {
-  constructor(private configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {}
 
-  private BRAZIL_API_URL = this.configService.get<string>("BRAZIL_API_URL");
+  private readonly BRAZIL_API_URL = this.configService.get<string>("BRAZIL_API_URL");
 
   async getBanks() {
     return await axios.get<BANK_RESPONSE[]>(`${this.BRAZIL_API_URL}/banks/v1`);
