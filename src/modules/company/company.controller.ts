@@ -6,13 +6,11 @@ import {
   Param,
   Post,
   Put,
-  Res,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
-import { Response } from "express";
 
 import { CompanyService } from "./company.service";
 import { CreateCompanyDTO } from "./dto/create-company.dto";
@@ -30,38 +28,21 @@ export class CompanyController {
     @Param("personId") personId: string,
     @UploadedFile() image: Express.Multer.File,
     @Body() body: CreateCompanyDTO,
-    @Res({ passthrough: true }) res: Response,
   ) {
     IsEmptyParam(personId);
-    const { codeHttp, ...response } = await this.companyService.createCompany(
-      personId,
-      body,
-      image,
-    );
-
-    res.status(codeHttp).json(response);
+    return this.companyService.createCompany(personId, body, image);
   }
 
   @Get("/list/:companyId")
-  async getCompanyById(
-    @Param("companyId") companyId: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async getCompanyById(@Param("companyId") companyId: string) {
     IsEmptyParam(companyId);
-    const { codeHttp, ...response } = await this.companyService.findCompanyById(companyId);
-
-    res.status(codeHttp).json(response);
+    return this.companyService.findCompanyById(companyId);
   }
 
   @Get("/list-by-person/:personId")
-  async getCompanyByPersonId(
-    @Param("personId") personId: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async getCompanyByPersonId(@Param("personId") personId: string) {
     IsEmptyParam(personId);
-    const { codeHttp, ...response } = await this.companyService.findCompanyByUserId(personId);
-
-    res.status(codeHttp).json(response);
+    return this.companyService.findCompanyByUserId(personId);
   }
 
   @Put("/update/:companyId")
@@ -70,26 +51,14 @@ export class CompanyController {
     @Param("companyId") companyId: string,
     @UploadedFile() image: Express.Multer.File,
     @Body() body: UpdateCompanyDTO,
-    @Res({ passthrough: true }) res: Response,
   ) {
     IsEmptyParam(companyId);
-    const { codeHttp, ...response } = await this.companyService.updateCompany(
-      companyId,
-      body,
-      image,
-    );
-
-    res.status(codeHttp).json(response);
+    return this.companyService.updateCompany(companyId, body, image);
   }
 
   @Delete("/delete/:companyId")
-  async inactivateCompany(
-    @Param("companyId") companyId: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async inactivateCompany(@Param("companyId") companyId: string) {
     IsEmptyParam(companyId);
-    const { codeHttp, ...response } = await this.companyService.inactivateCompany(companyId);
-
-    res.status(codeHttp).json(response);
+    return this.companyService.inactivateCompany(companyId);
   }
 }

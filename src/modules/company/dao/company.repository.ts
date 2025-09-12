@@ -8,7 +8,7 @@ import { CreateCompanyDTO } from "../dto/create-company.dto";
 import { UpdateCompanyDTO } from "../dto/update-company.dto";
 import { OriginBucket } from "@shared/shared/externals/file-storage/filte-storage.types";
 
-const globalFunction = new GlobalFunctions();
+const { getCurrentDateAndTime } = new GlobalFunctions();
 
 @Injectable()
 export class CompanyRepository {
@@ -90,7 +90,7 @@ export class CompanyRepository {
   async inactivateCompanyById(companyId: string): Promise<CompanyModel> {
     return await this.prisma.company.update({
       where: { id: companyId },
-      data: { deletedAt: globalFunction.getCurrentDateAndTime() },
+      data: { deletedAt: getCurrentDateAndTime() },
     });
   }
 }
