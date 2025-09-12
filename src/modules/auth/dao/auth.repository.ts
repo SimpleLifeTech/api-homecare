@@ -4,7 +4,7 @@ import { Tokens, GenTokenPayload, JwtPayload } from "../types/auth.type";
 
 @Injectable()
 export class AuthRepository {
-  constructor(private jwtService: JwtService) {}
+  constructor(private readonly jwtService: JwtService) {}
 
   async getTokens(payload: GenTokenPayload): Promise<Tokens> {
     const { userId, ...rest } = payload;
