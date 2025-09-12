@@ -6,7 +6,7 @@ import { CreateBranchDTO } from "../dto/create-branch.dto";
 import { UpdateBranchDTO } from "../dto/update-branch.dto";
 import { Injectable } from "@nestjs/common";
 
-const globalFunction = new GlobalFunctions();
+const { getCurrentDateAndTime } = new GlobalFunctions();
 
 @Injectable()
 export class BranchRepository {
@@ -37,7 +37,7 @@ export class BranchRepository {
   async inactivateBranchById(branchId: string): Promise<BranchModel> {
     return this.prisma.branch.update({
       where: { id: branchId },
-      data: { deletedAt: globalFunction.getCurrentDateAndTime() },
+      data: { deletedAt: getCurrentDateAndTime() },
     });
   }
 }
