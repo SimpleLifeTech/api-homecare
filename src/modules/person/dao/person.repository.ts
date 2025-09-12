@@ -1,5 +1,6 @@
 import { PersonModel } from "@modules/models/person.model";
 import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 import { FileStorage } from "@shared/shared/externals/file-storage/file-storage";
 import { OriginBucket } from "@shared/shared/externals/file-storage/filte-storage.types";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
@@ -8,7 +9,7 @@ import { PrismaService } from "src/database/prisma/prisma.service";
 import { CreatePersonDTO } from "../dto/create-person.dto";
 import { UpdatePersonDTO } from "../dto/update-person.dto";
 
-const globalFunction = new GlobalFunctions();
+const { getCurrentDateAndTime } = new GlobalFunctions();
 
 @Injectable()
 export class PersonRepository {
@@ -37,13 +38,13 @@ export class PersonRepository {
     return user;
   }
 
-  async findPersonById(
+  async findPersonById<T extends Prisma.PersonInclude | undefined = undefined>(
     personId: string,
-    include?: { company: boolean },
-  ): Promise<PersonModel | any> {
+    include?: T,
+  ): Promise<Prisma.PersonGetPayload<{ include: T }> | null> {
     return await this.prisma.person.findUnique({
       where: { id: personId, deletedAt: null },
-      include: include,
+      include,
     });
   }
 
@@ -85,7 +86,7 @@ export class PersonRepository {
   async inactivatePersonById(personId: string): Promise<PersonModel> {
     return this.prisma.person.update({
       where: { id: personId },
-      data: { deletedAt: globalFunction.getCurrentDateAndTime() },
+      data: { deletedAt: getCurrentDateAndTime() },
     });
   }
 }

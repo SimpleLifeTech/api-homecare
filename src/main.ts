@@ -5,6 +5,8 @@ import * as dotenv from "dotenv";
 import helmet from "helmet";
 
 import { AppModule } from "./app.module";
+import { ResponseInterceptor } from "@shared/shared/interceptors/response.interceptor";
+import { AllExceptionsFilter } from "@shared/shared/interceptors/all-exceptions.filter";
 
 dotenv.config();
 async function bootstrap() {
@@ -28,7 +30,7 @@ async function bootstrap() {
       whitelist: true,
       exceptionFactory: (errors) => {
         const error = {
-          status: true,
+          status: false,
           data: null,
           error: errors[0].constraints[Object.keys(errors[0].constraints)[0]],
         };
@@ -36,7 +38,10 @@ async function bootstrap() {
       },
     }),
   );
+
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   const port = process.env.PORT || 9000;
   await app.listen(port);

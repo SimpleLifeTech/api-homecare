@@ -1,6 +1,5 @@
-import { BadRequestException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
-import { APIResponse, CoreResponse, ErrorTypes } from "@shared/shared/utils/response";
 import * as bcrypt from "bcryptjs";
 
 import { PersonRepository } from "./dao/person.repository";
@@ -8,17 +7,13 @@ import { CreatePersonDTO } from "./dto/create-person.dto";
 import { UpdatePersonDTO } from "./dto/update-person.dto";
 import { Person } from "./types/person.types";
 
-const response = new CoreResponse();
 const { blank, filled, removeSpecialCharacters, excludeFromObject } = new GlobalFunctions();
 
 @Injectable()
 export class PersonService {
   constructor(@Inject(PersonRepository) protected readonly personRepository: PersonRepository) {}
 
-  async createPerson(
-    data: CreatePersonDTO,
-    file?: Express.Multer.File,
-  ): Promise<APIResponse<string, ErrorTypes>> {
+  async createPerson(data: CreatePersonDTO, file?: Express.Multer.File) {
     const personExists = await this.personRepository.findPersonByDocument(data.document);
 
     if (filled(personExists)) throw new BadRequestException("Pessoa já cadastrada");
@@ -37,32 +32,26 @@ export class PersonService {
 
     await this.personRepository.createPerson(user, file);
 
-    return response.success("Pessoa criada com sucesso!", HttpStatus.CREATED);
+    return "Pessoa criada com sucesso!";
   }
 
-  async findPersonById(personId: string): Promise<APIResponse<Person, ErrorTypes>> {
+  async findPersonById(personId: string) {
     const person = await this.getPersonById(personId);
-    const formatted = excludeFromObject(person, ["password"]) as unknown as Person; // melhorar isso aqui.
-
-    return response.success(formatted);
+    return excludeFromObject(person, ["password"]) as unknown as Person;
   }
 
-  async updatePersonById(
-    personId: string,
-    data: UpdatePersonDTO,
-    file?: Express.Multer.File,
-  ): Promise<APIResponse<string, ErrorTypes>> {
+  async updatePersonById(personId: string, data: UpdatePersonDTO, file?: Express.Multer.File) {
     await this.getPersonById(personId);
     await this.personRepository.updatePersonById(personId, data, file);
 
-    return response.success("Pessoa atualizada com sucesso!");
+    return "Pessoa atualizada com sucesso!";
   }
 
-  async inactivatePersonById(personId: string): Promise<APIResponse<string, ErrorTypes>> {
+  async inactivatePersonById(personId: string) {
     await this.getPersonById(personId);
     await this.personRepository.inactivatePersonById(personId);
 
-    return response.success("Pessoa inativada com sucesso!");
+    return "Pessoa inativada com sucesso!";
   }
 
   private async getPersonById(personId: string) {
