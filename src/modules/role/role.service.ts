@@ -1,65 +1,52 @@
-import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { APIResponse, CoreResponse, ErrorTypes } from "@shared/shared/utils/response";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { GlobalFunctions } from "@shared/shared/utils/functions";
 
-import { RoleRoles } from "./business/role.roles";
 import { RoleRepository } from "./dao/role.repository";
 import { CreateOrUpdateRoleDTO } from "./dto/create-update-role.dto";
-import { RoleModel } from "@modules/models/role.model";
 
-const response = new CoreResponse();
+const { blank, filled } = new GlobalFunctions();
 
 @Injectable()
-export class RoleService extends RoleRoles {
-  constructor(@Inject(RoleRepository) protected readonly roleRepository: RoleRepository) {
-    super();
-  }
+export class RoleService {
+  constructor(@Inject(RoleRepository) protected readonly roleRepository: RoleRepository) {}
 
-  async createRole(data: CreateOrUpdateRoleDTO): Promise<APIResponse<string, ErrorTypes>> {
+  async createRole(data: CreateOrUpdateRoleDTO) {
     const roleAlreadyExists = await this.roleRepository.findRoleByName(data.name);
 
-    await this.roleAlreadyExists(roleAlreadyExists);
+    if (filled(roleAlreadyExists)) throw new BadRequestException("Esta função já existe.");
 
     await this.roleRepository.createRole(data);
 
-    return response.success("Função criada com sucesso!", HttpStatus.CREATED);
+    return "Função criada com sucesso!";
   }
 
-  async findRoleById(roleId: number): Promise<APIResponse<RoleModel, ErrorTypes>> {
-    const roleExists = await this.roleRepository.findRoleById(roleId);
-
-    await this.roleNotFound(roleExists);
-
-    return response.success(roleExists);
+  async findRoleById(roleId: number) {
+    return await this.roleNotFound(roleId);
   }
 
-  async findRoles(): Promise<APIResponse<RoleModel[], ErrorTypes>> {
+  async findRoles() {
     const roles = await this.roleRepository.findRoles();
-
-    await this.rolesNotFound(roles);
-
-    return response.success(roles);
+    if (blank(roles)) throw new BadRequestException("Nenhuma função encontrada.");
+    return roles;
   }
 
-  async updateRoleById(
-    roleId: number,
-    data: CreateOrUpdateRoleDTO,
-  ): Promise<APIResponse<string, ErrorTypes>> {
-    const roleExists = await this.roleRepository.findRoleById(roleId);
-
-    await this.roleNotFound(roleExists);
-
+  async updateRoleById(roleId: number, data: CreateOrUpdateRoleDTO) {
+    this.roleNotFound(roleId);
     await this.roleRepository.updateRoleById(roleId, data);
-
-    return response.success("Função atualizada com sucesso!");
+    return "Função atualizada com sucesso!";
   }
 
-  async inactivateRoleById(roleId: number): Promise<APIResponse<string, ErrorTypes>> {
+  async inactivateRoleById(roleId: number) {
+    this.roleNotFound(roleId);
+    await this.roleRepository.inactivateRoleById(roleId);
+    return "Função inativada com sucesso!";
+  }
+
+  private async roleNotFound(roleId: number) {
     const roleExists = await this.roleRepository.findRoleById(roleId);
 
-    await this.roleNotFound(roleExists);
+    if (blank(roleExists)) throw new BadRequestException("Função não encontrada.");
 
-    await this.roleRepository.inactivateRoleById(roleId);
-
-    return response.success("Função inativada com sucesso!");
+    return roleExists;
   }
 }

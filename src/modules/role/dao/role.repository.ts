@@ -5,11 +5,11 @@ import { PrismaService } from "src/database/prisma/prisma.service";
 
 import { CreateOrUpdateRoleDTO } from "../dto/create-update-role.dto";
 
-const globalFunction = new GlobalFunctions();
+const { getCurrentDateAndTime } = new GlobalFunctions();
 
 @Injectable()
 export class RoleRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async createRole(data: CreateOrUpdateRoleDTO): Promise<RoleModel> {
     return await this.prisma.role.create({ data: { ...data } });
@@ -34,7 +34,7 @@ export class RoleRepository {
   async inactivateRoleById(roleId: number): Promise<RoleModel> {
     return await this.prisma.role.update({
       where: { id: roleId },
-      data: { deletedAt: globalFunction.getCurrentDateAndTime() },
+      data: { deletedAt: getCurrentDateAndTime() },
     });
   }
 }
