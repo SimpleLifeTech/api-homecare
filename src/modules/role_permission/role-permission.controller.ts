@@ -1,11 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Res } from "@nestjs/common";
-import { RolePermissionService } from "./role-permission.service";
-import { CreateRolePermissionDTO } from "./dto/create-role-permission.dto";
-import { Response } from "express";
+import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
-import { UpdateRolePermissionDTO } from "./dto/update-role-permission.dto";
 
-const globalFunctions = new GlobalFunctions();
+import { CreateRolePermissionDTO } from "./dto/create-role-permission.dto";
+import { UpdateRolePermissionDTO } from "./dto/update-role-permission.dto";
+import { RolePermissionService } from "./role-permission.service";
+
+const { IsEmptyParam } = new GlobalFunctions();
 
 @Controller("role-permission")
 export class RolePermissionController {
@@ -15,55 +15,29 @@ export class RolePermissionController {
   async createRolePermission(
     @Param("roleId") roleId: string,
     @Body() data: CreateRolePermissionDTO,
-    @Res({ passthrough: true }) res: Response,
   ) {
-    globalFunctions.IsEmptyParam(roleId);
-    const { codeHttp, ...response } = await this.rolePermissionService.createRolePermission(
-      Number(roleId),
-      data,
-    );
-    res.status(codeHttp).json(response);
+    IsEmptyParam(roleId);
+    return this.rolePermissionService.createRolePermission(Number(roleId), data);
   }
 
   @Get("role-permission/list/:rolePermissionId")
-  async getRolePermissionById(
-    @Param("rolePermissionId") rolePermissionId: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    globalFunctions.IsEmptyParam(rolePermissionId);
-
-    const { codeHttp, ...response } =
-      await this.rolePermissionService.findRolePermissionById(rolePermissionId);
-
-    res.status(codeHttp).json(response);
+  async getRolePermissionById(@Param("rolePermissionId") rolePermissionId: string) {
+    IsEmptyParam(rolePermissionId);
+    return this.rolePermissionService.findRolePermissionById(rolePermissionId);
   }
 
   @Put("role-permission/update/:rolePermissionId")
   async updateRolePermissionById(
     @Param("rolePermissionId") rolePermissionId: string,
     @Body() data: UpdateRolePermissionDTO,
-    @Res({ passthrough: true }) res: Response,
   ) {
-    globalFunctions.IsEmptyParam(rolePermissionId);
-
-    const { codeHttp, ...response } = await this.rolePermissionService.updateFunctionPermissionById(
-      rolePermissionId,
-      data,
-    );
-
-    res.status(codeHttp).json(response);
+    IsEmptyParam(rolePermissionId);
+    return this.rolePermissionService.updateFunctionPermissionById(rolePermissionId, data);
   }
 
   @Delete("role-permission/delete/:rolePermissionId")
-  async deleteRolePermissionById(
-    @Param("rolePermissionId") rolePermissionId: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    globalFunctions.IsEmptyParam(rolePermissionId);
-
-    const { codeHttp, ...response } =
-      await this.rolePermissionService.inactivateFunctionPermissionById(rolePermissionId);
-
-    res.status(codeHttp).json(response);
+  async deleteRolePermissionById(@Param("rolePermissionId") rolePermissionId: string) {
+    IsEmptyParam(rolePermissionId);
+    return this.rolePermissionService.inactivateFunctionPermissionById(rolePermissionId);
   }
 }

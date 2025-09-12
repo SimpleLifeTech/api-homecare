@@ -6,11 +6,11 @@ import { PrismaService } from "src/database/prisma/prisma.service";
 import { CreateRolePermissionDTO } from "../dto/create-role-permission.dto";
 import { UpdateRolePermissionDTO } from "../dto/update-role-permission.dto";
 
-const globalFunction = new GlobalFunctions();
+const { getCurrentDateAndTime } = new GlobalFunctions();
 
 @Injectable()
 export class RolePermissionRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async createRolePermission(
     roleId: number,
@@ -50,7 +50,7 @@ export class RolePermissionRepository {
   async inactivateRolePermissionById(rolePermissionId: string): Promise<RolePermissionModel> {
     return await this.prisma.rolePermission.update({
       where: { id: rolePermissionId },
-      data: { deletedAt: globalFunction.getCurrentDateAndTime() },
+      data: { deletedAt: getCurrentDateAndTime() },
     });
   }
 }

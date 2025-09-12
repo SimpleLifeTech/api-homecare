@@ -1,81 +1,59 @@
-import { RolePermissionModel } from "@modules/models/role-permission.model";
-import { RoleRoles } from "@modules/role/business/role.roles";
 import { RoleRepository } from "@modules/role/dao/role.repository";
-import { HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { APIResponse, CoreResponse, ErrorTypes } from "@shared/shared/utils/response";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { GlobalFunctions } from "@shared/shared/utils/functions";
 
-import { RolePermissionRoles } from "./business/role-permission.roles";
 import { RolePermissionRepository } from "./dao/role-permission.repository";
 import { CreateRolePermissionDTO } from "./dto/create-role-permission.dto";
 import { UpdateRolePermissionDTO } from "./dto/update-role-permission.dto";
 
-const response = new CoreResponse();
-
+const { blank, filled } = new GlobalFunctions();
 @Injectable()
-export class RolePermissionService extends RolePermissionRoles {
+export class RolePermissionService {
   constructor(
     @Inject(RolePermissionRepository)
     private readonly rolePermissionRepository: RolePermissionRepository,
     @Inject(RoleRepository)
     private readonly roleRepository: RoleRepository,
-    private readonly roleRoles: RoleRoles,
-  ) {
-    super();
-  }
+  ) {}
 
-  async createRolePermission(
-    roleId: number,
-    data: CreateRolePermissionDTO,
-  ): Promise<APIResponse<string, ErrorTypes>> {
+  async createRolePermission(roleId: number, data: CreateRolePermissionDTO) {
     const roleExists = await this.roleRepository.findRoleById(roleId);
 
-    await this.roleRoles.roleNotFound(roleExists);
+    if (blank(roleExists)) throw new BadRequestException("Função não encontrada.");
 
     const rolePermissionAlreadyExists =
       await this.rolePermissionRepository.findRolePermissionByRoleId(roleId);
 
-    await this.rolePermissionAlreadyExists(rolePermissionAlreadyExists);
+    if (filled(rolePermissionAlreadyExists))
+      throw new BadRequestException("Esta Permissão já existe.");
 
     await this.rolePermissionRepository.createRolePermission(roleId, data);
 
-    return response.success("Permissão criada com sucesso!", HttpStatus.CREATED);
+    return "Permissão criada com sucesso!";
   }
 
-  async findRolePermissionById(
-    rolePermissionId: string,
-  ): Promise<APIResponse<RolePermissionModel, ErrorTypes>> {
-    const rolePermissionExists =
-      await this.rolePermissionRepository.findRolePermissionById(rolePermissionId);
-
-    await this.rolePermissionNotFound(rolePermissionExists);
-
-    return response.success(rolePermissionExists);
+  async findRolePermissionById(rolePermissionId: string) {
+    return this.rolePermissionNotFound(rolePermissionId);
   }
 
-  async updateFunctionPermissionById(
-    rolePermissionId: string,
-    data: UpdateRolePermissionDTO,
-  ): Promise<APIResponse<string, ErrorTypes>> {
-    const rolePermissionExists =
-      await this.rolePermissionRepository.findRolePermissionById(rolePermissionId);
-
-    await this.rolePermissionNotFound(rolePermissionExists);
-
+  async updateFunctionPermissionById(rolePermissionId: string, data: UpdateRolePermissionDTO) {
+    await this.rolePermissionNotFound(rolePermissionId);
     await this.rolePermissionRepository.updateRolePermissionById(rolePermissionId, data);
-
-    return response.success("Permissão atualizada com sucesso!");
+    return "Permissão atualizada com sucesso!";
   }
 
-  async inactivateFunctionPermissionById(
-    rolePermissionId: string,
-  ): Promise<APIResponse<string, ErrorTypes>> {
+  async inactivateFunctionPermissionById(rolePermissionId: string) {
+    await this.rolePermissionNotFound(rolePermissionId);
+    await this.rolePermissionRepository.inactivateRolePermissionById(rolePermissionId);
+    return "Permissão desativada com sucesso!";
+  }
+
+  private async rolePermissionNotFound(rolePermissionId: string) {
     const rolePermissionExists =
       await this.rolePermissionRepository.findRolePermissionById(rolePermissionId);
 
-    await this.rolePermissionNotFound(rolePermissionExists);
+    if (blank(rolePermissionExists)) throw new BadRequestException("Permissão não encontrada.");
 
-    await this.rolePermissionRepository.inactivateRolePermissionById(rolePermissionId);
-
-    return response.success("Permissão desativada com sucesso!");
+    return rolePermissionExists;
   }
 }
