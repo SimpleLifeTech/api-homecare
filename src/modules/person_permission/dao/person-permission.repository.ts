@@ -3,11 +3,11 @@ import { Injectable } from "@nestjs/common";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { PrismaService } from "src/database/prisma/prisma.service";
 
-const globalFunction = new GlobalFunctions();
+const { getCurrentDateAndTime } = new GlobalFunctions();
 
 @Injectable()
 export class PersonPermissionRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async createPersonPermission(
     personId: string,
@@ -44,7 +44,7 @@ export class PersonPermissionRepository {
   async inactivatePermissionById(personPermissionId: string): Promise<PersonPermissionModel> {
     return await this.prisma.personPermission.update({
       where: { id: personPermissionId },
-      data: { deletedAt: globalFunction.getCurrentDateAndTime() },
+      data: { deletedAt: getCurrentDateAndTime() },
     });
   }
 }
