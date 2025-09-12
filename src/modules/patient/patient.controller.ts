@@ -1,6 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
-import { Response } from "express";
 
 import { CreatePatientDto } from "./dto/create-patient.dto";
 import { UpdatePatientDto } from "./dto/update-patient.dto";
@@ -13,46 +12,31 @@ export class PatientController {
   constructor(private readonly patientService: PatientService) {}
 
   @Post()
-  async create(@Body() dto: CreatePatientDto, @Res({ passthrough: true }) res: Response) {
-    const userToken = res.locals.userToken; // TODO: Get User By Token
-
-    const { codeHttp, ...response } = await this.patientService.create(dto, userToken);
-
-    res.status(codeHttp).json(response);
+  async create(@Body() dto: CreatePatientDto) {
+    const userToken = ""; // TODO: Get User By Token
+    return this.patientService.create(dto, userToken);
   }
 
   @Get()
-  async findAll(@Res({ passthrough: true }) res: Response) {
-    const { codeHttp, ...response } = await this.patientService.findAll();
-
-    res.status(codeHttp).json(response);
+  async findAll() {
+    return this.patientService.findAll();
   }
 
   @Get(":id")
-  async findOne(@Param("id") id: string, @Res({ passthrough: true }) res: Response) {
+  async findOne(@Param("id") id: string) {
     IsEmptyParam(id);
-    const { codeHttp, ...response } = await this.patientService.findOne(id);
-
-    res.status(codeHttp).json(response);
+    return this.patientService.findOne(id);
   }
 
   @Put(":id")
-  async update(
-    @Param("id") id: string,
-    @Body() dto: UpdatePatientDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async update(@Param("id") id: string, @Body() dto: UpdatePatientDto) {
     IsEmptyParam(id);
-    const { codeHttp, ...response } = await this.patientService.update(id, dto);
-
-    res.status(codeHttp).json(response);
+    return this.patientService.update(id, dto);
   }
 
   @Delete(":id")
-  async remove(@Param("id") id: string, @Res({ passthrough: true }) res: Response) {
+  async remove(@Param("id") id: string) {
     IsEmptyParam(id);
-    const { codeHttp, ...response } = await this.patientService.remove(id);
-
-    res.status(codeHttp).json(response);
+    return this.patientService.remove(id);
   }
 }
