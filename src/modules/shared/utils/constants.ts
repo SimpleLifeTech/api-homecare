@@ -1,1 +1,0 @@
-export const DATA_SOURCE_PROVIDER = "DATA_SOURCE";

@@ -1,4 +1,3 @@
-import { PersonPermissionModel } from "@modules/models/person-permission.model";
 import { Injectable } from "@nestjs/common";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { PrismaService } from "src/database/prisma/prisma.service";
@@ -12,20 +11,20 @@ export class PersonPermissionRepository {
   async createPersonPermission(
     personId: string,
     rolePermissionId: string,
-  ): Promise<PersonPermissionModel> {
+  ) {
     return await this.prisma.personPermission.create({
       data: { personId: personId, rolePermissionId: rolePermissionId },
     });
   }
 
-  async findPermissionByPersonId(personId: string): Promise<PersonPermissionModel[]> {
+  async findPermissionByPersonId(personId: string) {
     return await this.prisma.personPermission.findMany({
       where: { personId: personId, deletedAt: null },
       include: { rolePermission: true },
     });
   }
 
-  async findPermissionById(personPermissionId: string): Promise<PersonPermissionModel> {
+  async findPermissionById(personPermissionId: string) {
     return await this.prisma.personPermission.findUnique({
       where: { id: personPermissionId, deletedAt: null },
     });
@@ -34,14 +33,14 @@ export class PersonPermissionRepository {
   async updatePermissionById(
     personPermissionId: string,
     rolePermissionId: string,
-  ): Promise<PersonPermissionModel> {
+  ) {
     return await this.prisma.personPermission.update({
       where: { id: personPermissionId },
       data: { rolePermissionId: rolePermissionId },
     });
   }
 
-  async inactivatePermissionById(personPermissionId: string): Promise<PersonPermissionModel> {
+  async inactivatePermissionById(personPermissionId: string) {
     return await this.prisma.personPermission.update({
       where: { id: personPermissionId },
       data: { deletedAt: getCurrentDateAndTime() },

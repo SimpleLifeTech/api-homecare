@@ -1,12 +1,11 @@
-import { CompanyModel } from "@modules/models/company.model";
-import { Injectable } from "@nestjs/common";
-import { FileStorage } from "@shared/shared/externals/file-storage/file-storage";
-import { GlobalFunctions } from "@shared/shared/utils/functions";
-import { PrismaService } from "src/database/prisma/prisma.service";
+import { Injectable } from '@nestjs/common';
+import { FileStorage } from '@shared/shared/externals/file-storage/file-storage';
+import { OriginBucket } from '@shared/shared/externals/file-storage/filte-storage.types';
+import { GlobalFunctions } from '@shared/shared/utils/functions';
+import { PrismaService } from 'src/database/prisma/prisma.service';
 
-import { CreateCompanyDTO } from "../dto/create-company.dto";
-import { UpdateCompanyDTO } from "../dto/update-company.dto";
-import { OriginBucket } from "@shared/shared/externals/file-storage/filte-storage.types";
+import { CreateCompanyDTO } from '../dto/create-company.dto';
+import { UpdateCompanyDTO } from '../dto/update-company.dto';
 
 const { getCurrentDateAndTime } = new GlobalFunctions();
 
@@ -56,15 +55,15 @@ export class CompanyRepository {
     });
   }
 
-  async findCompanyByDocument(document: string): Promise<CompanyModel> {
+  async findCompanyByDocument(document: string) {
     return await this.prisma.company.findFirst({ where: { document, deletedAt: null } });
   }
 
-  async findCompanyById(companyId: string): Promise<CompanyModel> {
+  async findCompanyById(companyId: string) {
     return await this.prisma.company.findUnique({ where: { id: companyId, deletedAt: null } });
   }
 
-  async findCompanyByUserId(ownerId: string): Promise<CompanyModel> {
+  async findCompanyByUserId(ownerId: string) {
     return await this.prisma.company.findFirst({
       where: { ownerId, deletedAt: null },
     });
@@ -74,7 +73,7 @@ export class CompanyRepository {
     companyId: string,
     data: UpdateCompanyDTO,
     file?: Express.Multer.File,
-  ): Promise<CompanyModel> {
+  ) {
     const company = await this.findCompanyById(companyId);
 
     const companyImageUrl = file
@@ -87,7 +86,7 @@ export class CompanyRepository {
     });
   }
 
-  async inactivateCompanyById(companyId: string): Promise<CompanyModel> {
+  async inactivateCompanyById(companyId: string) {
     return await this.prisma.company.update({
       where: { id: companyId },
       data: { deletedAt: getCurrentDateAndTime() },

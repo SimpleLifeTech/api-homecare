@@ -1,12 +1,11 @@
-import { CompanyModel } from "@modules/models/company.model";
-import { PersonPermissionModel } from "@modules/models/person-permission.model";
 import { Person } from "@modules/person/types/person.types";
+import { Company, PersonPermission } from "@prisma/client";
 
 export interface IResponseLogin {
   tokens: Tokens;
   user: Person;
-  company: CompanyModel | null;
-  permissions: PersonPermissionModel[];
+  company: Company | null;
+  permissions: PersonPermission[];
 }
 
 export type GenTokenPayload = { userId: string; email: string };

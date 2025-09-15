@@ -1,4 +1,3 @@
-import { BranchModel } from "@modules/models/branch.model";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { PrismaService } from "src/database/prisma/prisma.service";
 
@@ -12,29 +11,29 @@ const { getCurrentDateAndTime } = new GlobalFunctions();
 export class BranchRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createBranch(companyId: string, data: CreateBranchDTO): Promise<BranchModel> {
+  async createBranch(companyId: string, data: CreateBranchDTO) {
     return this.prisma.branch.create({ data: { companyId: companyId, ...data } });
   }
 
-  async findBranchesByCompanyId(companyId: string): Promise<BranchModel[]> {
+  async findBranchesByCompanyId(companyId: string) {
     return this.prisma.branch.findMany({ where: { companyId: companyId, deletedAt: null } });
   }
 
-  async findBranchById(branchId: string): Promise<BranchModel> {
+  async findBranchById(branchId: string) {
     return this.prisma.branch.findUnique({ where: { id: branchId, deletedAt: null } });
   }
 
-  async findBranchByName(companyId: string, name: string): Promise<BranchModel> {
+  async findBranchByName(companyId: string, name: string) {
     return this.prisma.branch.findFirst({
       where: { companyId: companyId, name, deletedAt: null },
     });
   }
 
-  async updateBranchById(branchId: string, data: UpdateBranchDTO): Promise<BranchModel> {
+  async updateBranchById(branchId: string, data: UpdateBranchDTO) {
     return this.prisma.branch.update({ where: { id: branchId }, data: { ...data } });
   }
 
-  async inactivateBranchById(branchId: string): Promise<BranchModel> {
+  async inactivateBranchById(branchId: string) {
     return this.prisma.branch.update({
       where: { id: branchId },
       data: { deletedAt: getCurrentDateAndTime() },
