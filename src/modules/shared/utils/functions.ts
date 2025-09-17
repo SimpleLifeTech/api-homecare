@@ -12,6 +12,15 @@ export class GlobalFunctions {
   }
 
   /**
+   * Validates if a parameter is an array
+   * @param param - Parameter to be validated
+   * @throws HttpException - Throws a 400 Bad Request if the parameter is not an array
+   */
+  IsValidArray(param: any) {
+    if (!Array.isArray(param)) throw new BadRequestException("Parâmetro malformado");
+  }
+
+  /**
    * Get the current date and time in the "America/Bahia" timezone
    * @returns Current date and time in the "America/Bahia" timezone
    */

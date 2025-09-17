@@ -1,16 +1,17 @@
-import { AuthModule } from "@modules/auth/auth.module";
-import { BranchModule } from "@modules/branch/branch.module";
-import { CompanyModule } from "@modules/company/company.module";
-import { PersonModule } from "@modules/person/person.module";
-import { RoleModule } from "@modules/role/role.module";
-import { RolePermissionModule } from "@modules/role_permission/role-permission.module";
-import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
-import { APP_FILTER } from "@nestjs/core";
-import { HttpExceptionFilter } from "@shared/shared/utils/errors/http-exeception.filter";
+import { AuthModule } from '@modules/auth/auth.module';
+import { BranchModule } from '@modules/branch/branch.module';
+import { CompanyModule } from '@modules/company/company.module';
+import { DepartmentModule } from '@modules/department/department.module';
+import { PersonModule } from '@modules/person/person.module';
+import { RoleModule } from '@modules/role/role.module';
+import { RolePermissionModule } from '@modules/role_permission/role-permission.module';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from '@shared/shared/utils/errors/http-exeception.filter';
 
-import { AppController } from "./app.controller";
-import { PrismaService } from "./database/prisma/prisma.service";
+import { AppController } from './app.controller';
+import { PrismaService } from './database/prisma/prisma.service';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PrismaService } from "./database/prisma/prisma.service";
     AuthModule,
     BranchModule,
     CompanyModule,
+    DepartmentModule,
     PersonModule,
     RoleModule,
     RolePermissionModule,
