@@ -23,6 +23,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs/cache-manager": "^3.0.1",
     "@nestjs/common": "^11.1.6",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.6",
@@ -35,6 +36,8 @@
     "@supabase/supabase-js": "^2.56.0",
     "axios": "^1.11.0",
     "bcryptjs": "3.0.2",
+    "cache-manager": "^7.2.0",
+    "cache-manager-ioredis-store": "^1.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "date-fns": "^4.1.0",
@@ -50,6 +53,7 @@
     "@nestjs/schematics": "^11.0.7",
     "@nestjs/testing": "^11.1.6",
     "@types/bcryptjs": "^3.0.0",
+    "@types/cache-manager-ioredis": "^2.0.7",
     "@types/express": "^5.0.3",
     "@types/jest": "^30.0.0",
     "@types/multer": "^2.0.0",
@@ -70,29 +74,6 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.2"
-  },
-  "overrides": {
-    "ansi-regex": "6.2.2",
-    "strip-ansi": "7.1.0",
-    "string-width": "8.1.0",
-    "ansi-styles": "6.2.1",
-    "chalk": "5.4.1",
-    "supports-color": "10.2.1",
-    "color-convert": "3.1.1",
-    "color-name": "2.0.1",
-    "is-arrayish": "0.3.3",
-    "slice-ansi": "7.1.1",
-    "wrap-ansi": "9.0.1",
-    "debug": "4.4.2",
-    "color": "5.0.1",
-    "color-string": "2.1.1",
-    "simple-swizzle": "0.2.3",
-    "supports-hyperlinks": "4.1.1",
-    "has-ansi": "6.0.1",
-    "chalk-template": "1.1.1",
-    "backslash": "0.2.1",
-    "error-ex": "1.3.3",
-    "proto-tinker-wc": "1.8.7"
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma"

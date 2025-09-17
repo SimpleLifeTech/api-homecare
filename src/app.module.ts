@@ -6,17 +6,30 @@ import { PersonModule } from '@modules/person/person.module';
 import { RoleModule } from '@modules/role/role.module';
 import { RolePermissionModule } from '@modules/role_permission/role-permission.module';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from '@shared/shared/utils/errors/http-exeception.filter';
 
 import { AppController } from './app.controller';
 import { PrismaService } from './database/prisma/prisma.service';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        store: (await import('cache-manager-ioredis-store')).default,
+        host: config.get<string>('REDIS_HOST'),
+        port: config.get<number>('REDIS_PORT'),
+        auth_pass: config.get<string>('REDIS_PASSWORD'),
+        db: config.get<number>('REDIS_DB') ?? 0,
+        ttl: 60,
+      }),
     }),
     AuthModule,
     BranchModule,
