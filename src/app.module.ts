@@ -30,6 +30,7 @@ import { CacheModule } from '@nestjs/cache-manager';
         db: config.get<number>('REDIS_DB') ?? 0,
         ttl: 60,
       }),
+      isGlobal: true,
     }),
     AuthModule,
     BranchModule,

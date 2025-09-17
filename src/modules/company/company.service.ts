@@ -5,6 +5,7 @@ import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { CompanyRepository } from "./dao/company.repository";
 import { CreateCompanyDTO } from "./dto/create-company.dto";
 import { UpdateCompanyDTO } from "./dto/update-company.dto";
+import { CacheRepository } from "@shared/shared/cache/cache.repository";
 
 const { filled, blank } = new GlobalFunctions();
 
@@ -15,7 +16,9 @@ export class CompanyService {
     protected readonly companyRepository: CompanyRepository,
     @Inject(PersonRepository)
     protected readonly personRepository: PersonRepository,
+    @Inject(CacheRepository) private readonly cache: CacheRepository,
   ) {}
+
   async createCompany(
     personId: string,
     createCompanyDTO: CreateCompanyDTO,
@@ -49,6 +52,7 @@ export class CompanyService {
   async updateCompany(companyId: string, company: UpdateCompanyDTO, file?: Express.Multer.File) {
     await this.companyExists(companyId);
     await this.companyRepository.updateCompanyById(companyId, company, file);
+    await this.cache.del(this.cacheKey(companyId));
 
     return "Empresa atualizada com sucesso!";
   }
@@ -56,15 +60,22 @@ export class CompanyService {
   async inactivateCompany(companyId: string) {
     await this.companyExists(companyId);
     await this.companyRepository.inactivateCompanyById(companyId);
+    await this.cache.del(this.cacheKey(companyId));
 
     return "Empresa deletada com sucesso!";
   }
 
   private async companyExists(companyId: string) {
+    const cachekey = this.cacheKey(companyId);
+    const cache = await this.cache.get(cachekey);
+
+    if (filled(cache)) return cache;
+
     const company = await this.companyRepository.findCompanyById(companyId);
 
     if (blank(company)) throw new BadRequestException("Empresa não encontrada");
-
+    
+    await this.cache.set(cachekey, company);
     return company;
   }
 
@@ -75,4 +86,8 @@ export class CompanyService {
 
     return person;
   }
+
+  private cacheKey(companyId: string) {
+    return `company:${companyId}`
+  } 
 }

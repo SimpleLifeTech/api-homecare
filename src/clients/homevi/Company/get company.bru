@@ -1,0 +1,15 @@
+meta {
+  name: get company
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{local}}/company/list/:companyId
+  body: none
+  auth: none
+}
+
+params:path {
+  companyId: 35787655-a050-4c26-9401-7c28785e9acf
+}
