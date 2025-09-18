@@ -1,0 +1,27 @@
+meta {
+  name: create company
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{local}}/company/create/:personId
+  body: multipartForm
+  auth: none
+}
+
+params:path {
+  personId: cc01c618-57f4-46a5-814e-84f7ebece649
+}
+
+body:multipart-form {
+  type: SUPPLIER
+  name: Supplier Test
+  document: 43033315000148
+  address: teste endereco
+  addressNumber: 123
+  addressCity: Taguatinga
+  addressState: Distrito Federal
+  addressZipcode: 12345678
+  image: @file(C:\Users\BEST OPTION NOTEBOOK\Pictures\Pipetech_Logo_Black.png)
+}

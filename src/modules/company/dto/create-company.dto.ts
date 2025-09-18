@@ -1,5 +1,5 @@
 import { CompanyType } from "@prisma/client";
-import { IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateCompanyDTO {
   @IsEnum(CompanyType, { message: "O tipo da empresa é inválido" })
@@ -23,6 +23,7 @@ export class CreateCompanyDTO {
   addressNumber: string;
 
   @IsString({ message: "O complemento do endereço da empresa deve ser uma string" })
+  @IsOptional()
   addressComplement: string;
 
   @IsString({ message: "A cidade da empresa deve ser uma string" })

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FileStorage } from '@shared/shared/externals/file-storage/file-storage';
-import { OriginBucket } from '@shared/shared/externals/file-storage/filte-storage.types';
+import { Buckets } from '@shared/shared/externals/file-storage/filte-storage.types';
 import { GlobalFunctions } from '@shared/shared/utils/functions';
 import { PrismaService } from 'src/database/prisma/prisma.service';
 
@@ -25,9 +25,8 @@ export class CompanyRepository {
       let companyImageUrl = null;
 
       if (file) {
-        companyImageUrl = await this.fileStorage.uploadImage(
-          data.document,
-          OriginBucket.COMPANY,
+        companyImageUrl = await this.fileStorage.uploadFile(
+          Buckets.company_profile,
           file,
         );
       }
@@ -76,9 +75,16 @@ export class CompanyRepository {
   ) {
     const company = await this.findCompanyById(companyId);
 
-    const companyImageUrl = file
-      ? await this.fileStorage.uploadImage(companyId, OriginBucket.COMPANY, file)
-      : company?.companyImageUrl;
+    let companyImageUrl = null;
+    
+    if (file) {
+      companyImageUrl = await this.fileStorage.uploadFile(Buckets.company_profile,file)
+       if (company?.companyImageUrl) {
+        await this.fileStorage.deleteFile(company?.companyImageUrl);
+      }
+    } else {
+      companyImageUrl = company?.companyImageUrl;
+    }
 
     return await this.prisma.company.update({
       where: { id: companyId },

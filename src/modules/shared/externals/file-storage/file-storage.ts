@@ -1,5 +1,6 @@
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 
 import { StorageService } from './file-storage.client';
 import { BucketType } from './filte-storage.types';
@@ -13,9 +14,15 @@ export class FileStorage {
     company_profile: process.env.COMPANY_PROFILE_PHOTO_BUCKET as string,
   };
 
+  /**
+   * Uploads a file to a specific bucket
+   * 
+   * @param bucketType - Bucket type to upload the file
+   * @param file - File to upload
+   * @returns file url
+   */
   async uploadFile(
     bucketType: BucketType,
-    fileKey: string,
     file: Express.Multer.File
   ) {
     const allowedMimeTypes = [
@@ -35,6 +42,8 @@ export class FileStorage {
       throw new Error("Tipo de arquivo inválido");
     }
 
+    const extension = file.originalname.split('.').pop();
+    const fileKey = `${uuidv4()}.${extension}`;
     const bucketName = this.bucketMap[bucketType];
     const s3 = this.storageService.getClient();
 
@@ -48,11 +57,32 @@ export class FileStorage {
         })
       );
 
-      const baseUrl = process.env.MINIO_ENDPOINT as string;
-      return `${baseUrl}/${bucketName}/${fileKey}`;
+      return `${bucketName}/${fileKey}`;
     } catch (error) {
       console.error(`Erro ao fazer upload para bucket ${bucketName}:`, error);
       throw new Error("Erro ao fazer upload do arquivo no MinIO");
+    }
+  }
+
+  /**
+   * Deletes a file
+   * 
+   * @param fileUrl - File url
+   */
+  async deleteFile(fileUrl: string) {
+    const s3 = this.storageService.getClient();
+    const [bucketName, fileKey] = fileUrl.split('/');
+    
+    try {
+      await s3.send(
+        new DeleteObjectCommand({
+          Bucket: bucketName,
+          Key: fileKey,
+        })
+      )
+    } catch (error) {
+      console.error(`Erro ao deletar o arquivo: ${bucketName}/${fileKey}`, error);
+      throw new Error(`Erro ao deletar o arquivo: ${(error as Error).message}`);
     }
   }
 }
