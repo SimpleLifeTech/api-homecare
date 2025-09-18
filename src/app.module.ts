@@ -5,6 +5,7 @@ import { DepartmentModule } from '@modules/department/department.module';
 import { PersonModule } from '@modules/person/person.module';
 import { RoleModule } from '@modules/role/role.module';
 import { RolePermissionModule } from '@modules/role_permission/role-permission.module';
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
@@ -12,7 +13,6 @@ import { HttpExceptionFilter } from '@shared/shared/utils/errors/http-exeception
 
 import { AppController } from './app.controller';
 import { PrismaService } from './database/prisma/prisma.service';
-import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -20,6 +20,7 @@ import { CacheModule } from '@nestjs/cache-manager';
       isGlobal: true,
     }),
     CacheModule.registerAsync({
+      isGlobal: true,
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
@@ -30,7 +31,6 @@ import { CacheModule } from '@nestjs/cache-manager';
         db: config.get<number>('REDIS_DB') ?? 0,
         ttl: 60,
       }),
-      isGlobal: true,
     }),
     AuthModule,
     BranchModule,
