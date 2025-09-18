@@ -17,7 +17,7 @@ export class PersonService {
     private readonly cache: CacheRepository,
   ) {}
 
-  async createPerson(data: CreatePersonDTO, file?: Express.Multer.File) {
+  async createPerson(data: CreatePersonDTO) {
     const personExists = await this.personRepository.findPersonByDocument(data.document);
 
     if (filled(personExists)) throw new BadRequestException("Pessoa já cadastrada");
@@ -33,9 +33,7 @@ export class PersonService {
       document: removeSpecialCharacters(data.document),
       addressZipcode: removeSpecialCharacters(data.addressZipcode),
     };
-
-    await this.personRepository.createPerson(user, file);
-
+    await this.personRepository.createPerson(user);
     return "Pessoa criada com sucesso!";
   }
 
@@ -43,9 +41,9 @@ export class PersonService {
     return await this.getPersonById(personId);
   }
 
-  async updatePersonById(personId: string, data: UpdatePersonDTO, file?: Express.Multer.File) {
+  async updatePersonById(personId: string, data: UpdatePersonDTO) {
     await this.getPersonById(personId);
-    await this.personRepository.updatePersonById(personId, data, file);
+    await this.personRepository.updatePersonById(personId, data);
     await this.cache.del(this.cacheKey(personId));
     return "Pessoa atualizada com sucesso!";
   }

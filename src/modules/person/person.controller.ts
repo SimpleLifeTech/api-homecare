@@ -1,20 +1,9 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UploadedFile,
-  UseInterceptors,
-} from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { GlobalFunctions } from "@shared/shared/utils/functions";
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { GlobalFunctions } from '@shared/shared/utils/functions';
 
-import { CreatePersonDTO } from "./dto/create-person.dto";
-import { UpdatePersonDTO } from "./dto/update-person.dto";
-import { PersonService } from "./person.service";
+import { CreatePersonDTO } from './dto/create-person.dto';
+import { UpdatePersonDTO } from './dto/update-person.dto';
+import { PersonService } from './person.service';
 
 const { IsEmptyParam } = new GlobalFunctions();
 
@@ -23,9 +12,8 @@ export class PersonController {
   constructor(protected readonly personService: PersonService) {}
 
   @Post("/create")
-  @UseInterceptors(FileInterceptor("image"))
-  async createPerson(@UploadedFile() image: Express.Multer.File, @Body() data: CreatePersonDTO) {
-    return this.personService.createPerson(data, image);
+  async createPerson(@Body() data: CreatePersonDTO) {
+    return this.personService.createPerson(data);
   }
 
   @Get("/list/:personId")
@@ -35,14 +23,12 @@ export class PersonController {
   }
 
   @Put("/update/:personId")
-  @UseInterceptors(FileInterceptor("image"))
   async updatePerson(
     @Param("personId") personId: string,
     @Body() data: UpdatePersonDTO,
-    @UploadedFile() image?: Express.Multer.File,
   ) {
     IsEmptyParam(personId);
-    return this.personService.updatePersonById(personId, data, image);
+    return this.personService.updatePersonById(personId, data);
   }
 
   @Delete("/delete/:personId")
