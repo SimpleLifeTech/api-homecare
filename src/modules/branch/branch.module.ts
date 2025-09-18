@@ -21,5 +21,6 @@ import { BranchRepository } from './dao/branch.repository';
     CacheRepository,
     PrismaService,
   ],
+  exports: [BranchRepository, BranchService],
 })
 export class BranchModule {}

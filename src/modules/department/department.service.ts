@@ -1,12 +1,13 @@
-import { BranchRepository } from "@modules/branch/dao/branch.repository";
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { GlobalFunctions } from "@shared/shared/utils/functions";
+import { BranchService } from '@modules/branch/branch.service';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { GlobalFunctions } from '@shared/shared/utils/functions';
 
-import { DepartmentRepository } from "./dao/department.repository";
-import { CreateDepartmentDTO } from "./dto/create-department.dto";
-import { UpdateDepartmentDTO } from "./dto/update-department.dto";
-import { AddOrUpdateEmployeeDepartmentDTO } from "./dto/add-or-update-employee-to-department.dto";
-import { DepartmentEmployeeRepository } from "./dao/department-employee.repository";
+import { DepartmentEmployeeRepository } from './dao/department-employee.repository';
+import { DepartmentRepository } from './dao/department.repository';
+import { AddOrUpdateEmployeeDepartmentDTO } from './dto/add-or-update-employee-to-department.dto';
+import { CreateDepartmentDTO } from './dto/create-department.dto';
+import { UpdateDepartmentDTO } from './dto/update-department.dto';
+import { CacheRepository } from '@shared/shared/cache/cache.repository';
 
 const { blank, filled } = new GlobalFunctions();
 
@@ -16,11 +17,12 @@ export class DepartmentService {
     @Inject(DepartmentRepository) private readonly departmentRepository: DepartmentRepository,
     @Inject(DepartmentEmployeeRepository)
     private readonly departmentEmployeeRepository: DepartmentEmployeeRepository,
-    @Inject(BranchRepository) private readonly branchRepository: BranchRepository,
+    private readonly branchService: BranchService,
+    private readonly cache: CacheRepository
   ) {}
 
   async createDepartment(data: CreateDepartmentDTO) {
-    await this.branchRepository.findBranchById(data.branchId);
+    await this.branchService.findBranchById(data.branchId);
     const hasDepartment = await this.departmentRepository.findDepartmentByName(
       data.name,
       data.branchId,
@@ -61,7 +63,7 @@ export class DepartmentService {
   }
 
   async findDepartmentsByBranchId(branchId: string) {
-    await this.branchRepository.findBranchById(branchId);
+    await this.branchService.findBranchById(branchId);
     const departments = await this.departmentRepository.findDepartmentsByBranchId(branchId);
     return departments ? departments : [];
   }
@@ -69,7 +71,7 @@ export class DepartmentService {
   async updateDepartmentById(departmentId: string, data: UpdateDepartmentDTO) {
     await this.getDepartmentById(departmentId);
     await this.departmentRepository.updateDepartmentById(departmentId, data);
-
+    await this.cache.del(this.cacheKey(departmentId));
     return "Departamento atualizado com sucesso!";
   }
 
@@ -81,7 +83,7 @@ export class DepartmentService {
   async inactivateDepartmentById(departmentId: string) {
     await this.getDepartmentById(departmentId);
     await this.departmentRepository.inactivateDepartmentById(departmentId);
-
+    await this.cache.del(this.cacheKey(departmentId));
     return "Departamento inativado com sucesso!";
   }
 
@@ -96,11 +98,20 @@ export class DepartmentService {
     return "Funcionário inativado com sucesso!";
   }
 
-  private async getDepartmentById(departmentId: string) {
+  async getDepartmentById(departmentId: string) {
+    const cachedDepartment = await this.cache.get(this.cacheKey(departmentId));
+
+    if (filled(cachedDepartment)) return cachedDepartment;
+
     const department = await this.departmentRepository.findDepartmentById(departmentId);
 
     if (blank(department)) throw new BadRequestException("Departamento não encontrado");
 
+    await this.cache.set(this.cacheKey(departmentId), department);
     return department;
+  }
+
+  private cacheKey(departmentId: string) {
+    return `department-${departmentId}`;
   }
 }

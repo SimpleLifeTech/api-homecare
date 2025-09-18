@@ -1,5 +1,6 @@
-import { BranchRepository } from '@modules/branch/dao/branch.repository';
+import { BranchModule } from '@modules/branch/branch.module';
 import { Module } from '@nestjs/common';
+import { CacheRepository } from '@shared/shared/cache/cache.repository';
 import { PrismaModule } from 'src/database/prisma/prisma.module';
 import { PrismaService } from 'src/database/prisma/prisma.service';
 
@@ -9,11 +10,11 @@ import { DepartmentController } from './department.controller';
 import { DepartmentService } from './department.service';
 
 @Module({
-    imports: [PrismaModule],
+    imports: [PrismaModule, BranchModule],
     controllers: [DepartmentController],
     providers: [
         DepartmentService,
-        BranchRepository,
+        CacheRepository,
         DepartmentRepository,
         DepartmentEmployeeRepository,
         PrismaService,
