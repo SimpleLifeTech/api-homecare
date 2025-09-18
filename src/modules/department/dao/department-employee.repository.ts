@@ -1,9 +1,12 @@
-import { GlobalFunctions } from "@shared/shared/utils/functions";
-import { PrismaService } from "src/database/prisma/prisma.service";
-import { AddOrUpdateEmployeeDepartmentDTO } from "../dto/add-or-update-employee-to-department.dto";
+import { Injectable } from '@nestjs/common';
+import { GlobalFunctions } from '@shared/shared/utils/functions';
+import { PrismaService } from 'src/database/prisma/prisma.service';
+
+import { AddOrUpdateEmployeeDepartmentDTO } from '../dto/add-or-update-employee-to-department.dto';
 
 const { getCurrentDateAndTime } = new GlobalFunctions();
 
+@Injectable()
 export class DepartmentEmployeeRepository {
     constructor(private readonly prisma: PrismaService) {}
 

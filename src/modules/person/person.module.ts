@@ -7,6 +7,7 @@ import { PrismaService } from 'src/database/prisma/prisma.service';
 import { PersonRepository } from './dao/person.repository';
 import { PersonController } from './person.controller';
 import { PersonService } from './person.service';
+import { CacheRepository } from '@shared/shared/cache/cache.repository';
 
 @Module({
   imports: [PrismaModule],
@@ -15,8 +16,10 @@ import { PersonService } from './person.service';
     PersonService,
     StorageService,
     FileStorage,
+    CacheRepository,
     PersonRepository,
     PrismaService,
   ],
+  exports: [PersonRepository,PersonService],
 })
 export class PersonModule {}

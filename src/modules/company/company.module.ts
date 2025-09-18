@@ -1,4 +1,4 @@
-import { PersonRepository } from '@modules/person/dao/person.repository';
+import { PersonModule } from '@modules/person/person.module';
 import { Module } from '@nestjs/common';
 import { CacheRepository } from '@shared/shared/cache/cache.repository';
 import { FileStorage } from '@shared/shared/externals/file-storage/file-storage';
@@ -11,16 +11,16 @@ import { CompanyService } from './company.service';
 import { CompanyRepository } from './dao/company.repository';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, PersonModule],
   controllers: [CompanyController],
   providers: [
     CompanyService,
     CompanyRepository,
     StorageService,
     FileStorage,
-    PersonRepository,
     PrismaService,
     CacheRepository
   ],
+  exports: [CompanyRepository, CompanyService],
 })
 export class CompanyModule {}

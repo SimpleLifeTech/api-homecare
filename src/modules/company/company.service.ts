@@ -1,11 +1,11 @@
-import { PersonRepository } from "@modules/person/dao/person.repository";
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { GlobalFunctions } from "@shared/shared/utils/functions";
+import { PersonService } from '@modules/person/person.service';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { CacheRepository } from '@shared/shared/cache/cache.repository';
+import { GlobalFunctions } from '@shared/shared/utils/functions';
 
-import { CompanyRepository } from "./dao/company.repository";
-import { CreateCompanyDTO } from "./dto/create-company.dto";
-import { UpdateCompanyDTO } from "./dto/update-company.dto";
-import { CacheRepository } from "@shared/shared/cache/cache.repository";
+import { CompanyRepository } from './dao/company.repository';
+import { CreateCompanyDTO } from './dto/create-company.dto';
+import { UpdateCompanyDTO } from './dto/update-company.dto';
 
 const { filled, blank } = new GlobalFunctions();
 
@@ -14,9 +14,8 @@ export class CompanyService {
   constructor(
     @Inject(CompanyRepository)
     protected readonly companyRepository: CompanyRepository,
-    @Inject(PersonRepository)
-    protected readonly personRepository: PersonRepository,
-    @Inject(CacheRepository) private readonly cache: CacheRepository,
+    protected readonly personService: PersonService,
+    private readonly cache: CacheRepository,
   ) {}
 
   async createCompany(
@@ -24,7 +23,7 @@ export class CompanyService {
     createCompanyDTO: CreateCompanyDTO,
     file?: Express.Multer.File,
   ) {
-    await this.personExists(personId);
+    await this.personService.findPersonById(personId);
     const isCompanyAlreadyExists = await this.companyRepository.findCompanyByDocument(
       createCompanyDTO.document,
     );
@@ -32,7 +31,6 @@ export class CompanyService {
     if (filled(isCompanyAlreadyExists)) throw new BadRequestException("Empresa já cadastrada");
 
     await this.companyRepository.createCompanyAndBranch(personId, createCompanyDTO, file);
-
     return "Empresa criada com sucesso!";
   }
 
@@ -41,7 +39,7 @@ export class CompanyService {
   }
 
   async findCompanyByUserId(personId: string) {
-    await this.personExists(personId);
+    await this.personService.findPersonById(personId);
     const company = await this.companyRepository.findCompanyByUserId(personId);
 
     if (blank(company)) throw new BadRequestException("Empresa não encontrada");
@@ -53,7 +51,6 @@ export class CompanyService {
     await this.companyExists(companyId);
     await this.companyRepository.updateCompanyById(companyId, company, file);
     await this.cache.del(this.cacheKey(companyId));
-
     return "Empresa atualizada com sucesso!";
   }
 
@@ -61,11 +58,10 @@ export class CompanyService {
     await this.companyExists(companyId);
     await this.companyRepository.inactivateCompanyById(companyId);
     await this.cache.del(this.cacheKey(companyId));
-
     return "Empresa deletada com sucesso!";
   }
 
-  private async companyExists(companyId: string) {
+  async companyExists(companyId: string) {
     const cachekey = this.cacheKey(companyId);
     const cache = await this.cache.get(cachekey);
 
@@ -74,20 +70,12 @@ export class CompanyService {
     const company = await this.companyRepository.findCompanyById(companyId);
 
     if (blank(company)) throw new BadRequestException("Empresa não encontrada");
-    
+
     await this.cache.set(cachekey, company);
     return company;
   }
 
-  private async personExists(personId: string) {
-    const person = await this.personRepository.findPersonById(personId);
-
-    if (blank(person)) throw new BadRequestException("Pessoa não encontrada");
-
-    return person;
-  }
-
   private cacheKey(companyId: string) {
-    return `company:${companyId}`
-  } 
+    return `company:${companyId}`;
+  }
 }

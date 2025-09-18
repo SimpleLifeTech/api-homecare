@@ -3,9 +3,11 @@ import { PrismaService } from 'src/database/prisma/prisma.service';
 
 import { CreateDepartmentDTO } from '../dto/create-department.dto';
 import { UpdateDepartmentDTO } from '../dto/update-department.dto';
+import { Injectable } from '@nestjs/common';
 
 const { getCurrentDateAndTime } = new GlobalFunctions();
 
+@Injectable()
 export class DepartmentRepository {
     constructor(private readonly prisma: PrismaService) {}
 
