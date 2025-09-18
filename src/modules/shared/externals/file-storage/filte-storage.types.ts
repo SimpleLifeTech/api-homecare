@@ -1,4 +1,1 @@
-export enum OriginBucket {
-  COMPANY = "company",
-  PERSON = "person",
-}
+export type BucketType = "user_profile" | "company_profile";

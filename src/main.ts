@@ -1,12 +1,15 @@
-import { BadRequestException, ClassSerializerInterceptor, ValidationPipe } from "@nestjs/common";
-import { NestFactory, Reflector } from "@nestjs/core";
-import { errorLogger, requestLogger } from "@shared/shared/utils/log/logger.http";
-import * as dotenv from "dotenv";
-import helmet from "helmet";
+import { BadRequestException, ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { StorageService } from '@shared/shared/externals/file-storage/file-storage.client';
+import { initBuckets } from '@shared/shared/externals/file-storage/filte-storage-bucket-init';
+import { AllExceptionsFilter } from '@shared/shared/interceptors/all-exceptions.filter';
+import { ResponseInterceptor } from '@shared/shared/interceptors/response.interceptor';
+import { errorLogger, requestLogger } from '@shared/shared/utils/log/logger.http';
+import * as dotenv from 'dotenv';
+import helmet from 'helmet';
 
-import { AppModule } from "./app.module";
-import { ResponseInterceptor } from "@shared/shared/interceptors/response.interceptor";
-import { AllExceptionsFilter } from "@shared/shared/interceptors/all-exceptions.filter";
+import { AppModule } from './app.module';
 
 dotenv.config();
 async function bootstrap() {
@@ -42,6 +45,10 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new AllExceptionsFilter());
+
+  const configService = app.get(ConfigService);
+  const storageService = app.get(StorageService);
+  await initBuckets(storageService.getClient(), configService);
 
   const port = process.env.PORT || 9000;
   await app.listen(port);
