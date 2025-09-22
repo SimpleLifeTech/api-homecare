@@ -18,6 +18,11 @@ export class StorageService {
     });
   }
 
+  /**
+   * Method to get the S3 client instance.
+   * 
+   * @returns The S3 client instance
+   */
   getClient(): S3Client {
     return this.s3;
   }
