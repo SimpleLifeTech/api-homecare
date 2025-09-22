@@ -6,10 +6,16 @@ meta {
 
 put {
   url: {{local}}/company/update/:companyId
-  body: none
+  body: multipartForm
   auth: none
 }
 
 params:path {
-  companyId: 
+  companyId: 35787655-a050-4c26-9401-7c28785e9acf
+}
+
+body:multipart-form {
+  name: HomeCare Teste
+  document: 98765432100123
+  image: @file(C:\Users\BEST OPTION NOTEBOOK\Pictures\Pipetech_Logo.jpg)
 }
