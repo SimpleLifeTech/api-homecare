@@ -15,7 +15,7 @@ dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: "*",
+      origin: process.env.APPS_URL?.split(','),
       methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
       preflightContinue: false,
       optionsSuccessStatus: 204,
