@@ -7,11 +7,15 @@ import { AllExceptionsFilter } from '@shared/shared/interceptors/all-exceptions.
 import { ResponseInterceptor } from '@shared/shared/interceptors/response.interceptor';
 import { CustomLogger } from '@shared/shared/logs/custom.logger';
 import * as dotenv from 'dotenv';
+import * as dotenvExpand from 'dotenv-expand';
+
 import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 
-dotenv.config();
+const dotEnv = dotenv.config();
+dotenvExpand.expand(dotEnv);
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
