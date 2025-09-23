@@ -5,7 +5,7 @@ import { StorageService } from '@shared/shared/externals/file-storage/file-stora
 import { initBuckets } from '@shared/shared/externals/file-storage/filte-storage-bucket-init';
 import { AllExceptionsFilter } from '@shared/shared/interceptors/all-exceptions.filter';
 import { ResponseInterceptor } from '@shared/shared/interceptors/response.interceptor';
-import { errorLogger, requestLogger } from '@shared/shared/utils/log/logger.http';
+import { CustomLogger } from '@shared/shared/logs/custom.logger';
 import * as dotenv from 'dotenv';
 import helmet from 'helmet';
 
@@ -20,12 +20,13 @@ async function bootstrap() {
       preflightContinue: false,
       optionsSuccessStatus: 204,
     },
-    logger: ["error", "warn", "debug", "log", "verbose"],
+    bufferLogs: true,
+    logger: false,
   });
 
+  const logger = app.get(CustomLogger);
+  app.useLogger(logger);
   app.use(helmet());
-  app.use(requestLogger);
-  app.use(errorLogger);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -52,6 +53,6 @@ async function bootstrap() {
 
   const port = process.env.PORT || 9000;
   await app.listen(port);
-  console.log("🚀 Server is running on port", port);
+  logger.log(`🚀 Server is running on port ${port}`);
 }
 bootstrap();

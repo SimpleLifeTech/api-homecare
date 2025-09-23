@@ -1,5 +1,5 @@
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
 import { StorageService } from './file-storage.client';
@@ -8,6 +8,7 @@ import { BucketType } from './filte-storage.types';
 @Injectable()
 export class FileStorage {
   constructor(private readonly storageService: StorageService) {}
+  private readonly logger = new Logger(FileStorage.name);
 
   private readonly bucketMap: Record<BucketType, string> = {
     user_profile: process.env.USER_PROFILE_PHOTO_BUCKET as string,
@@ -59,8 +60,8 @@ export class FileStorage {
 
       return `${bucketName}/${fileKey}`;
     } catch (error) {
-      console.error(`Erro ao fazer upload para bucket ${bucketName}:`, error);
-      throw new Error("Erro ao fazer upload do arquivo no MinIO");
+      this.logger.error(`Erro ao fazer upload para bucket ${bucketName}:`, error);
+      throw new Error("Erro ao fazer upload do arquivo");
     }
   }
 
@@ -81,7 +82,7 @@ export class FileStorage {
         })
       )
     } catch (error) {
-      console.error(`Erro ao deletar o arquivo: ${bucketName}/${fileKey}`, error);
+      this.logger.error(`Erro ao deletar o arquivo: ${bucketName}/${fileKey}`, error);
       throw new Error(`Erro ao deletar o arquivo: ${(error as Error).message}`);
     }
   }

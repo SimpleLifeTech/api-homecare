@@ -8,11 +8,11 @@ import { RolePermissionModule } from '@modules/role_permission/role-permission.m
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_FILTER } from '@nestjs/core';
-import { HttpExceptionFilter } from '@shared/shared/utils/errors/http-exeception.filter';
+import { LoggerModule } from 'nestjs-pino';
 
 import { AppController } from './app.controller';
 import { PrismaService } from './database/prisma/prisma.service';
+import { CustomLogger } from '@shared/shared/logs/custom.logger';
 
 @Module({
   imports: [
@@ -39,14 +39,10 @@ import { PrismaService } from './database/prisma/prisma.service';
     PersonModule,
     RoleModule,
     RolePermissionModule,
+    LoggerModule.forRoot(),
   ],
   controllers: [AppController],
-  providers: [
-    PrismaService,
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
-  ],
+  providers: [CustomLogger, PrismaService],
+  exports: [CustomLogger],
 })
 export class AppModule {}
