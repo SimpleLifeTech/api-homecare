@@ -1,5 +1,6 @@
 import { PersonService } from '@modules/person/person.service';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Company } from '@prisma/client';
 import { CacheRepository } from '@shared/shared/cache/cache.repository';
 import { GlobalFunctions } from '@shared/shared/utils/functions';
 
@@ -63,7 +64,7 @@ export class CompanyService {
 
   async companyExists(companyId: string) {
     const cachekey = this.cacheKey(companyId);
-    const cache = await this.cache.get(cachekey);
+    const cache = await this.cache.get<Company>(cachekey);
 
     if (filled(cache)) return cache;
 

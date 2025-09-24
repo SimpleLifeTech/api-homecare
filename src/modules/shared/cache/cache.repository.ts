@@ -1,103 +1,44 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable } from '@nestjs/common';
-import { Cache } from 'cache-manager';
-
-interface CacheOptions {
-  ttl?: number;
-  prefix?: string;
-}
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import { Injectable } from '@nestjs/common';
+import Redis from 'ioredis';
+import { Duration } from '../utils/duration';
 
 @Injectable()
 export class CacheRepository {
-  private defaultTtl = 3600; // 1 hora
-  private defaultPrefix = '';
+  constructor(@InjectRedis() public readonly client: Redis) {}
 
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
-
-  /**
-   * Set the default time to live for cache entries.
-   * 
-   * @param ttl Time to live in seconds
-   */
-  setDefaultTtl(ttl: number) {
-    this.defaultTtl = ttl;
-  }
-
-  /**
-   * Set the default prefix for cache keys.
-   * 
-   * @param prefix Default prefix for cache keys
-   */
-  setDefaultPrefix(prefix: string) {
-    this.defaultPrefix = prefix;
-  }
-
-  private getPrefixedKey(key: string, prefix?: string): string {
-    return `${prefix ?? this.defaultPrefix}${key}`;
-  }
-
-  /**
-   * Method to set a value in the cache with optional TTL and prefix.
-   * 
-   * @param key - The cache key
-   * @param value - The value to be cached
-   * @param options - Optional settings including TTL and prefix
-   */
-  async set(key: string, value: any, options?: CacheOptions): Promise<void> {
-    const ttl = options?.ttl ?? this.defaultTtl;
-    const prefixedKey = this.getPrefixedKey(key, options?.prefix);
-    await this.cacheManager.set(prefixedKey, value, ttl );
-  }
-
-  /**
-   * Method to get a value from the cache with an optional prefix.
-   * 
-   * @param key - The cache key
-   * @param prefix - Optional prefix for the cache key
-   * @returns The cached value or null if not found
-   */
-  async get<T>(key: string, prefix?: string): Promise<T | null> {
-    const prefixedKey = this.getPrefixedKey(key, prefix);
-    const value = await this.cacheManager.get<T>(prefixedKey);
-    return value ?? null;
-  }
-
-  /**
-   * Method to delete a value from the cache with an optional prefix.
-   * 
-   * @param key - The cache key
-   * @param prefix - Optional prefix for the cache key
-   */
-  async del(key: string, prefix?: string): Promise<void> {
-    const prefixedKey = this.getPrefixedKey(key, prefix);
-    await this.cacheManager.del(prefixedKey);
-  }
-
-  /**
-   * Method to clear all cache entries that match a given prefix.
-   * 
-   * @param prefix - The prefix to match cache keys
-   */
-  async clearByPrefix(prefix: string): Promise<void> {
-    const stores = (this.cacheManager as any).stores as any[];
-    for (const store of stores) {
-      if (!store?.client) continue;
-      const keys = await store.client.keys(`${prefix}*`);
-      if (keys.length > 0) {
-        await store.client.del(keys);
-      }
+  async listAllKeys(keyParams?: string): Promise<string[]> {
+    if (keyParams) {
+      return await this.client.keys(keyParams);
     }
+    return await this.client.keys('*');
   }
 
-  /**
-   * Method to clear all cache entries.
-   */
-  async clearAll(): Promise<void> {
-    const stores = (this.cacheManager as any).stores as any[];
-    for (const store of stores) {
-      if (store?.client?.flushdb) {
-        await store.client.flushdb();
-      }
-    }
+  async set<T>(key: string, data: T, expirationSeconds?: number, keepttl = false): Promise<void> {
+    const expTime = expirationSeconds ?? Duration({ hours: 1 }).toSeconds();
+    await this.client.set(key, JSON.stringify(data), 'EX', expTime);
+  }
+
+  async get<T>(key: string): Promise<T | null> {
+    const result = await this.client.get(key);
+    if (result === null) return null;
+    return JSON.parse(result) as T | null;
+  }
+
+  async getOrSet<T>(key: string, expirationSeconds: number, getter: () => Promise<T>): Promise<T> {
+    const existingData = await this.get<T>(key);
+    if (existingData !== null) return existingData;
+
+    const getterResult = await getter();
+    await this.set(key, getterResult, expirationSeconds);
+    return getterResult;
+  }
+
+  async saveDataKeepTtl<T>(data: T, key: string): Promise<void> {
+    await this.client.set(key, JSON.stringify(data), 'KEEPTTL');
+  }
+
+  async del(key: string): Promise<void> {
+    await this.client.del(key);
   }
 }
