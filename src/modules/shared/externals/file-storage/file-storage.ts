@@ -13,6 +13,7 @@ export class FileStorage {
   private readonly bucketMap: Record<BucketType, string> = {
     user_profile: process.env.USER_PROFILE_PHOTO_BUCKET as string,
     company_profile: process.env.COMPANY_PROFILE_PHOTO_BUCKET as string,
+    employee_documents: process.env.EMPLOYEE_DOCUMENTS_BUCKET as string,
   };
 
   /**

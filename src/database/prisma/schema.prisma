@@ -192,7 +192,11 @@ model Employee {
   personId  String    @map("person_id") @db.Uuid
   branchId  String?   @map("branch_id") @db.Uuid
   workRole  String?   @map("work_role")
-  document  String?
+  workShift String?   @map("work_shift")
+  personalDocumentUrl  String? @map("personal_document_url")
+  professionalDocumentUrl String? @map("professional_document_url")
+  criminalRecordUrl String? @map("criminal_record_url")
+  resumeUrl String? @map("resume_url")
   salary    Float?
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz

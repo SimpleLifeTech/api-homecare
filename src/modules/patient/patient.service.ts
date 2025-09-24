@@ -16,7 +16,7 @@ export class PatientService {
     private readonly personRepository: PersonRepository,
   ) {}
 
-  async create(dto: CreatePatientDto, userToken) {
+  async create(dto: any, userToken) {
     const userId = userToken.userId; // TODO: Get User By Token
     const companyType = userToken.companyType; // TODO: Get By TOken
 

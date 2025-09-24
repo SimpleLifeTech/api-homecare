@@ -1,0 +1,32 @@
+meta {
+  name: create employee
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{local}}/employee/create/
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  branchId: 
+  name: John Doe
+  email: 
+  password: 
+  birthdate: 19/04/1998
+  document: 12345678909
+  phone: 61998765432
+  address: exemplo1
+  addressNumber: 123
+  addressCity: Ceilândia
+  addressState: Distrito Federal
+  addressZipcode: 72150000
+  workRole: Téc. Enfermagem
+  workShift: 24
+  personalDocument: @file()
+  professionalDocument: @file()
+  criminalRecord: @file()
+  resume: @file()
+}

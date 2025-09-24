@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreatePersonDTO {
   @IsString({ message: "O nome do usuário deve ser uma string" })
@@ -6,16 +6,16 @@ export class CreatePersonDTO {
   name: string;
 
   @IsString({ message: "O e-mail do usuário deve ser uma string" })
-  @IsNotEmpty({ message: "O e-mail do usuário deve ser preenchido" })
+  @IsOptional()
   email: string;
 
   @IsString({ message: "A senha do usuário deve ser uma string" })
-  @IsNotEmpty({ message: "A senha do usuário deve ser preenchido" })
+  @IsOptional()
   password: string;
 
   @IsString({ message: "A data de nascimento do usuário deve ser uma string" })
   @IsNotEmpty({ message: "A data de nascimento do usuário deve ser preenchida" })
-  birthdate: string;
+  birthdate: Date;
 
   @IsString({ message: "O CPF do usuário deve ser uma string" })
   @IsNotEmpty({ message: "O CPF do usuário deve ser preenchido" })
@@ -34,6 +34,7 @@ export class CreatePersonDTO {
   addressNumber: string;
 
   @IsString({ message: "O complemento do endereço do usuário deve ser uma string" })
+  @IsOptional()
   addressComplement: string;
 
   @IsString({ message: "A cidade do usuário deve ser uma string" })
