@@ -6,6 +6,7 @@ import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { PatientRepository } from "./dao/patient.repository";
 import { CreatePatientDto } from "./dto/create-patient.dto";
 import { UpdatePatientDto } from "./dto/update-patient.dto";
+import { PatientRelationshipsRepository } from "./dao/patient_relationships.repository";
 
 const { blank } = new GlobalFunctions();
 
@@ -14,6 +15,7 @@ export class PatientService {
   constructor(
     private readonly patientRepository: PatientRepository,
     private readonly personRepository: PersonRepository,
+    private readonly patientRelationshipsRepository: PatientRelationshipsRepository,
   ) {}
 
   async create(dto: CreatePatientDto, userToken) {
@@ -62,6 +64,12 @@ export class PatientService {
   }
   async findOne(id: string) {
     return await this.patientRepository.findOne(id);
+  }
+  async findPatientsByCompanyId(companyId: string) {
+    return await this.patientRelationshipsRepository.findPatientsByCompanyId(companyId);
+  }
+  async findPatientsByHomecareId(homecareId: string) {
+    return await this.patientRelationshipsRepository.findPatientsByHomecareId(homecareId);
   }
   async update(id: string, dto: UpdatePatientDto) {
     await this.patientRepository.update(id, dto);

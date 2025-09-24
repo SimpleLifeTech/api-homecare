@@ -122,10 +122,11 @@ model Branch {
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
   deletedAt DateTime? @map("deleted_at") @db.Timestamp(6)
 
-  company  Company    @relation(fields: [companyId], references: [id], map: "fk_company")
-  employee Employee[]
-  profile  Profile[]
+  company    Company      @relation(fields: [companyId], references: [id], map: "fk_company")
+  employee   Employee[]
+  profile    Profile[]
   department Department[]
+  planning Planning[]
 
   @@map("branch")
 }
@@ -140,7 +141,8 @@ model Department {
 
   departmentEmployee DepartmentEmployee[]
 
-  branch Branch    @relation(fields: [branchId], references: [id], map: "fk_branch")
+  branch Branch @relation(fields: [branchId], references: [id], map: "fk_branch")
+
   @@map("department")
 }
 
@@ -161,12 +163,15 @@ model DepartmentEmployee {
 
 model Planning {
   id        String    @id @default(uuid()) @db.Uuid
+  branchId  String    @map("branch_id") @db.Uuid
   month     String
   year      String
   createdBy String    @map("created_by") @db.Uuid
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+
+  branch Branch @relation(fields: [branchId], references: [id], map: "fk_branch")
 
   statuses PlanningStatus[]
 
@@ -198,10 +203,10 @@ model Employee {
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz
 
-  person   Person    @relation(fields: [personId], references: [id])
-  branch   Branch?   @relation(fields: [branchId], references: [id])
-  profiles Profile[]
-  services Service[]
+  person      Person               @relation(fields: [personId], references: [id])
+  branch      Branch?              @relation(fields: [branchId], references: [id])
+  profiles    Profile[]
+  services    Service[]
   departments DepartmentEmployee[]
 
   @@map("employee")

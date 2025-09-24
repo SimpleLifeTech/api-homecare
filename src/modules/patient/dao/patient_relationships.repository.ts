@@ -4,21 +4,34 @@ import { PatientRelationships } from '@prisma/client';
 
 @Injectable()
 export class PatientRelationshipsRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findAll() {
-    return this.prisma.patient.findMany({ include: { person: true, relationships: true } });
+    return this.prisma.patientRelationships.findMany({ include: { patient: true } });
   }
   async findOne(id: string) {
-    return this.prisma.patient.findUnique({ where: { id }, include: { person: true, relationships: true } });
+    return this.prisma.patientRelationships.findUnique({ where: { id }, include: { patient: true } });
+  }
+  async findPatientsByCompanyId(companyId: string) {
+    return this.prisma.patientRelationships.findMany({
+      where:
+        { OR: [{ homecareId: companyId }, { supplierId: companyId }] },
+      include: { patient: true },
+    });
+  }
+  async findPatientsByHomecareId(homecareId: string) {
+    return this.prisma.patientRelationships.findMany({
+      where: { homecareId },
+      include: { patient: true },
+    })
   }
   async update(id: string, data: Partial<PatientRelationships>, userId: string) {
-    return this.prisma.patient.update({
+    return this.prisma.patientRelationships.update({
       where: { id },
       data: { updatedBy: userId, ...data }
     });
   }
   async remove(id: string) {
-    return this.prisma.patient.delete({ where: { id } });
+    return this.prisma.patientRelationships.delete({ where: { id } });
   }
 }

@@ -6,6 +6,7 @@ import { BranchRepository } from './dao/branch.repository';
 import { CreateBranchDTO } from './dto/create-branch.dto';
 import { UpdateBranchDTO } from './dto/update-branch.dto';
 import { CacheRepository } from '@shared/shared/cache/cache.repository';
+import { Branch } from '@prisma/client';
 
 const { blank, filled } = new GlobalFunctions();
 
@@ -57,11 +58,11 @@ export class BranchService {
     return "Filial inativada com sucesso!";
   }
 
-  async branchExists(branchId: string) {
+  async branchExists(branchId: string): Promise<Branch> {
     const cachekey = this.cacheKey(branchId);
     const cache = await this.cache.get(cachekey);
 
-    if (filled(cache)) return cache;
+    if (filled(cache)) return cache as Branch;
 
     const branch = await this.branchRepository.findBranchById(branchId);
 
