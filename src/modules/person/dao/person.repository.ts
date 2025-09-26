@@ -1,22 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { GlobalFunctions } from '@shared/shared/utils/functions';
-import { PrismaService } from 'src/database/prisma/prisma.service';
+import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { GlobalFunctions } from "@shared/shared/utils/functions";
+import { PrismaService } from "src/database/prisma/prisma.service";
 
-import { CreatePersonDTO } from '../dto/create-person.dto';
-import { UpdatePersonDTO } from '../dto/update-person.dto';
+import { CreatePersonDTO } from "../dto/create-person.dto";
+import { UpdatePersonDTO } from "../dto/update-person.dto";
 
-const { getCurrentDateAndTime } = new GlobalFunctions();
+const { getCurrentDateAndTime, removeSpecialCharacters } = new GlobalFunctions();
 
 @Injectable()
 export class PersonRepository {
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async createPerson(data: CreatePersonDTO) {
     return await this.prisma.person.create({
-      data: { ...data, isFirstAccess: true },
+      data: {
+        ...data,
+        document: removeSpecialCharacters(data.document),
+        addressZipcode: removeSpecialCharacters(data.addressZipcode),
+        isFirstAccess: true,
+      },
     });
   }
 
@@ -31,7 +34,9 @@ export class PersonRepository {
   }
 
   async findPersonByDocument(document: string) {
-    return await this.prisma.person.findFirst({ where: { document, deletedAt: null } });
+    return await this.prisma.person.findFirst({
+      where: { document: removeSpecialCharacters(document), deletedAt: null },
+    });
   }
 
   async findPersonByEmail(email: string) {
@@ -45,16 +50,23 @@ export class PersonRepository {
 
     if (person) return person;
 
-    return await this.prisma.person.create({ data });
+    return await this.prisma.person.create({
+      data: {
+        ...data,
+        document: removeSpecialCharacters(data.document),
+        addressZipcode: removeSpecialCharacters(data.addressZipcode),
+      },
+    });
   }
 
-  async updatePersonById(
-    personId: string,
-    data: UpdatePersonDTO,
-  ) {
+  async updatePersonById(personId: string, data: UpdatePersonDTO) {
     return await this.prisma.person.update({
       where: { id: personId },
-      data: { ...data },
+      data: {
+        ...data,
+        document: removeSpecialCharacters(data.document),
+        addressZipcode: removeSpecialCharacters(data.addressZipcode),
+      },
     });
   }
 

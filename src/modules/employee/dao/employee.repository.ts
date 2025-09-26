@@ -1,12 +1,9 @@
-import { Person } from '@modules/person/types/person.types';
-import { Injectable } from '@nestjs/common';
-import { Employee } from '@prisma/client';
-import { GlobalFunctions } from '@shared/shared/utils/functions';
-import { PrismaService } from 'src/database/prisma/prisma.service';
+import { Injectable } from "@nestjs/common";
+import { Employee } from "@prisma/client";
+import { GlobalFunctions } from "@shared/shared/utils/functions";
+import { PrismaService } from "src/database/prisma/prisma.service";
 
-import { CreateEmployeeDto } from '../dto/create-employee.dto';
-
-const { filled, getCurrentDateAndTime } = new GlobalFunctions();
+const { getCurrentDateAndTime } = new GlobalFunctions();
 
 @Injectable()
 export class EmployeeRepository {
