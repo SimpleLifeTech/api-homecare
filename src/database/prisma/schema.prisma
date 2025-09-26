@@ -105,28 +105,52 @@ model Company {
   updatedAt         DateTime?   @updatedAt @map("updated_at") @db.Timestamp(6)
   deletedAt         DateTime?   @map("deleted_at") @db.Timestamp(6)
 
-  branch     Branch[]
-  service    Service[]
-  healthPlan HealthPlan[]
-  homecareRelations     CompanyRelationships[] @relation(name: "HomecareRelationship")
-  supplierRelations     CompanyRelationships[] @relation(name: "SupplierRelationship")
+  branch            Branch[]
+  service           Service[]
+  healthPlan        HealthPlan[]
+  patientHomecare   PatientRelationships[] @relation(name: "PatientHomecareRelationship")
+  patientSupplier   PatientRelationships[] @relation(name: "PatientSupplierRelationship")
+  homecareRelations CompanyRelationships[] @relation(name: "HomecareRelationship")
+  supplierRelations CompanyRelationships[] @relation(name: "SupplierRelationship")
 
-  person     Person?      @relation(fields: [ownerId], references: [id], map: "fk_person")
+  person Person? @relation(fields: [ownerId], references: [id], map: "fk_person")
 
   @@map("company")
 }
 
+model CompanyFictional {
+  id                String      @id @default(uuid()) @db.Uuid
+  type              CompanyType
+  name              String      @db.VarChar(255)
+  companyImageUrl   String?     @map("company_image_url") @db.VarChar(255)
+  address           String
+  addressNumber     String      @map("address_number")
+  addressComplement String?     @map("address_complement")
+  addressCity       String      @map("address_city")
+  addressState      String      @map("address_state")
+  addressZipcode    String      @map("address_zipcode")
+  document          String      @db.VarChar(255)
+  createdAt         DateTime    @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @map("created_at") @db.Timestamp(6)
+  updatedAt         DateTime?   @updatedAt @map("updated_at") @db.Timestamp(6)
+  deletedAt         DateTime?   @map("deleted_at") @db.Timestamp(6)
+
+  fictionalHomecareRelations PatientRelationships[] @relation(name: "FictionalHomecareRelationship")
+  fictionalSupplierRelations PatientRelationships[] @relation(name: "FictionalSupplierRelationship")
+
+  @@map("company_fictional")
+}
+
 model CompanyRelationships {
-  id        String    @id @default(uuid()) @db.Uuid
+  id         String    @id @default(uuid()) @db.Uuid
   homecareId String    @map("homecare_id") @db.Uuid
   supplierId String    @map("supplier_id") @db.Uuid
-  createdBy String    @map("created_by") @db.Uuid
-  createdAt DateTime  @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
-  deletedAt DateTime? @map("deleted_at") @db.Timestamp(6)
+  createdBy  String    @map("created_by") @db.Uuid
+  createdAt  DateTime  @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @map("created_at") @db.Timestamp(6)
+  updatedAt  DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+  deletedAt  DateTime? @map("deleted_at") @db.Timestamp(6)
 
-  homecare Company @relation(name: "HomecareRelationship",fields: [homecareId], references: [id], map: "fk_homecare")
-  supplier Company @relation(name: "SupplierRelationship",fields: [supplierId], references: [id], map: "fk_supplier")
+  homecare Company @relation(name: "HomecareRelationship", fields: [homecareId], references: [id], map: "fk_homecare")
+  supplier Company @relation(name: "SupplierRelationship", fields: [supplierId], references: [id], map: "fk_supplier")
 
   @@map("company_relationships")
 }
@@ -140,9 +164,9 @@ model Branch {
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
   deletedAt DateTime? @map("deleted_at") @db.Timestamp(6)
 
-  company  Company    @relation(fields: [companyId], references: [id], map: "fk_company")
-  employee Employee[]
-  profile  Profile[]
+  company    Company      @relation(fields: [companyId], references: [id], map: "fk_company")
+  employee   Employee[]
+  profile    Profile[]
   department Department[]
 
   @@map("branch")
@@ -158,7 +182,8 @@ model Department {
 
   departmentEmployee DepartmentEmployee[]
 
-  branch Branch    @relation(fields: [branchId], references: [id], map: "fk_branch")
+  branch Branch @relation(fields: [branchId], references: [id], map: "fk_branch")
+
   @@map("department")
 }
 
@@ -206,24 +231,24 @@ model PlanningStatus {
 }
 
 model Employee {
-  id        String    @id @default(uuid()) @db.Uuid
-  personId  String    @map("person_id") @db.Uuid
-  branchId  String?   @map("branch_id") @db.Uuid
-  workRole  String?   @map("work_role")
-  workShift String?   @map("work_shift")
-  personalDocumentUrl  String? @map("personal_document_url")
-  professionalDocumentUrl String? @map("professional_document_url")
-  criminalRecordUrl String? @map("criminal_record_url")
-  resumeUrl String? @map("resume_url")
-  salary    Float?
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+  id                      String    @id @default(uuid()) @db.Uuid
+  personId                String    @map("person_id") @db.Uuid
+  branchId                String?   @map("branch_id") @db.Uuid
+  workRole                String?   @map("work_role")
+  workShift               String?   @map("work_shift")
+  personalDocumentUrl     String?   @map("personal_document_url")
+  professionalDocumentUrl String?   @map("professional_document_url")
+  criminalRecordUrl       String?   @map("criminal_record_url")
+  resumeUrl               String?   @map("resume_url")
+  salary                  Float?
+  createdAt               DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt               DateTime? @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt               DateTime? @map("deleted_at") @db.Timestamptz
 
-  person   Person    @relation(fields: [personId], references: [id])
-  branch   Branch?   @relation(fields: [branchId], references: [id])
-  profiles Profile[]
-  services Service[]
+  person      Person               @relation(fields: [personId], references: [id])
+  branch      Branch?              @relation(fields: [branchId], references: [id])
+  profiles    Profile[]
+  services    Service[]
   departments DepartmentEmployee[]
 
   @@map("employee")
@@ -280,9 +305,10 @@ model Patient {
 
 model PatientRelationships {
   id                  String              @id @default(uuid()) @db.Uuid
-  supplierId          String?             @map("supplier_id") @db.Uuid
   homecareId          String?             @map("homecare_id") @db.Uuid
-
+  supplierId          String?             @map("supplier_id") @db.Uuid
+  fictionalHomecareId String?             @map("fictional_homecare_id") @db.Uuid
+  fictionalSupplierId String?             @map("fictional_supplier_id") @db.Uuid
   patientId           String              @map("patient_id") @db.Uuid
   healthPlanId        String?             @map("health_plan_id") @db.Uuid
   healthPlanPayment   Float?              @map("health_plan_payment")
@@ -300,8 +326,12 @@ model PatientRelationships {
   deletedAt           DateTime?           @map("deleted_at") @db.Timestamptz
   deletedBy           String?             @map("deleted_by") @db.Uuid
 
-  patient Patient         @relation(fields: [patientId], references: [id])
-  record  PatientRecord[]
+  homecare          Company?          @relation(name: "PatientHomecareRelationship", fields: [homecareId], references: [id])
+  supplier          Company?          @relation(name: "PatientSupplierRelationship", fields: [supplierId], references: [id])
+  fictionalHomecare CompanyFictional? @relation(name: "FictionalHomecareRelationship", fields: [fictionalHomecareId], references: [id])
+  fictionalSupplier CompanyFictional? @relation(name: "FictionalSupplierRelationship", fields: [fictionalSupplierId], references: [id])
+  patient           Patient           @relation(fields: [patientId], references: [id])
+  record            PatientRecord[]
 
   @@map("patient_relationships")
 }
