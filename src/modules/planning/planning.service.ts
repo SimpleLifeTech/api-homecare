@@ -9,7 +9,7 @@ import { CacheRepository } from '@shared/shared/cache/cache.repository';
 import { BranchService } from '@modules/branch/branch.service';
 import { PatientService } from '@modules/patient/patient.service';
 import { EmployeeService } from '@modules/employee/employee.service';
-import { Employee, Patient } from '@prisma/client';
+import { Employee, Patient, PatientRelationships } from '@prisma/client';
 
 const { blank, filled } = new GlobalFunctions();
 
@@ -40,6 +40,10 @@ export class PlanningService {
     
     const patients = await this.patientService.findPatientsByHomecareId(homecareId);
 
+    if (blank(patients)) {
+      throw new BadRequestException("Nenhum paciente encontrado para esse homecare");
+    }
+
     await this.generateServices(patients, employees);
 
     await this.planningRepository.createPlanning(data);
@@ -47,7 +51,7 @@ export class PlanningService {
     return "Agenda criada com sucesso!";
   }
 
-  async generateServices(patients: Patient[], employees: Employee[]) {
+  async generateServices(patients: PatientRelationships[], employees: Employee[]) {
     for (const patient of patients) {
       for (const employee of employees) {
         await this.planningRepository.createService(patient.id, employee.id);
