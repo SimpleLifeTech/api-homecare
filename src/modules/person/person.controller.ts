@@ -13,7 +13,7 @@ export class PersonController {
 
   @Post("/create")
   async createPerson(@Body() data: CreatePersonDTO) {
-    return this.personService.createPerson(data);
+    return this.personService.createPerson(data, true);
   }
 
   @Get("/list/:personId")

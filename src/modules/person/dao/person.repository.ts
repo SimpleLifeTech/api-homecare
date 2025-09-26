@@ -16,7 +16,7 @@ export class PersonRepository {
 
   async createPerson(data: CreatePersonDTO) {
     return await this.prisma.person.create({
-      data: { ...data, profileImageUrl: null, isFirstAccess: true },
+      data: { ...data, isFirstAccess: true },
     });
   }
 

@@ -14,6 +14,7 @@ export async function initBuckets(s3: S3Client, config: ConfigService) {
   const buckets = [
     config.get<string>('USER_PROFILE_PHOTO_BUCKET'),
     config.get<string>('COMPANY_PROFILE_PHOTO_BUCKET'),
+    config.get<string>('EMPLOYEE_DOCUMENTS_BUCKET'),
   ];
 
   for (const bucket of buckets) {

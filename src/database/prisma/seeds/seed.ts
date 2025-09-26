@@ -71,7 +71,6 @@ async function main() {
       personId: person1.id,
       branchId: branch1.id,
       workRole: 'Enfermeiro',
-      salary: 2500,
     },
   });
 

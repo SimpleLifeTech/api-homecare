@@ -1,9 +1,12 @@
-import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import { Injectable, Logger } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { Injectable, Logger } from "@nestjs/common";
+import { v4 as uuidv4 } from "uuid";
 
-import { StorageService } from './file-storage.client';
-import { BucketType } from './filte-storage.types';
+import { StorageService } from "./file-storage.client";
+import { BucketType } from "./filte-storage.types";
+import { GlobalFunctions } from "@shared/shared/utils/functions";
+
+const { filled } = new GlobalFunctions();
 
 @Injectable()
 export class FileStorage {
@@ -13,19 +16,17 @@ export class FileStorage {
   private readonly bucketMap: Record<BucketType, string> = {
     user_profile: process.env.USER_PROFILE_PHOTO_BUCKET as string,
     company_profile: process.env.COMPANY_PROFILE_PHOTO_BUCKET as string,
+    employee_documents: process.env.EMPLOYEE_DOCUMENTS_BUCKET as string,
   };
 
   /**
    * Uploads a file to a specific bucket
-   * 
+   *
    * @param bucketType - Bucket type to upload the file
    * @param file - File to upload
    * @returns file url
    */
-  async uploadFile(
-    bucketType: BucketType,
-    file: Express.Multer.File
-  ) {
+  async uploadFile(bucketType: BucketType, file: Express.Multer.File) {
     const allowedMimeTypes = [
       "image/jpeg",
       "image/png",
@@ -43,7 +44,7 @@ export class FileStorage {
       throw new Error("Tipo de arquivo inválido");
     }
 
-    const extension = file.originalname.split('.').pop();
+    const extension = file.originalname.split(".").pop();
     const fileKey = `${uuidv4()}.${extension}`;
     const bucketName = this.bucketMap[bucketType];
     const s3 = this.storageService.getClient();
@@ -55,7 +56,7 @@ export class FileStorage {
           Key: fileKey,
           Body: file.buffer,
           ContentType: file.mimetype,
-        })
+        }),
       );
 
       return `${bucketName}/${fileKey}`;
@@ -66,21 +67,44 @@ export class FileStorage {
   }
 
   /**
+   * Uploads multiple files
+   *
+   * @param files - Files to upload
+   * @param bucketType - Bucket type
+   * @returns - Object with file urls
+   */
+  async uploadDocuments(
+    bucketType: BucketType,
+    files: Record<string, Express.Multer.File | undefined>,
+  ) {
+    const entries = Object.entries(files).filter(([_, file]) => filled(file));
+
+    const urls = await Promise.all(
+      entries.map(async ([key, file]) => ({
+        key: `${key}Url`,
+        url: await this.uploadFile(bucketType, file!),
+      })),
+    );
+
+    return Object.fromEntries(urls.map(({ key, url }) => [key, url]));
+  }
+
+  /**
    * Deletes a file
-   * 
+   *
    * @param fileUrl - File url
    */
   async deleteFile(fileUrl: string) {
     const s3 = this.storageService.getClient();
-    const [bucketName, fileKey] = fileUrl.split('/');
-    
+    const [bucketName, fileKey] = fileUrl.split("/");
+
     try {
       await s3.send(
         new DeleteObjectCommand({
           Bucket: bucketName,
           Key: fileKey,
-        })
-      )
+        }),
+      );
     } catch (error) {
       this.logger.error(`Erro ao deletar o arquivo: ${bucketName}/${fileKey}`, error);
       throw new Error(`Erro ao deletar o arquivo: ${(error as Error).message}`);

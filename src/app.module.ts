@@ -2,6 +2,7 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { BranchModule } from '@modules/branch/branch.module';
 import { CompanyModule } from '@modules/company/company.module';
 import { DepartmentModule } from '@modules/department/department.module';
+import { EmployeeModule } from '@modules/employee/employee.module';
 import { PersonModule } from '@modules/person/person.module';
 import { RoleModule } from '@modules/role/role.module';
 import { RolePermissionModule } from '@modules/role_permission/role-permission.module';
@@ -19,11 +20,12 @@ import { PrismaService } from './database/prisma/prisma.service';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    CacheRepositoryModule,
     AuthModule,
     BranchModule,
+    CacheRepositoryModule,
     CompanyModule,
     DepartmentModule,
+    EmployeeModule,
     PersonModule,
     RoleModule,
     RolePermissionModule,
