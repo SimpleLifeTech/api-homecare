@@ -233,14 +233,14 @@ model PlanningStatus {
 model Employee {
   id                      String    @id @default(uuid()) @db.Uuid
   personId                String    @map("person_id") @db.Uuid
-  branchId                String?   @map("branch_id") @db.Uuid
-  workRole                String?   @map("work_role")
-  workShift               String?   @map("work_shift")
+  branchId                String    @map("branch_id") @db.Uuid
+  workRole                String    @map("work_role")
+  workTime                Int       @map("work_time")
+  dayOffTime              Int       @map("day_off_time")
   personalDocumentUrl     String?   @map("personal_document_url")
   professionalDocumentUrl String?   @map("professional_document_url")
   criminalRecordUrl       String?   @map("criminal_record_url")
   resumeUrl               String?   @map("resume_url")
-  salary                  Float?
   createdAt               DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt               DateTime? @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt               DateTime? @map("deleted_at") @db.Timestamptz
@@ -313,7 +313,7 @@ model PatientRelationships {
   healthPlanId        String?             @map("health_plan_id") @db.Uuid
   healthPlanPayment   Float?              @map("health_plan_payment")
   homecarePayment     Float?              @map("homecare_payment")
-  schedule            Int
+  requiredCareHours   Int                 @map("required_care_hours")
   customFields        Json?               @map("custom_fields")
   patientRecord       String?             @map("patient_record")
   notations           String?
