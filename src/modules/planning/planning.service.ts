@@ -8,6 +8,7 @@ import { UpdatePlanningDTO } from './dto/update-planning.dto';
 import { CacheRepository } from '@shared/shared/cache/cache.repository';
 import { BranchService } from '@modules/branch/branch.service';
 import { PatientService } from '@modules/patient/patient.service';
+import { EmployeeService } from '@modules/employee/employee.service';
 import { Employee, Patient } from '@prisma/client';
 
 const { blank, filled } = new GlobalFunctions();
@@ -20,6 +21,7 @@ export class PlanningService {
     protected readonly branchService: BranchService,
     protected readonly companyService: CompanyService,
     protected readonly patientService: PatientService,
+    protected readonly employeeService: EmployeeService,
     protected readonly cache: CacheRepository
   ) {}
 
@@ -30,18 +32,12 @@ export class PlanningService {
       throw new BadRequestException("Filial nao encontrada");
     }
 
-    // TODO: existem funcionarios na branch?
-    // const employees = await this.employeeService.findEmployeesByBranchId(branch.id);
+    const employees = await this.employeeService.findEmployeesByBranchId(branch.id);
 
-    // if (blank(employees)) {
-    //   throw new BadRequestException("Nenhum funcionário encontrado para essa filial");
-    // }
-
-
-    const employees = [];
-
+    if (blank(employees)) {
+      throw new BadRequestException("Nenhum funcionário encontrado para essa filial");
+    }
     
-       // TODO: existem pacientes na company?
     const patients = await this.patientService.findPatientsByHomecareId(homecareId);
 
     await this.generateServices(patients, employees);

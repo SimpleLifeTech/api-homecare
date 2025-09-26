@@ -10,9 +10,10 @@ import { PlanningController } from './planning.controller';
 import { PlanningService } from './planning.service';
 import { PlanningRepository } from './dao/planning.repository';
 import { BranchModule } from '@modules/branch/branch.module';
+import { EmployeeModule } from '@modules/employee/employee.module';
 
 @Module({
-  imports: [PrismaModule, CompanyModule, BranchModule, PlanningModule],
+  imports: [PrismaModule, CompanyModule, BranchModule, PlanningModule, EmployeeModule],
   controllers: [PlanningController],
   providers: [
     PlanningService,
