@@ -1,5 +1,16 @@
-import { AllowanceCostOrigin } from '@prisma/client';
-import { IsOptional, IsNotEmpty, IsString, IsNumber, IsArray, IsEnum } from 'class-validator';
+import { AllowanceCostOrigin } from "@prisma/client";
+import {
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Max,
+  Min,
+} from "class-validator";
 
 export class CreatePatientDto {
   @IsOptional()
@@ -14,9 +25,16 @@ export class CreatePatientDto {
   @IsString({ message: "O telefone do responsável deve ser uma string" })
   responsiblePhone: string;
 
-  @IsNumber()
+  @IsNumber(
+    { allowInfinity: false, allowNaN: false },
+    { message: "O campo escala deve ser um número" },
+  )
+  @IsPositive({ message: "O campo escala deve ser maior que zero" })
+  @IsInt({ message: "O campo escala deve ser um número inteiro" })
+  @Min(1, { message: "O campo escala deve ser maior que zero" })
+  @Max(24, { message: "O campo escala deve ser menor ou igual a 24" })
   @IsNotEmpty({ message: "O campo escala deve ser preenchido" })
-  schedule: number;
+  requiredCareHours: number;
 
   @IsArray({ message: "O campo customFields deve ser um array" })
   @IsOptional()

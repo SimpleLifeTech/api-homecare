@@ -120,37 +120,37 @@ model Company {
 
 model CompanyFictional {
   id                String      @id @default(uuid()) @db.Uuid
+  branchId          String      @map("branch_id") @db.Uuid
   type              CompanyType
   name              String      @db.VarChar(255)
-  companyImageUrl   String?     @map("company_image_url") @db.VarChar(255)
-  address           String
-  addressNumber     String      @map("address_number")
-  addressComplement String?     @map("address_complement")
-  addressCity       String      @map("address_city")
-  addressState      String      @map("address_state")
-  addressZipcode    String      @map("address_zipcode")
-  document          String      @db.VarChar(255)
   createdAt         DateTime    @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @map("created_at") @db.Timestamp(6)
   updatedAt         DateTime?   @updatedAt @map("updated_at") @db.Timestamp(6)
   deletedAt         DateTime?   @map("deleted_at") @db.Timestamp(6)
 
-  fictionalHomecareRelations PatientRelationships[] @relation(name: "FictionalHomecareRelationship")
-  fictionalSupplierRelations PatientRelationships[] @relation(name: "FictionalSupplierRelationship")
+  branch                      Branch                 @relation(fields: [branchId], references: [id], map: "fk_branch")
+  fictionalHomecareRelations  PatientRelationships[] @relation(name: "FictionalHomecareRelationship")
+  fictionalSupplierRelations  PatientRelationships[] @relation(name: "FictionalSupplierRelationship")
+  companyRelationshipHomecare CompanyRelationships[] @relation(name: "CompanyRelationshipHomecareFictional")
+  companyRelationshipSupplier CompanyRelationships[] @relation(name: "CompanyRelationshipSupplierFictional")
 
   @@map("company_fictional")
 }
 
 model CompanyRelationships {
-  id         String    @id @default(uuid()) @db.Uuid
-  homecareId String    @map("homecare_id") @db.Uuid
-  supplierId String    @map("supplier_id") @db.Uuid
-  createdBy  String    @map("created_by") @db.Uuid
-  createdAt  DateTime  @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @map("created_at") @db.Timestamp(6)
-  updatedAt  DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
-  deletedAt  DateTime? @map("deleted_at") @db.Timestamp(6)
+  id                  String    @id @default(uuid()) @db.Uuid
+  homecareId          String?   @map("homecare_id") @db.Uuid
+  supplierId          String?   @map("supplier_id") @db.Uuid
+  homecareFictionalId String?   @map("homecare_fictional_id") @db.Uuid
+  supplierFictionalId String?   @map("supplier_fictional_id") @db.Uuid
+  createdBy           String    @map("created_by") @db.Uuid
+  createdAt           DateTime  @default(dbgenerated("(CURRENT_TIMESTAMP AT TIME ZONE 'America/Bahia'::text)")) @map("created_at") @db.Timestamp(6)
+  updatedAt           DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+  deletedAt           DateTime? @map("deleted_at") @db.Timestamp(6)
 
-  homecare Company @relation(name: "HomecareRelationship", fields: [homecareId], references: [id], map: "fk_homecare")
-  supplier Company @relation(name: "SupplierRelationship", fields: [supplierId], references: [id], map: "fk_supplier")
+  homecare          Company?          @relation(name: "HomecareRelationship", fields: [homecareId], references: [id], map: "fk_homecare")
+  supplier          Company?          @relation(name: "SupplierRelationship", fields: [supplierId], references: [id], map: "fk_supplier")
+  homecareFictional CompanyFictional? @relation(name: "CompanyRelationshipHomecareFictional", fields: [homecareFictionalId], references: [id], map: "fk_homecare_fictional")
+  supplierFictional CompanyFictional? @relation(name: "CompanyRelationshipSupplierFictional", fields: [supplierFictionalId], references: [id], map: "fk_supplier_fictional")
 
   @@map("company_relationships")
 }
@@ -164,10 +164,11 @@ model Branch {
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
   deletedAt DateTime? @map("deleted_at") @db.Timestamp(6)
 
-  company    Company      @relation(fields: [companyId], references: [id], map: "fk_company")
-  employee   Employee[]
-  profile    Profile[]
-  department Department[]
+  company          Company            @relation(fields: [companyId], references: [id], map: "fk_company")
+  employee         Employee[]
+  profile          Profile[]
+  department       Department[]
+  companyFictional CompanyFictional[]
 
   @@map("branch")
 }

@@ -66,11 +66,13 @@ async function main() {
   });
 
   // Employee
-  const employee1 = await prisma.employee.create({
+  await prisma.employee.create({
     data: {
       personId: person1.id,
       branchId: branch1.id,
-      workRole: 'Enfermeiro',
+      workRole: 'Tec. Enfermagem',
+      workTime: 24,
+      dayOffTime: 36,
     },
   });
 
