@@ -16,7 +16,7 @@ export class BranchController {
     return this.branchService.createBranch(companyId, data);
   }
 
-  @Get("/list/:companyId")
+  @Get("/list-by-company/:companyId")
   async findBranchesByCompanyId(@Param("companyId") companyId: string) {
     IsEmptyParam(companyId);
     return this.branchService.findBranchesByCompanyId(companyId);

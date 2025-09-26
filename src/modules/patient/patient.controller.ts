@@ -11,30 +11,30 @@ const { IsEmptyParam } = new GlobalFunctions();
 export class PatientController {
   constructor(private readonly patientService: PatientService) {}
 
-  @Post()
+  @Post('/create')
   async create(@Body() dto: CreatePatientDto) {
     const userToken = ""; // TODO: Get User By Token
     return this.patientService.create(dto, userToken);
   }
 
-  @Get()
+  @Get('/list')
   async findAll() {
     return this.patientService.findAll();
   }
 
-  @Get(":id")
+  @Get("/list/:id")
   async findOne(@Param("id") id: string) {
     IsEmptyParam(id);
     return this.patientService.findOne(id);
   }
 
-  @Put(":id")
+  @Put("/update/:id")
   async update(@Param("id") id: string, @Body() dto: UpdatePatientDto) {
     IsEmptyParam(id);
     return this.patientService.update(id, dto);
   }
 
-  @Delete(":id")
+  @Delete("/delete/:id")
   async remove(@Param("id") id: string) {
     IsEmptyParam(id);
     return this.patientService.remove(id);

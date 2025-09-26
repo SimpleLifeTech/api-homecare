@@ -25,7 +25,7 @@ export class CompanyFictionalController {
     return await this.companyFictionalService.findCompanyFictionalById(companyFictionalId);
   }
 
-  @Get("/list/branch/:branchId")
+  @Get("/list-by-branch/:branchId")
   async findCompanyFictionalByBranchId(@Param("branchId") branchId: string) {
     IsEmptyParam(branchId);
     return await this.companyFictionalService.findCompanyFictionalByBranchId(branchId);

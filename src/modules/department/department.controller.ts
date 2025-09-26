@@ -28,13 +28,13 @@ export class DepartmentController {
     return await this.departmentService.findDepartmentById(departmentId);
   }
 
-  @Get("/list/department-employee/:departmentId")
+  @Get("/list-by-department-employee/:departmentId")
   async findDepartmentEmployeeByDepartmentId(@Param("departmentId") departmentId: string) {
     IsEmptyParam(departmentId);
     return await this.departmentService.findDepartmentEmployeeByDepartmentId(departmentId);
   }
 
-  @Get("/list/:branchId")
+  @Get("/list-by-branch/:branchId")
   async findDepartmentsByBranchId(@Param("branchId") branchId: string) {
     IsEmptyParam(branchId);
     return await this.departmentService.findDepartmentsByBranchId(branchId);
