@@ -1,5 +1,7 @@
 import { BranchService } from "@modules/branch/branch.service";
+import { PersonRepository } from "@modules/person/dao/person.repository";
 import { PersonService } from "@modules/person/person.service";
+import { Person } from "@modules/person/types/person.types";
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { Employee } from "@prisma/client";
 import { CacheRepository } from "@shared/shared/cache/cache.repository";
@@ -10,8 +12,6 @@ import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { EmployeeRepository } from "./dao/employee.repository";
 import { CreateEmployeeDto } from "./dto/create-employee.dto";
 import { UpdateEmployeeDto } from "./dto/update-employee.dto";
-import { PersonRepository } from "@modules/person/dao/person.repository";
-import { Person } from "@modules/person/types/person.types";
 
 const { blank, filled, removeSpecialCharacters } = new GlobalFunctions();
 
@@ -40,36 +40,24 @@ export class EmployeeService {
     const hasPerson = await this.personRepository.findPersonByDocument(cleanDocument);
 
     if (filled(hasPerson)) {
-      const hasEmployee = await this.employeeRepository.findEmployeeByPersonIdAndBranchId(hasPerson.id, data.branchId);
-      if (filled(hasEmployee))
-        throw new BadRequestException("Este funcionário já está cadastrado");
+      const hasEmployee = await this.employeeRepository.findEmployeeByPersonIdAndBranchId(
+        hasPerson.id,
+        data.branchId,
+      );
+      if (filled(hasEmployee)) throw new BadRequestException("Este funcionário já está cadastrado");
     }
 
-    let personalDocumentUrl: string | undefined;
-    let professionalDocumentUrl: string | undefined;
-    let criminalRecordUrl: string | undefined;
-    let resumeUrl: string | undefined;
+    const documentFiles = {
+      personalDocument,
+      professionalDocument,
+      criminalRecord,
+      resume,
+    };
 
-    if (filled(personalDocument))
-      personalDocumentUrl = await this.fileStorage.uploadFile(
-        Buckets.employee_documents,
-        personalDocument,
-      );
-
-    if (filled(professionalDocument))
-      professionalDocumentUrl = await this.fileStorage.uploadFile(
-        Buckets.employee_documents,
-        professionalDocument,
-      );
-
-    if (filled(criminalRecord))
-      criminalRecordUrl = await this.fileStorage.uploadFile(
-        Buckets.employee_documents,
-        criminalRecord,
-      );
-
-    if (filled(resume))
-      resumeUrl = await this.fileStorage.uploadFile(Buckets.employee_documents, resume);
+    const documentUrls = await this.fileStorage.uploadDocuments(
+      Buckets.employee_documents,
+      documentFiles,
+    );
 
     const personData = {
       name: data.name,
@@ -91,23 +79,19 @@ export class EmployeeService {
       workRole: data.workRole,
       workShift: data.workShift,
       salary: data.salary,
-      professionalDocumentUrl,
-      personalDocumentUrl,
-      criminalRecordUrl,
-      resumeUrl,
+      ...documentUrls,
     };
 
     if (filled(hasPerson)) {
       employeeData = { ...employeeData, personId: hasPerson.id };
       const employee = await this.employeeRepository.createEmployee(employeeData);
 
-      console.log('caiuuuuuu aquiii')
       await this.recordsWereCreated(
         filled(employee),
-        personalDocumentUrl,
-        professionalDocumentUrl,
-        criminalRecordUrl,
-        resumeUrl,
+        documentUrls.personalDocumentUrl,
+        documentUrls.professionalDocumentUrl,
+        documentUrls.criminalRecordUrl,
+        documentUrls.resumeUrl,
       );
 
       return "Funcionário criado com sucesso";
@@ -118,10 +102,10 @@ export class EmployeeService {
     if (blank(person)) {
       await this.recordsWereCreated(
         true,
-        personalDocumentUrl,
-        professionalDocumentUrl,
-        criminalRecordUrl,
-        resumeUrl,
+        documentUrls.personalDocumentUrl,
+        documentUrls.professionalDocumentUrl,
+        documentUrls.criminalRecordUrl,
+        documentUrls.resumeUrl,
       );
 
       throw new BadRequestException("Erro ao criar pessoa");
@@ -134,10 +118,10 @@ export class EmployeeService {
     if (blank(employee)) {
       await this.recordsWereCreated(
         false,
-        personalDocumentUrl,
-        professionalDocumentUrl,
-        criminalRecordUrl,
-        resumeUrl,
+        documentUrls.personalDocumentUrl,
+        documentUrls.professionalDocumentUrl,
+        documentUrls.criminalRecordUrl,
+        documentUrls.resumeUrl,
       );
 
       throw new BadRequestException("Erro ao criar funcionário");
