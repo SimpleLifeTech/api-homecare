@@ -59,75 +59,52 @@ export class EmployeeService {
       documentFiles,
     );
 
-    const personData = {
-      name: data.name,
-      email: "",
-      document: data.document,
-      birthdate: data.birthdate,
-      password: "",
-      phone: data.phone,
-      address: data.address,
-      addressNumber: data.addressNumber,
-      addressComplement: data.addressComplement,
-      addressCity: data.addressCity,
-      addressState: data.addressState,
-      addressZipcode: data.addressZipcode,
-    };
+    try {
+      const personData = {
+        name: data.name,
+        email: data.email ?? "",
+        document: data.document,
+        birthdate: data.birthdate,
+        password: "",
+        phone: data.phone,
+        address: data.address,
+        addressNumber: data.addressNumber,
+        addressComplement: data.addressComplement,
+        addressCity: data.addressCity,
+        addressState: data.addressState,
+        addressZipcode: data.addressZipcode,
+      };
 
-    let employeeData: any = {
-      branchId: data.branchId,
-      workRole: data.workRole,
-      workShift: data.workShift,
-      salary: data.salary,
-      ...documentUrls,
-    };
+      let employeeData: any = {
+        branchId: data.branchId,
+        workRole: data.workRole,
+        workShift: data.workShift,
+        salary: data.salary,
+        ...documentUrls,
+      };
 
-    if (filled(hasPerson)) {
-      employeeData = { ...employeeData, personId: hasPerson.id };
-      const employee = await this.employeeRepository.createEmployee(employeeData);
+      if (filled(hasPerson)) {
+        employeeData = { ...employeeData, personId: hasPerson.id };
+        await this.employeeRepository.createEmployee(employeeData);
+        return "Funcionário criado com sucesso";
+      }
 
-      await this.recordsWereCreated(
-        filled(employee),
-        documentUrls.personalDocumentUrl,
-        documentUrls.professionalDocumentUrl,
-        documentUrls.criminalRecordUrl,
-        documentUrls.resumeUrl,
-      );
+      const person = (await this.personService.createPerson(personData)) as Person;
+      employeeData = { ...employeeData, personId: person.id };
 
+      await this.employeeRepository.createEmployee(employeeData);
       return "Funcionário criado com sucesso";
-    }
+    } catch (error) {
+      const hasDocuments = Object.entries(documentUrls).some(([key, value]) => filled(value));
 
-    const person = (await this.personService.createPerson(personData)) as Person;
-
-    if (blank(person)) {
       await this.recordsWereCreated(
-        true,
+        hasDocuments,
         documentUrls.personalDocumentUrl,
         documentUrls.professionalDocumentUrl,
         documentUrls.criminalRecordUrl,
         documentUrls.resumeUrl,
       );
-
-      throw new BadRequestException("Erro ao criar pessoa");
     }
-
-    employeeData = { ...employeeData, personId: person.id };
-
-    const employee = await this.employeeRepository.createEmployee(employeeData);
-
-    if (blank(employee)) {
-      await this.recordsWereCreated(
-        false,
-        documentUrls.personalDocumentUrl,
-        documentUrls.professionalDocumentUrl,
-        documentUrls.criminalRecordUrl,
-        documentUrls.resumeUrl,
-      );
-
-      throw new BadRequestException("Erro ao criar funcionário");
-    }
-
-    return "Funcionário criado com sucesso";
   }
 
   async findEmployeeById(employeeId: string) {
