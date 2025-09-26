@@ -24,6 +24,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       status = exception.getStatus();
       const res = exception.getResponse();
       errorMessage = typeof res === "string" ? res : (res as any)?.message || "Erro desconhecido";
+      this.logger.error("Erro HTTP capturado", exception);
     }
     // Erros do Prisma
     else if (
