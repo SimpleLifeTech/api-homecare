@@ -201,9 +201,6 @@ export class PlanningService {
       return servicesToCreate;
     }
 
-}
-
-
   // async findPlanningByCompanyId(companyId: string) {
   //   await this.companyService.companyExists(companyId);
   //   const planninges = await this.planningRepository.findPlanningByCompanyId(companyId);

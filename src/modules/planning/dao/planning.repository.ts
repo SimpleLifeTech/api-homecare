@@ -12,7 +12,7 @@ const { getCurrentDateAndTime } = new GlobalFunctions();
 export class PlanningRepository {
   constructor(private readonly prisma: PrismaService) { }
 
-  async createPlanning(data: Planning) {
+  async createPlanning(data: { month: number; year: number; branchId: string, createdBy: string }) {
     return this.prisma.planning.create({ data: { ...data } });
   };
 

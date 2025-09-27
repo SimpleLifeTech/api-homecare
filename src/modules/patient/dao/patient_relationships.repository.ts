@@ -25,12 +25,12 @@ export class PatientRelationshipsRepository {
       include: { patient: true },
     })
   }
-  async findPatientRelationshipsByCareServiceType(homecareId: string, type: string) {
+  async findPatientRelationshipsByCareServiceType(homecareId: string, workRoleId: string) {
     return this.prisma.patientRelationships.findMany({
       where: {
         homecareId,
-        careServiceTypeNeeds: {
-          some: { type }
+        patientServiceNeeds: {
+          some: { workRoleId }
         }
       }
     });

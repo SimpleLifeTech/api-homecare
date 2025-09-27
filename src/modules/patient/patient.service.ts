@@ -82,8 +82,8 @@ export class PatientService {
   async findPatientsByHomecareId(homecareId: string) {
     return await this.patientRelationshipsRepository.findPatientsByHomecareId(homecareId);
   }
-  findPatientRelationshipsByCareServiceType(homecareId: string, careServiceType: string) {
-    return this.patientRelationshipsRepository.findPatientRelationshipsByCareServiceType(homecareId, careServiceType);
+  findPatientRelationshipsByCareServiceType(homecareId: string, workRoleId: string) {
+    return this.patientRelationshipsRepository.findPatientRelationshipsByCareServiceType(homecareId, workRoleId);
   }
   async update(id: string, dto: UpdatePatientDto) {
     await this.patientRepository.update(id, dto);
