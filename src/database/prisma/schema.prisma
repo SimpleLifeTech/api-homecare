@@ -393,7 +393,7 @@ model Service {
   id                    String    @id @default(uuid()) @db.Uuid
   companyId             String    @map("company_id") @db.Uuid
   patientRelationshipId String    @map("patient_id") @db.Uuid
-  employeeId            String    @map("employee_id") @db.Uuid
+  employeeId            String?    @map("employee_id") @db.Uuid
   title                 String
   description           String?
   startAt               DateTime? @map("start_at") @db.Timestamptz
@@ -406,7 +406,7 @@ model Service {
 
   company  Company              @relation(fields: [companyId], references: [id])
   patient  PatientRelationships @relation(fields: [patientRelationshipId], references: [id])
-  employee Employee             @relation(fields: [employeeId], references: [id])
+  employee Employee?             @relation(fields: [employeeId], references: [id])
 
   @@map("service")
 }
