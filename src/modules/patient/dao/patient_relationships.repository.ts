@@ -25,6 +25,16 @@ export class PatientRelationshipsRepository {
       include: { patient: true },
     })
   }
+  async findPatientRelationshipsByCareServiceType(homecareId: string, type: string) {
+    return this.prisma.patientRelationships.findMany({
+      where: {
+        homecareId,
+        careServiceTypeNeeds: {
+          some: { type }
+        }
+      }
+    });
+  }
   async update(id: string, data: Partial<PatientRelationships>, userId: string) {
     return this.prisma.patientRelationships.update({
       where: { id },

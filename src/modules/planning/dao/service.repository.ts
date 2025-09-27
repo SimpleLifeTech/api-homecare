@@ -12,8 +12,12 @@ const { getCurrentDateAndTime } = new GlobalFunctions();
 export class ServiceRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createService(data: Service) {
+  async create(data: Service) {
     return this.prisma.service.create({ data: { ...data } });
+  }
+
+  async createMany(data: Service[]) {
+    return this.prisma.service.createMany({ data: [...data] });
   }
 
   // async findServiceById(planningId: string) {

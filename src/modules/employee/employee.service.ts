@@ -116,6 +116,11 @@ export class EmployeeService {
     return await this.employeeRepository.findEmployeesByBranchId(branchId);
   }
 
+  async findEmployeesByBranchIdAndByCareServiceType(branchId: string, workRole: string) {
+    await this.branchService.branchExists(branchId);
+    return await this.employeeRepository.findEmployeesByBranchIdAndByCareServiceType(branchId, workRole);
+  }
+
   async updateEmployee(
     employeeId: string,
     data: UpdateEmployeeDto,

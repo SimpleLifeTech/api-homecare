@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
 
 import { PlanningService } from "./planning.service";
@@ -10,10 +10,15 @@ const { IsEmptyParam } = new GlobalFunctions();
 export class PlanningController {
   constructor(protected readonly planningService: PlanningService) {}
 
-  @Post("/create/:companyId")
-  async createPlanning(@Param("companyId") companyId: string, @Body() data: CreatePlanningDTO) {
-    IsEmptyParam(companyId);
-    return this.planningService.createPlanning(companyId, data);
+  @Post("/create/:branchId")
+  async createPlanning(
+    @Param("branchId") branchId: string,
+    @Query("userId") userId: string,
+    @Body() data: CreatePlanningDTO,
+  ) {
+    // TODO: Implementar o que vai passar
+    IsEmptyParam(branchId);
+    return this.planningService.createPlanning(branchId, userId, data);
   }
 
   // @Get("/list/:companyId")

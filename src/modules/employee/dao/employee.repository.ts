@@ -31,6 +31,12 @@ export class EmployeeRepository {
     });
   }
 
+  async findEmployeesByBranchIdAndByCareServiceType(branchId: string, workRole: string) {
+    return await this.prisma.employee.findMany({
+      where: { branchId, workRole, deletedAt: null },
+    });
+  }
+
   async updateEmployee(employeeId: string, data: Partial<Employee>) {
     return await this.prisma.employee.update({
       where: { id: employeeId },

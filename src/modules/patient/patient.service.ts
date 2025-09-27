@@ -16,7 +16,7 @@ export class PatientService {
     private readonly patientRepository: PatientRepository,
     private readonly personRepository: PersonRepository,
     private readonly patientRelationshipsRepository: PatientRelationshipsRepository,
-  ) {}
+  ) { }
 
   async create(dto: any, userToken) {
     const userId = userToken.userId; // TODO: Get User By Token
@@ -70,6 +70,9 @@ export class PatientService {
   }
   async findPatientsByHomecareId(homecareId: string) {
     return await this.patientRelationshipsRepository.findPatientsByHomecareId(homecareId);
+  }
+  findPatientRelationshipsByCareServiceType(homecareId: string, careServiceType: string) {
+    return this.patientRelationshipsRepository.findPatientRelationshipsByCareServiceType(homecareId, careServiceType);
   }
   async update(id: string, dto: UpdatePatientDto) {
     await this.patientRepository.update(id, dto);
