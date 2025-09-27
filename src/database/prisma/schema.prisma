@@ -33,6 +33,7 @@ model Branch {
   profile          Profile[]
   department       Department[]
   companyFictional CompanyFictional[]
+  planning         Planning[]
 
   @@map("branch")
 }
