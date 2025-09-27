@@ -102,6 +102,10 @@ export class PlanningService {
        */
       const employeeSchedule: Record<string, Record<string, number[]>> = {};
     
+      // ⏰ Definimos o horário de expediente
+      const WORK_START_HOUR = 7; // início às 7h
+      const WORK_END_HOUR = 19;  // fim às 19h
+    
       // 🔄 Loop pelos dias do mês
       for (let i = 0; i < totalDays; i++) {
         const currentDay = addDays(monthStart, i);
@@ -115,11 +119,12 @@ export class PlanningService {
     
           // Quantidade de horas que ainda precisa ser atendida nesse dia
           let remainingHours = hours;
-          // Começamos do horário 7 (ex: 7h) — você pode ajustar
-          let startHour = 7;
+          // Começamos do horário inicial do expediente
+          let startHour = WORK_START_HOUR;
     
-          // Enquanto ainda restarem horas para atender esse paciente nesse dia
-          while (remainingHours > 0) {
+          // Enquanto ainda houver horas para atender esse paciente nesse dia
+          // E enquanto não ultrapassar o horário de expediente
+          while (remainingHours > 0 && startHour < WORK_END_HOUR) {
             // ⏳ Definimos o tamanho do bloco de atendimento (ex: 1 hora)
             const shiftHours = 1;
     
@@ -143,15 +148,11 @@ export class PlanningService {
             }
     
             // 🆕 Marca esse horário como ocupado para esse funcionário no mapa de disponibilidade
-            if (!employeeSchedule[availableEmployee.id]) {
-              employeeSchedule[availableEmployee.id] = {};
-            }
-            if (!employeeSchedule[availableEmployee.id][dateKey]) {
-              employeeSchedule[availableEmployee.id][dateKey] = [];
-            }
+            if (!employeeSchedule[availableEmployee.id]) employeeSchedule[availableEmployee.id] = {};
+            if (!employeeSchedule[availableEmployee.id][dateKey]) employeeSchedule[availableEmployee.id][dateKey] = [];
             employeeSchedule[availableEmployee.id][dateKey].push(startHour);
     
-            // ⏲️ Monta datas/hora início e fim do serviço
+            // ⏲️ Monta datas/hora do Service
             const startAt = new Date(currentDay);
             startAt.setHours(startHour, 0, 0, 0);
             const endAt = new Date(currentDay);
@@ -172,8 +173,8 @@ export class PlanningService {
             servicesToCreate.push({
               id: crypto.randomUUID(),
               companyId,
-              patientId: patientRel.patientId,
               employeeId: availableEmployee.id,
+              patientRelationshipId: patientRel.id,
               title: `Atendimento ${startHour}-${startHour + shiftHours}h`,
               description: `Atendimento automático para paciente ${patientRel.patientId}`,
               startAt,
@@ -198,7 +199,7 @@ export class PlanningService {
       }
     
       return servicesToCreate;
-    }    
+    }
 
 }
 
