@@ -12,6 +12,7 @@ import { GlobalFunctions } from "@shared/shared/utils/functions";
 import { PatientServiceNeedsRepository } from "./dao/patient-service-needs.repository";
 import { PatientRepository } from "./dao/patient.repository";
 import { UpdatePatientDto } from "./dto/update-patient.dto";
+import { PatientRelationshipsRepository } from "./dao/patient_relationships.repository";
 
 const { blank } = new GlobalFunctions();
 
