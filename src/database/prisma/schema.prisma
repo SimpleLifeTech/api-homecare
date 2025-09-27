@@ -293,9 +293,9 @@ model Planning {
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz
 
-  branch Branch @relation(fields: [branchId], references: [id], map: "fk_branch")
-
   statuses PlanningStatus[]
+
+  branch Branch @relation(fields: [branchId], references: [id])
 
   @@map("planning")
 }
