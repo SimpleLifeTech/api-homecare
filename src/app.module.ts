@@ -1,5 +1,6 @@
 import { AuthModule } from "@modules/auth/auth.module";
 import { BranchModule } from "@modules/branch/branch.module";
+import { CareServiceTypeModule } from "@modules/care_service_type/care-service-type.module";
 import { CompanyModule } from "@modules/company/company.module";
 import { CompanyFictionalModule } from "@modules/company_fictional/company-fictional.module";
 import { DepartmentModule } from "@modules/department/department.module";
@@ -24,6 +25,7 @@ import { PrismaService } from "./database/prisma/prisma.service";
     AuthModule,
     BranchModule,
     CacheRepositoryModule,
+    CareServiceTypeModule,
     CompanyModule,
     CompanyFictionalModule,
     DepartmentModule,

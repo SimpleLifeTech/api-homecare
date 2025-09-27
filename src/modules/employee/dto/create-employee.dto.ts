@@ -6,9 +6,9 @@ export class CreateEmployeeDto extends CreatePersonDTO {
   @IsNotEmpty({ message: "O ID da filial deve ser preenchido" })
   branchId: string;
 
-  @IsString({ message: "A profissão deve ser uma string" })
-  @IsNotEmpty({ message: "A profissão deve ser preenchida" })
-  workRole: string;
+  @IsString({ message: "O ID da profissão deve ser uma string" })
+  @IsNotEmpty({ message: "O ID da profissão deve ser preenchida" })
+  workRoleId: string;
 
   @IsNumber({ allowInfinity: false, allowNaN: false }, { message: "A quantidade de horas que o funcionário irá cumprir deve ser um número" })
   @IsPositive({ message: "A quantidade de horas que o funcionário irá cumprir deve ser maior que zero" })
