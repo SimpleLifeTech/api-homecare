@@ -1,18 +1,23 @@
 import { PersonRepository } from "@modules/person/dao/person.repository";
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CompanyType } from "@prisma/client";
 import { GlobalFunctions } from "@shared/shared/utils/functions";
 
 import { PatientRepository } from "./dao/patient.repository";
 import { CreatePatientDto } from "./dto/create-patient.dto";
 import { UpdatePatientDto } from "./dto/update-patient.dto";
-import { PatientRelationshipsRepository } from "./dao/patient_relationships.repository";
+import { PatientServiceNeedsRepository } from "./dao/patiente-service-needs.repository";
+import { CareServiceTypeRepository } from "@modules/care_service_type/dao/care-service-type.repository";
 
 const { blank } = new GlobalFunctions();
 
 @Injectable()
 export class PatientService {
   constructor(
+    @Inject(PatientServiceNeedsRepository)
+    private readonly patientServiceNeedsRepository: PatientServiceNeedsRepository,
+    @Inject(CareServiceTypeRepository)
+    private readonly careServiceTypeRepository: CareServiceTypeRepository,
     private readonly patientRepository: PatientRepository,
     private readonly personRepository: PersonRepository,
     private readonly patientRelationshipsRepository: PatientRelationshipsRepository,
@@ -26,6 +31,7 @@ export class PatientService {
 
     if (blank(userData)) throw new NotFoundException("Usuário não encontrado!");
 
+    //TODO!: VERIFICAR CASOS ONDE É FICTICIO
     let homecareId;
     let supplierId;
 
@@ -56,6 +62,8 @@ export class PatientService {
     );
 
     if (blank(patient)) throw new InternalServerErrorException("Erro ao criar paciente!");
+
+    //TODO!: CRIAR REGISTROS NA PATIENTSERVICENEEDS
 
     return "Pessoa criada com sucesso!";
   }

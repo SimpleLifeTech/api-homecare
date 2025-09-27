@@ -77,7 +77,7 @@ export class EmployeeService {
 
       let employeeData: any = {
         branchId: data.branchId,
-        workRole: data.workRole,
+        workRoleId: data.workRoleId,
         workTime: data.workTime,
         dayOffTime: data.dayOffTime,
         ...documentUrls,
@@ -174,6 +174,7 @@ export class EmployeeService {
     const employeeData = {
       personId: data.personId,
       branchId: data.branchId,
+      workRoleId: data.workRoleId,
       workTime: data.workTime,
       dayOffTime: data.dayOffTime,
       personalDocumentUrl,

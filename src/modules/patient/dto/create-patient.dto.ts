@@ -13,6 +13,10 @@ import {
 } from "class-validator";
 
 export class CreatePatientDto {
+  @IsArray({ message: "O campo workRoleIds deve ser um array" })
+  @IsNotEmpty({ message: "O campo workRoleIds deve ser preenchido" })
+  workRoleIds: string[];
+
   @IsOptional()
   @IsString({ message: "O nome do responsável deve ser uma string" })
   responsibleName: string;

@@ -1,6 +1,19 @@
-import { IsInt, IsNumber, IsOptional, IsPositive, IsString, Max, Min } from "class-validator";
+import {
+  IsArray,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Max,
+  Min,
+} from "class-validator";
 
 export class UpdatePatientDto {
+  @IsOptional()
+  @IsArray({ message: "O campo workRoleIds deve ser um array" })
+  workRoleIds: string[];
+
   @IsOptional()
   @IsString({ message: "O nome do responsável deve ser uma string" })
   responsibleName?: string;
