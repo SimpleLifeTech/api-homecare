@@ -56,7 +56,7 @@ export class EmployeeController {
     return await this.employeeService.findEmployeeById(employeeId);
   }
 
-  @Get("/list-many/:branchId")
+  @Get("/list-by-branch/:branchId")
   async findEmployeesByBranchId(@Param("branchId") branchId: string) {
     IsEmptyParam(branchId);
     return await this.employeeService.findEmployeesByBranchId(branchId);

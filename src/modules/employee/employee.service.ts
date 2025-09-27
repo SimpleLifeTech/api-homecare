@@ -78,8 +78,8 @@ export class EmployeeService {
       let employeeData: any = {
         branchId: data.branchId,
         workRole: data.workRole,
-        workShift: data.workShift,
-        salary: data.salary,
+        workTime: data.workTime,
+        dayOffTime: data.dayOffTime,
         ...documentUrls,
       };
 
@@ -169,9 +169,8 @@ export class EmployeeService {
     const employeeData = {
       personId: data.personId,
       branchId: data.branchId,
-      workRole: data.workRole,
-      workShift: data.workShift,
-      salary: data.salary,
+      workTime: data.workTime,
+      dayOffTime: data.dayOffTime,
       personalDocumentUrl,
       professionalDocumentUrl,
       criminalRecordUrl,
