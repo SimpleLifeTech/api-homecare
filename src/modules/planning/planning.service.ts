@@ -1,5 +1,5 @@
 import { CompanyService } from '@modules/company/company.service';
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
 import { GlobalFunctions } from '@shared/shared/utils/functions';
 import { addDays, startOfMonth, endOfMonth } from "date-fns";
 import { PlanningRepository } from './dao/planning.repository';
@@ -26,6 +26,8 @@ export class PlanningService {
     protected readonly serviceRepository: ServiceRepository,
     protected readonly cache: CacheRepository
   ) { }
+
+  private readonly logger = new Logger(PlanningService.name);
 
   async createPlanning(branchId: string, userId: string, data: CreatePlanningDTO) {
     const branch = await this.branchService.branchExists(branchId);
@@ -64,116 +66,107 @@ export class PlanningService {
     return "Agenda criada com sucesso!";
   }
 
+  /**
+   * Gera automaticamente registros de "Service" para cada paciente,
+   * distribuindo funcionários de acordo com as horas de cuidado necessárias.
+   */
+  async generateServices(
+    patientRelationships: Array<{
+      id: string;
+      patientId: string;
+      requiredCareHours: number;
+      homecareId?: string | null;
+      supplierId?: string | null;
+      fictionalHomecareId?: string | null;
+      fictionalSupplierId?: string | null;
+    }>,
+    employees: Array<{ id: string }>,
+    month: number,
+    year: number
+  ) {
+    // Se não há pacientes ou funcionários, não há o que fazer
+    if (!patientRelationships.length || !employees.length) return;
+
+    // 📅 Definimos o início e fim do mês
+    const monthStart = startOfMonth(new Date(year, month - 1, 1));
+    const monthEnd = endOfMonth(monthStart);
+    // Calcula total de dias do mês
+    const totalDays =
+      (monthEnd.getTime() - monthStart.getTime()) / (1000 * 60 * 60 * 24) + 1;
+
+    // Array final que vamos usar para inserir os registros na tabela Service
+    const servicesToCreate: Service[] = [];
+
     /**
-     * Gera automaticamente registros de "Service" para cada paciente,
-     * distribuindo funcionários de acordo com as horas de cuidado necessárias.
+     * 🆕 Agenda de disponibilidade dos funcionários
+     * Estrutura: employeeSchedule[employeeId][yyyy-mm-dd] = [horas ocupadas]
+     * Assim conseguimos garantir que um mesmo funcionário não seja alocado no mesmo horário/dia para dois pacientes diferentes.
      */
-    async generateServices(
-      patientRelationships: Array<{
-        id: string;
-        patientId: string;
-        requiredCareHours: number;
-        homecareId?: string | null;
-        supplierId?: string | null;
-        fictionalHomecareId?: string | null;
-        fictionalSupplierId?: string | null;
-      }>,
-      employees: Array<{ id: string }>,
-      month: number,
-      year: number
-    ) {
-      // Se não há pacientes ou funcionários, não há o que fazer
-      if (!patientRelationships.length || !employees.length) return;
-    
-      // 📅 Definimos o início e fim do mês
-      const monthStart = startOfMonth(new Date(year, month - 1, 1));
-      const monthEnd = endOfMonth(monthStart);
-      // Calcula total de dias do mês
-      const totalDays =
-        (monthEnd.getTime() - monthStart.getTime()) / (1000 * 60 * 60 * 24) + 1;
-    
-      // Array final que vamos usar para inserir os registros na tabela Service
-      const servicesToCreate: Service[] = [];
-    
-      /**
-       * 🆕 Agenda de disponibilidade dos funcionários
-       * Estrutura: employeeSchedule[employeeId][yyyy-mm-dd] = [horas ocupadas]
-       * Assim conseguimos garantir que um mesmo funcionário não seja alocado no mesmo horário/dia para dois pacientes diferentes.
-       */
-      const employeeSchedule: Record<string, Record<string, number[]>> = {};
-    
-      // ⏰ Definimos o horário de expediente
-      const WORK_START_HOUR = 7; // início às 7h
-      const WORK_END_HOUR = 19;  // fim às 19h
-    
-      // 🔄 Loop pelos dias do mês
-      for (let i = 0; i < totalDays; i++) {
-        const currentDay = addDays(monthStart, i);
-        // Criamos uma chave do tipo yyyy-mm-dd para facilitar comparações
-        const dateKey = currentDay.toISOString().split("T")[0];
-    
-        // Para cada relação de paciente (patientRelationships)
-        for (const patientRel of patientRelationships) {
-          const hours = patientRel.requiredCareHours ?? 0;
-          if (hours <= 0) continue;
-    
-          // Quantidade de horas que ainda precisa ser atendida nesse dia
-          let remainingHours = hours;
-          // Começamos do horário inicial do expediente
-          let startHour = WORK_START_HOUR;
-    
-          // Enquanto ainda houver horas para atender esse paciente nesse dia
-          // E enquanto não ultrapassar o horário de expediente
-          while (remainingHours > 0 && startHour < WORK_END_HOUR) {
-            // ⏳ Definimos o tamanho do bloco de atendimento (ex: 1 hora)
-            const shiftHours = 1;
-    
-            /**
-             * 🆕 Procuramos um funcionário disponível nesse dia/horário
-             * - `employeeSchedule[emp.id][dateKey]` nos diz os horários já ocupados desse funcionário.
-             * - Se includes(startHour) é true, significa que já está ocupado nesse horário.
-             */
-            const availableEmployee = employees.find((emp) => {
-              const empDaySchedule =
-                employeeSchedule[emp.id]?.[dateKey] ?? [];
-              // verifica se esse horário já está ocupado
-              return !empDaySchedule.includes(startHour);
-            });
-    
-            // Se não encontrar funcionário livre, lança erro (ou trate de outra forma)
-            if (!availableEmployee) {
-              throw new Error(
-                `Não há funcionários livres para ${dateKey} às ${startHour}h`
-              );
-            }
-    
-            // 🆕 Marca esse horário como ocupado para esse funcionário no mapa de disponibilidade
-            if (!employeeSchedule[availableEmployee.id]) employeeSchedule[availableEmployee.id] = {};
-            if (!employeeSchedule[availableEmployee.id][dateKey]) employeeSchedule[availableEmployee.id][dateKey] = [];
-            employeeSchedule[availableEmployee.id][dateKey].push(startHour);
-    
-            // ⏲️ Monta datas/hora do Service
-            const startAt = new Date(currentDay);
-            startAt.setHours(startHour, 0, 0, 0);
-            const endAt = new Date(currentDay);
-            endAt.setHours(startHour + shiftHours, 0, 0, 0);
-    
-            /**
-             * 📝 Determina o companyId para o serviço:
-             * Pode ser homecareId, supplierId, fictionalHomecareId ou fictionalSupplierId
-             */
-            const companyId =
-              patientRel.homecareId ??
-              patientRel.supplierId ??
-              patientRel.fictionalHomecareId ??
-              patientRel.fictionalSupplierId ??
-              "";
-    
-            // Adiciona no array que depois será persistido no banco
+    const employeeSchedule: Record<string, Record<string, number[]>> = {};
+
+    // ⏰ Definimos o horário de expediente
+    const WORK_START_HOUR = 7; // início às 7h
+    const WORK_END_HOUR = 19;  // fim às 19h
+
+    // 🔄 Loop pelos dias do mês
+    for (let i = 0; i < totalDays; i++) {
+      const currentDay = addDays(monthStart, i);
+      // Criamos uma chave do tipo yyyy-mm-dd para facilitar comparações
+      const dateKey = currentDay.toISOString().split("T")[0];
+
+      // Para cada relação de paciente (patientRelationships)
+      for (const patientRel of patientRelationships) {
+        const hours = patientRel.requiredCareHours ?? 0;
+        if (hours <= 0) continue;
+
+        // Quantidade de horas que ainda precisa ser atendida nesse dia
+        let remainingHours = hours;
+        // Começamos do horário inicial do expediente
+        let startHour = WORK_START_HOUR;
+
+        // Enquanto ainda houver horas para atender esse paciente nesse dia
+        // E enquanto não ultrapassar o horário de expediente
+        while (remainingHours > 0 && startHour < WORK_END_HOUR) {
+          // ⏳ Definimos o tamanho do bloco de atendimento (ex: 1 hora)
+          // TODO!: Precisamos que o registro da tabela do employee defina isso
+          const shiftHours = 1;
+
+          /**
+           * 🆕 Procuramos um funcionário disponível nesse dia/horário
+           * - `employeeSchedule[emp.id][dateKey]` nos diz os horários já ocupados desse funcionário.
+           * - Se includes(startHour) é true, significa que já está ocupado nesse horário.
+           */
+          const availableEmployee = employees.find((emp) => {
+            const empDaySchedule =
+              employeeSchedule[emp.id]?.[dateKey] ?? [];
+            // verifica se esse horário já está ocupado
+            return !empDaySchedule.includes(startHour);
+          });
+
+          // ⏲️ Monta datas/hora do Service
+          const startAt = new Date(currentDay);
+          startAt.setHours(startHour, 0, 0, 0);
+          const endAt = new Date(currentDay);
+          endAt.setHours(startHour + shiftHours, 0, 0, 0);
+
+          /**
+           * 📝 Determina o companyId para o serviço:
+           * Pode ser homecareId, supplierId, fictionalHomecareId ou fictionalSupplierId
+           */
+          const companyId =
+            patientRel.homecareId ??
+            patientRel.supplierId ??
+            patientRel.fictionalHomecareId ??
+            patientRel.fictionalSupplierId ??
+            "";
+
+          // Se não encontrar funcionário livre, lança erro (ou trate de outra forma)
+          if (!availableEmployee) {
+            // Cria um serviço sem funcionário
             servicesToCreate.push({
               id: crypto.randomUUID(),
               companyId,
-              employeeId: availableEmployee.id,
+              employeeId: null,
               patientRelationshipId: patientRel.id,
               title: `Atendimento ${startHour}-${startHour + shiftHours}h`,
               description: `Atendimento automático para paciente ${patientRel.patientId}`,
@@ -185,21 +178,48 @@ export class PlanningService {
               updatedAt: null,
               deletedAt: null,
             });
-    
-            // 🆗 Atualiza contadores
-            remainingHours -= shiftHours;
-            startHour += shiftHours;
+            this.logger.error(
+              `Nenhum funcionário disponível para o paciente ${patientRel.id} no dia ${dateKey} as ${startHour}h`
+            );
+            continue;
           }
+
+          // 🆕 Marca esse horário como ocupado para esse funcionário no mapa de disponibilidade
+          if (!employeeSchedule[availableEmployee.id]) employeeSchedule[availableEmployee.id] = {};
+          if (!employeeSchedule[availableEmployee.id][dateKey]) employeeSchedule[availableEmployee.id][dateKey] = [];
+          employeeSchedule[availableEmployee.id][dateKey].push(startHour);
+
+          // Adiciona no array que depois será persistido no banco
+          servicesToCreate.push({
+            id: crypto.randomUUID(),
+            companyId,
+            employeeId: availableEmployee.id,
+            patientRelationshipId: patientRel.id,
+            title: `Atendimento ${startHour}-${startHour + shiftHours}h`,
+            description: `Atendimento automático para paciente ${patientRel.patientId}`,
+            startAt,
+            startTime: startAt.toTimeString().slice(0, 5),
+            endAt,
+            endTime: endAt.toTimeString().slice(0, 5),
+            createdAt: new Date(),
+            updatedAt: null,
+            deletedAt: null,
+          });
+
+          // 🆗 Atualiza contadores
+          remainingHours -= shiftHours;
+          startHour += shiftHours;
         }
       }
-    
-      // Finalmente, insere todos os serviços criados no repositório
-      if (filled(servicesToCreate)) {
-        await this.serviceRepository.createMany(servicesToCreate);
-      }
-    
-      return servicesToCreate;
     }
+
+    // Finalmente, insere todos os serviços criados no repositório
+    if (filled(servicesToCreate)) {
+      await this.serviceRepository.createMany(servicesToCreate);
+    }
+
+    return servicesToCreate;
+  }
 
   // async findPlanningByCompanyId(companyId: string) {
   //   await this.companyService.companyExists(companyId);
