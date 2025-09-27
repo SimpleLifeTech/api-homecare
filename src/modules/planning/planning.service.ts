@@ -70,105 +70,135 @@ export class PlanningService {
      */
     async generateServices(
       patientRelationships: Array<{
-        id: string; // id do PatientRelationship
-        patientId: string; // id do paciente
-        requiredCareHours: number; // horas de cuidado necessárias por dia
+        id: string;
+        patientId: string;
+        requiredCareHours: number;
         homecareId?: string | null;
         supplierId?: string | null;
         fictionalHomecareId?: string | null;
         fictionalSupplierId?: string | null;
       }>,
-      employees: Array<{ id: string }>, // lista de funcionários disponíveis
-      month: number, // mês da escala
-      year: number // ano da escala
+      employees: Array<{ id: string }>,
+      month: number,
+      year: number
     ) {
-      // Se não houver pacientes ou funcionários, não há o que gerar
+      // Se não há pacientes ou funcionários, não há o que fazer
       if (!patientRelationships.length || !employees.length) return;
-  
-      // Determina a data inicial e final do mês escolhido
+    
+      // 📅 Definimos o início e fim do mês
       const monthStart = startOfMonth(new Date(year, month - 1, 1));
       const monthEnd = endOfMonth(monthStart);
-  
-      // Calcula o número de dias do mês
+      // Calcula total de dias do mês
       const totalDays =
         (monthEnd.getTime() - monthStart.getTime()) / (1000 * 60 * 60 * 24) + 1;
-  
-      // Array onde vamos acumular todos os registros de "Service" a serem criados
-      const servicesToCreate: any[] = [];
-  
-      // Índice usado para alternar funcionários e distribuir de forma cíclica
-      let employeeIndex = 0;
-  
-      // Loop por cada dia do mês
+    
+      // Array final que vamos usar para inserir os registros na tabela Service
+      const servicesToCreate: Service[] = [];
+    
+      /**
+       * 🆕 Agenda de disponibilidade dos funcionários
+       * Estrutura: employeeSchedule[employeeId][yyyy-mm-dd] = [horas ocupadas]
+       * Assim conseguimos garantir que um mesmo funcionário não seja alocado no mesmo horário/dia para dois pacientes diferentes.
+       */
+      const employeeSchedule: Record<string, Record<string, number[]>> = {};
+    
+      // 🔄 Loop pelos dias do mês
       for (let i = 0; i < totalDays; i++) {
-        // Data atual (incrementa um dia a cada iteração)
         const currentDay = addDays(monthStart, i);
-  
-        // Loop por cada relacionamento (paciente) filtrado pelo tipo de serviço
-        for (const patient of patientRelationships) {
-          // Quantas horas de cuidado esse paciente precisa nesse dia
-          const hours = patient.requiredCareHours ?? 0;
-          if (hours <= 0) continue; // pula se não precisa de cuidado
-  
-          let remainingHours = hours; // controla o quanto falta atribuir
-          let startHour = 0; // controla o horário de início do próximo turno
-  
-          // Enquanto houver horas a serem atribuídas, criamos blocos de serviço
+        // Criamos uma chave do tipo yyyy-mm-dd para facilitar comparações
+        const dateKey = currentDay.toISOString().split("T")[0];
+    
+        // Para cada relação de paciente (patientRelationships)
+        for (const patientRel of patientRelationships) {
+          const hours = patientRel.requiredCareHours ?? 0;
+          if (hours <= 0) continue;
+    
+          // Quantidade de horas que ainda precisa ser atendida nesse dia
+          let remainingHours = hours;
+          // Começamos do horário 7 (ex: 7h) — você pode ajustar
+          let startHour = 7;
+    
+          // Enquanto ainda restarem horas para atender esse paciente nesse dia
           while (remainingHours > 0) {
-            // Pega o próximo funcionário da lista (vai ciclando pelo %)
-            const employee = employees[employeeIndex % employees.length];
-            employeeIndex++;
-  
-            const shiftHours = 1; // definimos 1h por bloco; pode ajustar se quiser blocos maiores
-  
-            // Calcula o horário de início e fim para esse bloco
+            // ⏳ Definimos o tamanho do bloco de atendimento (ex: 1 hora)
+            const shiftHours = 1;
+    
+            /**
+             * 🆕 Procuramos um funcionário disponível nesse dia/horário
+             * - `employeeSchedule[emp.id][dateKey]` nos diz os horários já ocupados desse funcionário.
+             * - Se includes(startHour) é true, significa que já está ocupado nesse horário.
+             */
+            const availableEmployee = employees.find((emp) => {
+              const empDaySchedule =
+                employeeSchedule[emp.id]?.[dateKey] ?? [];
+              // verifica se esse horário já está ocupado
+              return !empDaySchedule.includes(startHour);
+            });
+    
+            // Se não encontrar funcionário livre, lança erro (ou trate de outra forma)
+            if (!availableEmployee) {
+              throw new Error(
+                `Não há funcionários livres para ${dateKey} às ${startHour}h`
+              );
+            }
+    
+            // 🆕 Marca esse horário como ocupado para esse funcionário no mapa de disponibilidade
+            if (!employeeSchedule[availableEmployee.id]) {
+              employeeSchedule[availableEmployee.id] = {};
+            }
+            if (!employeeSchedule[availableEmployee.id][dateKey]) {
+              employeeSchedule[availableEmployee.id][dateKey] = [];
+            }
+            employeeSchedule[availableEmployee.id][dateKey].push(startHour);
+    
+            // ⏲️ Monta datas/hora início e fim do serviço
             const startAt = new Date(currentDay);
             startAt.setHours(startHour, 0, 0, 0);
-  
             const endAt = new Date(currentDay);
             endAt.setHours(startHour + shiftHours, 0, 0, 0);
-  
-            // Determina o companyId para o Service (pode vir de vários campos)
+    
+            /**
+             * 📝 Determina o companyId para o serviço:
+             * Pode ser homecareId, supplierId, fictionalHomecareId ou fictionalSupplierId
+             */
             const companyId =
-              patient.homecareId ??
-              patient.supplierId ??
-              patient.fictionalHomecareId ??
-              patient.fictionalSupplierId ??
+              patientRel.homecareId ??
+              patientRel.supplierId ??
+              patientRel.fictionalHomecareId ??
+              patientRel.fictionalSupplierId ??
               "";
-  
-            // Monta o registro de Service que será gravado no banco
+    
+            // Adiciona no array que depois será persistido no banco
             servicesToCreate.push({
               id: crypto.randomUUID(),
               companyId,
-              patientId: patient.patientId,
-              employeeId: employee.id,
-              patientRelationshipId: patient.id, // opcional se quiser vincular
+              patientId: patientRel.patientId,
+              employeeId: availableEmployee.id,
               title: `Atendimento ${startHour}-${startHour + shiftHours}h`,
-              description: `Atendimento automático para paciente ${rel.patientId}`,
+              description: `Atendimento automático para paciente ${patientRel.patientId}`,
               startAt,
-              startTime: startAt.toTimeString().slice(0, 5), // HH:mm
+              startTime: startAt.toTimeString().slice(0, 5),
               endAt,
               endTime: endAt.toTimeString().slice(0, 5),
               createdAt: new Date(),
               updatedAt: null,
-              deletedAt: null
+              deletedAt: null,
             });
-  
-            // Atualiza as variáveis para o próximo bloco
-            remainingHours -= shiftHours; // diminui as horas restantes
-            startHour += shiftHours; // avança o horário de início do próximo bloco
+    
+            // 🆗 Atualiza contadores
+            remainingHours -= shiftHours;
+            startHour += shiftHours;
           }
         }
       }
-  
-      // Por fim, se houver registros, insere todos de uma vez no banco
+    
+      // Finalmente, insere todos os serviços criados no repositório
       if (filled(servicesToCreate)) {
         await this.serviceRepository.createMany(servicesToCreate);
       }
-  
-      // Retorna quantos serviços foram gerados (opcional)
+    
       return servicesToCreate;
-    }
+    }    
 
 }
 
