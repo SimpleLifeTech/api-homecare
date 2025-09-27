@@ -33,6 +33,7 @@ model Branch {
   profile          Profile[]
   department       Department[]
   companyFictional CompanyFictional[]
+  planning         Planning[]
 
   @@map("branch")
 }
@@ -284,6 +285,7 @@ model PatientRelationships {
 
 model Planning {
   id        String    @id @default(uuid()) @db.Uuid
+  branchId  String    @map("branch_id") @db.Uuid
   month     String
   year      String
   createdBy String    @map("created_by") @db.Uuid
@@ -292,6 +294,8 @@ model Planning {
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz
 
   statuses PlanningStatus[]
+
+  branch Branch @relation(fields: [branchId], references: [id])
 
   @@map("planning")
 }
